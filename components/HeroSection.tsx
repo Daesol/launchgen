@@ -31,6 +31,42 @@ interface HeroSectionProps {
 
 export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWaitlistFull, handleSubmit }: HeroSectionProps) {
   const [showFloatingDock, setShowFloatingDock] = useState(false)
+  const [emailError, setEmailError] = useState('')
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    return emailRegex.test(email)
+  }
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setEmail(value)
+    
+    // Clear error when user starts typing
+    if (emailError) {
+      setEmailError('')
+    }
+  }
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!email.trim()) {
+      setEmailError('Email is required')
+      return
+    }
+    
+    if (!validateEmail(email)) {
+      setEmailError('Please enter a valid email address')
+      return
+    }
+    
+    // Clear any existing errors
+    setEmailError('')
+    
+    // Call the original handleSubmit
+    await handleSubmit(e)
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -81,16 +117,25 @@ export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWait
               {/* Email Signup */}
               <div className="space-y-4">
                 {!isSubmitted && !isWaitlistFull ? (
-                  <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email for early access"
-                      className="flex-1 px-6 py-4 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm"
-                      required
-                      disabled={isSubmitting}
-                    />
+                  <form onSubmit={handleFormSubmit} className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex-1">
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={handleEmailChange}
+                        placeholder="Enter your email for early access"
+                        className={`w-full px-6 py-4 bg-slate-900/50 border rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition-colors ${
+                          emailError ? 'border-red-500 focus:ring-red-500' : 'border-slate-700 focus:ring-purple-500'
+                        }`}
+                        required
+                        disabled={isSubmitting}
+                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                        title="Please enter a valid email address"
+                      />
+                      {emailError && (
+                        <p className="text-red-400 text-sm mt-1 ml-1">{emailError}</p>
+                      )}
+                    </div>
                     <button
                       type="submit"
                       disabled={isSubmitting}
