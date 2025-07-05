@@ -54,15 +54,14 @@ export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWait
                 </div>
                 
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-                  Create stunning landing pages in{' '}
+                  From Idea to Leads in{' '}
                   <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                    60 seconds
+                    One Prompt
                   </span>
                 </h1>
                 
                 <p className="text-xl text-slate-300 leading-relaxed">
-                  Transform your product idea into a professional landing page with AI. 
-                  No design skills required. Just describe your product and watch the magic happen.
+                  Turn your product idea into a beautiful, lead-ready landing page with built-in CRM and analytics. <strong><em>No design tools. No integrations. Just type and launch.</em></strong>
                 </p>
               </div>
 
@@ -149,6 +148,61 @@ export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWait
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Mobile Floating Dock Form */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-700/50 p-4">
+        {!isSubmitted && !isWaitlistFull ? (
+          <form onSubmit={handleSubmit} className="flex gap-2">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email for early access"
+              className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+              required
+              disabled={isSubmitting}
+            />
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 text-sm whitespace-nowrap"
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span className="hidden sm:inline">Submitting...</span>
+                </>
+              ) : (
+                <>
+                  <span className="hidden sm:inline">Join Waitlist</span>
+                  <span className="sm:hidden">Join</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </form>
+        ) : isSubmitted ? (
+          <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+              <div className="min-w-0">
+                <div className="font-semibold text-green-400 text-sm">Welcome to the waitlist!</div>
+                <div className="text-xs text-slate-400">We'll notify you when LaunchGen launches</div>
+              </div>
+            </div>
+          </div>
+        ) : isWaitlistFull ? (
+          <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-3">
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 text-orange-400 font-bold flex-shrink-0">⚠</div>
+              <div className="min-w-0">
+                <div className="font-semibold text-orange-400 text-sm">Waitlist is full</div>
+                <div className="text-xs text-slate-400">Contact <a href="mailto:daesol@webproagency.ca" className="text-orange-400 hover:underline">daesol@webproagency.ca</a></div>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </section>
   )
