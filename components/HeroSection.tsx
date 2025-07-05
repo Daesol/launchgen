@@ -94,7 +94,7 @@ export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWait
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="px-8 py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+                      className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-purple-800 disabled:to-pink-800 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
                     >
                       {isSubmitting ? (
                         <>
