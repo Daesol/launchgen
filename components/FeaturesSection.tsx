@@ -10,8 +10,8 @@ const features = [
   },
   {
     icon: Sparkles,
-    title: "AI-Powered",
-    description: "Advanced AI that understands your product and target audience"
+    title: "1 Click Deploy",
+    description: "Make your landing page live in seconds with CRM and Analytics"
   },
   {
     icon: TrendingUp,
