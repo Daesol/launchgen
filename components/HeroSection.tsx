@@ -20,15 +20,16 @@ import {
 } from 'lucide-react'
 import { DemoComponent } from './demo'
 
-export function HeroSection() {
-  const [email, setEmail] = useState('')
+interface HeroSectionProps {
+  email: string
+  setEmail: (email: string) => void
+  isSubmitted: boolean
+  isSubmitting: boolean
+  isWaitlistFull: boolean
+  handleSubmit: (e: React.FormEvent) => Promise<void>
+}
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle email submission
-    console.log('Email submitted:', email)
-    setEmail('')
-  }
+export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWaitlistFull, handleSubmit }: HeroSectionProps) {
 
   return (
     <section className="min-h-screen bg-slate-950 text-white relative overflow-hidden">
@@ -67,23 +68,56 @@ export function HeroSection() {
 
               {/* Email Signup */}
               <div className="space-y-4">
-                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email for early access"
-                    className="flex-1 px-6 py-4 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
-                  >
-                    Join Waitlist
-                    <ArrowRight className="w-5 h-5" />
-                  </button>
-                </form>
+                {!isSubmitted && !isWaitlistFull ? (
+                  <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email for early access"
+                      className="flex-1 px-6 py-4 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm"
+                      required
+                      disabled={isSubmitting}
+                    />
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="px-8 py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Submitting...
+                        </>
+                      ) : (
+                        <>
+                          Join Waitlist
+                          <ArrowRight className="w-5 h-5" />
+                        </>
+                      )}
+                    </button>
+                  </form>
+                ) : isSubmitted ? (
+                  <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-6 h-6 text-green-400" />
+                      <div>
+                        <div className="font-semibold text-green-400">Welcome to the waitlist!</div>
+                        <div className="text-sm text-slate-400">We'll notify you as soon as LaunchGen launches</div>
+                      </div>
+                    </div>
+                  </div>
+                ) : isWaitlistFull ? (
+                  <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 text-orange-400 font-bold">⚠</div>
+                      <div>
+                        <div className="font-semibold text-orange-400">The current waitlist is full</div>
+                        <div className="text-sm text-slate-400">Please contact <a href="mailto:daesol@webproagency.ca" className="text-orange-400 hover:underline">daesol@webproagency.ca</a> to join waitlist</div>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
                 <p className="text-sm text-slate-400">
                   🚀 Join 2,000+ founders already on the waitlist
                 </p>

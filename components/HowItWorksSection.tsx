@@ -45,7 +45,8 @@ export default function HowItWorksSection() {
   const demoPrompt = 'AI-powered meal planning app for busy professionals'
 
   useEffect(() => {
-    const runDemo = async () => {
+    // Start all animations simultaneously when component loads
+    const startAllAnimations = () => {
       // Reset everything
       setCurrentStep(0)
       setTypedText('')
@@ -62,65 +63,64 @@ export default function HowItWorksSection() {
         features: false
       })
 
-      // Wait before starting
-      await new Promise(resolve => setTimeout(resolve, 500))
-
-      // Step 1: Type the prompt
-      setCurrentStep(0)
-      for (let i = 0; i <= demoPrompt.length; i++) {
-        setTypedText(demoPrompt.substring(0, i))
-        await new Promise(resolve => setTimeout(resolve, 80))
+      // Start typing animation for step 0
+      const typeText = async () => {
+        for (let i = 0; i <= demoPrompt.length; i++) {
+          setTypedText(demoPrompt.substring(0, i))
+          await new Promise(resolve => setTimeout(resolve, 80))
+        }
+        // Loop typing animation
+        setTimeout(typeText, 3000)
       }
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      typeText()
 
-      // Step 2: Start generation
-      setCurrentStep(1)
-      setIsGenerating(true)
-      for (let i = 0; i <= 100; i += 3) {
-        setGenerationProgress(i)
-        await new Promise(resolve => setTimeout(resolve, 40))
+      // Start progress animation for step 1
+      const runProgress = async () => {
+        for (let i = 0; i <= 100; i += 3) {
+          setGenerationProgress(i)
+          await new Promise(resolve => setTimeout(resolve, 40))
+        }
+        // Loop progress animation
+        setTimeout(runProgress, 2000)
       }
-      await new Promise(resolve => setTimeout(resolve, 800))
+      runProgress()
 
-      // Step 3: Show preview
-      setCurrentStep(2)
-      setShowPreview(true)
-      setIsGenerating(false)
-      
-      // Animate preview elements
-      await new Promise(resolve => setTimeout(resolve, 300))
-      setPreviewAnimations(prev => ({ ...prev, header: true }))
-      await new Promise(resolve => setTimeout(resolve, 400))
-      setPreviewAnimations(prev => ({ ...prev, content: true }))
-      await new Promise(resolve => setTimeout(resolve, 400))
-      setPreviewAnimations(prev => ({ ...prev, cta: true }))
-      await new Promise(resolve => setTimeout(resolve, 400))
-      setPreviewAnimations(prev => ({ ...prev, features: true }))
-      
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
-      // Step 4: Show leads collection
-      setCurrentStep(3)
-      setShowLeads(true)
-      setShowPreview(false)
-      
-      for (let i = 1; i <= 5; i++) {
-        setLeadCount(i)
-        await new Promise(resolve => setTimeout(resolve, 500))
+      // Start preview animations for step 2
+      const runPreviewAnimations = async () => {
+        setPreviewAnimations({
+          header: false,
+          content: false,
+          cta: false,
+          features: false
+        })
+        
+        await new Promise(resolve => setTimeout(resolve, 300))
+        setPreviewAnimations(prev => ({ ...prev, header: true }))
+        await new Promise(resolve => setTimeout(resolve, 400))
+        setPreviewAnimations(prev => ({ ...prev, content: true }))
+        await new Promise(resolve => setTimeout(resolve, 400))
+        setPreviewAnimations(prev => ({ ...prev, cta: true }))
+        await new Promise(resolve => setTimeout(resolve, 400))
+        setPreviewAnimations(prev => ({ ...prev, features: true }))
+        
+        // Loop preview animations
+        setTimeout(runPreviewAnimations, 3000)
       }
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      runPreviewAnimations()
 
-      // Step 5: Show analytics
-      setCurrentStep(4)
-      setShowLeads(false)
-      setShowAnalytics(true)
-      await new Promise(resolve => setTimeout(resolve, 2000))
-
-      // Restart the demo
-      setTimeout(() => runDemo(), 1000)
+      // Start leads animation for step 3
+      const runLeadsAnimation = async () => {
+        for (let i = 1; i <= 5; i++) {
+          setLeadCount(i)
+          await new Promise(resolve => setTimeout(resolve, 500))
+        }
+        // Loop leads animation
+        setTimeout(runLeadsAnimation, 2000)
+      }
+      runLeadsAnimation()
     }
 
-    runDemo()
+    startAllAnimations()
   }, [])
 
   const getStepContent = (stepIndex: number) => {
