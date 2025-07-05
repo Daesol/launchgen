@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   ArrowRight, 
   Zap, 
@@ -30,6 +30,19 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWaitlistFull, handleSubmit }: HeroSectionProps) {
+  const [showFloatingDock, setShowFloatingDock] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY
+      const windowHeight = window.innerHeight
+      // Show floating dock when user scrolls past the hero section (roughly 80% of viewport height)
+      setShowFloatingDock(scrollY > windowHeight * 0.8)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
     <section className="min-h-screen bg-slate-950 text-white relative overflow-hidden">
@@ -151,7 +164,9 @@ export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWait
       </div>
 
       {/* Mobile Floating Dock Form */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-700/50 p-4">
+      <div className={`lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-700/50 p-4 transition-all duration-300 ${
+        showFloatingDock ? 'translate-y-0' : 'translate-y-full'
+      }`}>
         {!isSubmitted && !isWaitlistFull ? (
           <form onSubmit={handleSubmit} className="flex gap-2">
             <input
