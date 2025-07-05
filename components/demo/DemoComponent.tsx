@@ -31,9 +31,9 @@ export function DemoComponent() {
   const demoPrompt = 'AI-powered meal planning app for busy professionals'
   const steps = [
     'Enter your product idea',
-    'AI analyzes your prompt',
-    'Generate landing page',
-    'Collect leads instantly',
+    'AI generates landing page',
+    'Deploy your landing page in seconds',
+    'Collect leads instantly with Built in CRM',
     'View analytics dashboard'
   ]
 
