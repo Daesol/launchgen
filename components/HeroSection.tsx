@@ -73,7 +73,7 @@ export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWait
                   </span>
                 </h1>
                 
-                <p className="text-xl text-slate-300 leading-relaxed">
+                <p className="text-lg sm:text-xl text-slate-300 leading-relaxed">
                   Turn your product idea into a beautiful, lead-ready landing page with built-in CRM and analytics. <strong><em>No design tools. No integrations. Just type and launch.</em></strong>
                 </p>
               </div>
