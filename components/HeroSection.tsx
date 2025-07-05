@@ -139,11 +139,13 @@ export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWait
               <div className="flex items-center gap-6 text-sm text-slate-400">
                 <div className="flex items-center gap-2">
                   <div className="flex -space-x-2">
-                    {[1, 2, 3, 4].map((i) => (
+                    {['JD', 'SM', 'AL', 'RK'].map((initial, i) => (
                       <div
                         key={i}
-                        className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 border-2 border-slate-900"
-                      />
+                        className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 border-2 border-slate-900 flex items-center justify-center text-white text-xs font-semibold"
+                      >
+                        {initial}
+                      </div>
                     ))}
                   </div>
                   <span>2,000+ founders</span>
