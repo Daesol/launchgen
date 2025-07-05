@@ -165,61 +165,19 @@ export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWait
         </div>
       </div>
 
-      {/* Mobile Floating Dock Form */}
-      <div className={`lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-700/50 p-4 transition-all duration-300 ${
-        showFloatingDock ? 'translate-y-0' : 'translate-y-full'
+      {/* Mobile Floating CTA Button */}
+      <div className={`lg:hidden fixed bottom-4 right-4 z-50 transition-all duration-300 ${
+        showFloatingDock ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
       }`}>
-        {!isSubmitted && !isWaitlistFull ? (
-          <form onSubmit={handleSubmit} className="flex gap-2">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email for early access"
-              className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
-              required
-              disabled={isSubmitting}
-            />
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 text-sm whitespace-nowrap"
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span className="hidden sm:inline">Submitting...</span>
-                </>
-              ) : (
-                <>
-                  <span className="hidden sm:inline">Join Waitlist</span>
-                  <span className="sm:hidden">Join</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
-        ) : isSubmitted ? (
-          <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-              <div className="min-w-0">
-                <div className="font-semibold text-green-400 text-sm">Welcome to the waitlist!</div>
-                <div className="text-xs text-slate-400">We'll notify you when LaunchGen launches</div>
-              </div>
-            </div>
-          </div>
-        ) : isWaitlistFull ? (
-          <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-3">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 text-orange-400 font-bold flex-shrink-0">⚠</div>
-              <div className="min-w-0">
-                <div className="font-semibold text-orange-400 text-sm">Waitlist is full</div>
-                <div className="text-xs text-slate-400">Contact <a href="mailto:daesol@webproagency.ca" className="text-orange-400 hover:underline">daesol@webproagency.ca</a></div>
-              </div>
-            </div>
-          </div>
-        ) : null}
+        <button
+          onClick={() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }}
+          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition-all duration-300 flex items-center gap-2 text-sm"
+        >
+          <span>Join Waitlist</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
     </section>
   )
