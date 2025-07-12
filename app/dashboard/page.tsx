@@ -2,7 +2,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import React from 'react'; // Removed useState
+import React from 'react';
 import DashboardClient from "@/components/DashboardClient";
 
 export default async function DashboardPage() {
@@ -13,7 +13,7 @@ export default async function DashboardPage() {
     redirect('/auth/signin');
   }
 
-  // Fetch landing pages for the user (new columns)
+  // Fetch landing pages for the user
   const { data: pages, error: pagesError } = await supabase
     .from('landing_pages')
     .select('id, title, slug, created_at, template_id, page_content, page_style')
@@ -56,23 +56,93 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-700 via-indigo-900 to-slate-950 p-4">
-      <div className="max-w-5xl mx-auto mt-12">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-1">Welcome, {session.user.email}</h1>
-            <p className="text-slate-300">Your AI-powered landing pages, leads, and analytics in one place.</p>
+    <div className="space-y-8">
+      {/* Header Section */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold text-slate-900">
+            Welcome back! 👋
+          </h1>
+          <p className="text-slate-600 text-lg">
+            Manage your AI-powered landing pages and track performance
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Link 
+            href="/dashboard/generate" 
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold shadow-sm hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 hover:shadow-md"
+          >
+            <span className="text-lg">➕</span>
+            Create New Page
+          </Link>
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-slate-600">Total Pages</p>
+              <p className="text-2xl font-bold text-slate-900">{pages?.length || 0}</p>
+            </div>
+            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <span className="text-2xl">📄</span>
+            </div>
           </div>
-          <Link href="/dashboard/generate" className="inline-block bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:from-purple-700 hover:to-indigo-700 transition text-lg">+ Create New Landing Page</Link>
         </div>
-        <DashboardClient pages={pages || []} leadsByPage={leadsByPage} analyticsByPage={analyticsByPage} />
-        {/* Navigation */}
-        <div className="flex justify-end mt-8 gap-4">
-          <Link href="/dashboard/profile" className="text-slate-400 hover:text-slate-700">Profile</Link>
-          <Link href="/auth/signin?signout=true" className="text-slate-400 hover:text-slate-700">Sign Out</Link>
+        
+        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-slate-600">Total Views</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {Object.values(analyticsByPage).reduce((sum, analytics) => sum + analytics.views, 0)}
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <span className="text-2xl">👁️</span>
+            </div>
+          </div>
         </div>
+        
+        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-slate-600">Total Leads</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {Object.values(leadsByPage).reduce((sum, leads) => sum + leads.length, 0)}
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <span className="text-2xl">👥</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-slate-600">Conversions</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {Object.values(analyticsByPage).reduce((sum, analytics) => sum + analytics.submits, 0)}
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+              <span className="text-2xl">📈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Dashboard Client Component */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+        <DashboardClient 
+          pages={pages || []} 
+          leadsByPage={leadsByPage} 
+          analyticsByPage={analyticsByPage} 
+        />
       </div>
     </div>
   );
-} 
+}

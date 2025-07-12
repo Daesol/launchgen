@@ -34,48 +34,48 @@ export default function DashboardClient({ pages, leadsByPage, analyticsByPage }:
   }
 
   return (
-    <div className="bg-white/90 rounded-xl shadow-xl p-8">
+    <div className="bg-white/90 rounded-2xl shadow-xl p-4 md:p-8">
       <h2 className="text-2xl font-bold text-slate-900 mb-6">Your Landing Pages</h2>
       {pages && pages.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200">
+          <table className="min-w-full text-sm md:text-base border-separate border-spacing-y-2">
             <thead>
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">Title</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">Template</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">Created</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">Leads</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">Views</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">Submits</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">Conversion Rate</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase bg-white rounded-l-xl">Title</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase bg-white">Template</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase bg-white">Created</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase bg-white">Leads</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase bg-white">Views</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase bg-white">Submits</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase bg-white">Conversion</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase bg-white rounded-r-xl">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody>
               {pages.map((page: any) => (
                 <React.Fragment key={page.id}>
-                  <tr className="hover:bg-slate-50">
-                    <td className="px-4 py-2 font-semibold text-slate-900">
+                  <tr className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-200 group">
+                    <td className="px-4 py-4 font-semibold text-slate-900 rounded-l-xl whitespace-nowrap max-w-[180px] truncate">
                       {page.page_content?.hero?.headline || page.title || 'Untitled'}
                     </td>
-                    <td className="px-4 py-2 text-slate-600">{page.template_id || 'default'}</td>
-                    <td className="px-4 py-2 text-slate-600">{new Date(page.created_at).toLocaleDateString()}</td>
-                    <td className="px-4 py-2 text-slate-600">{leadsByPage[page.id]?.length || 0}</td>
-                    <td className="px-4 py-2 text-slate-600">{analyticsByPage[page.id]?.views || 0}</td>
-                    <td className="px-4 py-2 text-slate-600">{analyticsByPage[page.id]?.submits || 0}</td>
-                    <td className="px-4 py-2 text-slate-600">{analyticsByPage[page.id]?.views ? ((analyticsByPage[page.id].submits / analyticsByPage[page.id].views) * 100).toFixed(1) + '%' : '—'}</td>
-                    <td className="px-4 py-2 flex gap-2">
-                      <Link href={`/dashboard/page/${page.id}`} className="text-indigo-600 hover:underline">Edit</Link>
-                      <Link href={`/page/${page.slug}`} className="text-purple-600 hover:underline" target="_blank">View</Link>
+                    <td className="px-4 py-4 text-slate-600 whitespace-nowrap">{page.template_id || 'default'}</td>
+                    <td className="px-4 py-4 text-slate-600 whitespace-nowrap">{new Date(page.created_at).toLocaleDateString()}</td>
+                    <td className="px-4 py-4 text-slate-600 text-center">{leadsByPage[page.id]?.length || 0}</td>
+                    <td className="px-4 py-4 text-slate-600 text-center">{analyticsByPage[page.id]?.views || 0}</td>
+                    <td className="px-4 py-4 text-slate-600 text-center">{analyticsByPage[page.id]?.submits || 0}</td>
+                    <td className="px-4 py-4 text-slate-600 text-center">{analyticsByPage[page.id]?.views ? ((analyticsByPage[page.id].submits / analyticsByPage[page.id].views) * 100).toFixed(1) + '%' : '—'}</td>
+                    <td className="px-4 py-4 flex gap-2 items-center rounded-r-xl">
+                      <Link href={`/dashboard/page/${page.id}`} className="text-indigo-600 hover:underline font-medium">Edit</Link>
+                      <Link href={`/page/${page.slug}`} className="text-purple-600 hover:underline font-medium" target="_blank">View</Link>
                       <button
-                        className="text-red-600 hover:underline"
+                        className="text-red-600 hover:underline font-medium"
                         onClick={() => setDeleteId(page.id)}
                       >Delete</button>
                     </td>
                   </tr>
                   {leadsByPage[page.id]?.length > 0 && (
                     <tr>
-                      <td colSpan={8} className="bg-slate-50 px-4 py-2">
+                      <td colSpan={8} className="bg-slate-50 px-4 py-2 rounded-b-xl">
                         <div className="text-slate-700 font-semibold mb-2">Leads:</div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                           {leadsByPage[page.id].map((lead: any) => (
