@@ -15,6 +15,7 @@ export default function SignInPage() {
   const [success, setSuccess] = useState("");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [modeReady, setModeReady] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
   useEffect(() => {
     if (searchParams) {
@@ -57,6 +58,22 @@ export default function SignInPage() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    setError("");
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: typeof window !== "undefined" ? window.location.origin + "/dashboard" : undefined,
+        },
+      });
+    } catch (e: any) {
+      setError(e.message || "Google sign-in failed");
+      setGoogleLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-stretch bg-gradient-to-br from-purple-700 via-indigo-900 to-slate-950">
       {/* Left branding/illustration panel */}
@@ -74,6 +91,15 @@ export default function SignInPage() {
         <div className="w-full max-w-md mx-auto">
           {modeReady && (
             <>
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                className="w-full flex items-center justify-center gap-3 bg-white border border-slate-300 text-slate-700 font-semibold py-3 rounded-lg shadow hover:bg-slate-50 transition mb-6 disabled:opacity-60"
+                disabled={googleLoading}
+              >
+                <svg className="w-5 h-5" viewBox="0 0 48 48"><g><path fill="#4285F4" d="M24 9.5c3.54 0 6.7 1.22 9.19 3.23l6.85-6.85C35.64 2.36 30.18 0 24 0 14.82 0 6.71 5.82 2.69 14.09l7.98 6.2C12.13 13.13 17.56 9.5 24 9.5z"/><path fill="#34A853" d="M46.1 24.55c0-1.64-.15-3.22-.42-4.74H24v9.01h12.42c-.54 2.9-2.18 5.36-4.65 7.01l7.19 5.6C43.98 37.13 46.1 31.36 46.1 24.55z"/><path fill="#FBBC05" d="M10.67 28.29c-1.01-2.99-1.01-6.21 0-9.2l-7.98-6.2C.9 16.36 0 20.06 0 24c0 3.94.9 7.64 2.69 11.11l7.98-6.2z"/><path fill="#EA4335" d="M24 48c6.18 0 11.36-2.05 15.15-5.57l-7.19-5.6c-2.01 1.35-4.58 2.15-7.96 2.15-6.44 0-11.87-3.63-14.33-8.89l-7.98 6.2C6.71 42.18 14.82 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></g></svg>
+                {googleLoading ? "Signing in..." : "Sign in with Google"}
+              </button>
               <h2 className="text-3xl font-bold mb-2 text-slate-900 text-center animate-fade-in-up">{mode === "signin" ? "Sign In" : "Sign Up"}</h2>
               <p className="text-slate-500 mb-8 text-center animate-fade-in-up delay-100">
                 {mode === "signin" ? "Welcome back! Log in to your account." : "Create your LaunchGen account."}
