@@ -89,6 +89,9 @@ graph TD;
 - [x] Page editor (inline, theme, image)
 - [x] Dynamic landing page renderer
 - [x] Leads list & export (list complete, export next)
+- [x] Analytics UI (views, submits, conversion rate)
+- [x] Conversion tracking (form submits)
+- [x] Delete landing page with confirmation modal
 
 ---
 

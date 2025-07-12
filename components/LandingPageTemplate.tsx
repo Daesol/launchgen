@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import LeadForm from "./LeadForm";
 
 interface LandingPageTemplateProps {
@@ -31,6 +32,29 @@ export default function LandingPageTemplate({ config, pageId }: LandingPageTempl
   const primary = themeColors.primaryColor || '#6366f1';
   const secondary = themeColors.secondaryColor || '#f1f5f9';
   const accent = themeColors.accentColor || '#a21caf';
+
+  useEffect(() => {
+    if (pageId) {
+      // Generate a session_id for this visit (persist for 1 day)
+      let session_id = localStorage.getItem(`lg_session_${pageId}`);
+      if (!session_id) {
+        session_id = crypto.randomUUID();
+        localStorage.setItem(`lg_session_${pageId}`, session_id);
+      }
+      fetch("/api/analytics", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          landing_page_id: pageId,
+          event_type: "page_view",
+          referrer: document.referrer,
+          utm_source: new URLSearchParams(window.location.search).get("utm_source"),
+          session_id,
+        }),
+      });
+    }
+  }, [pageId]);
+
   return (
     <div
       className="min-h-screen flex flex-col"

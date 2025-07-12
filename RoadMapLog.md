@@ -34,6 +34,10 @@ This document tracks specific action items, tasks, and progress for each phase o
 **[2024-07-11]** Task completed: Integrated lead form into public and edit landing page views
 **[2024-07-11]** Task completed: Dashboard now displays leads per landing page
 **[2024-07-11]** Task completed: Live preview of lead form in editor
+**[2024-07-12]** Task completed: Implemented analytics_events table and API for tracking page views and form submits
+**[2024-07-12]** Task completed: Injected analytics tracking into landing page views and form submits
+**[2024-07-12]** Task completed: Dashboard now displays views, submits, and conversion rate per landing page
+**[2024-07-12]** Task completed: Added landing page delete with confirmation modal (frontend + backend, with cascading delete for leads/analytics)
 
 ---
 

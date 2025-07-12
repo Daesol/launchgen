@@ -28,6 +28,19 @@ export default function LeadForm({ pageId }: LeadFormProps) {
       setSuccess(true);
       setName("");
       setEmail("");
+      // Analytics: Track form_submit event
+      if (pageId) {
+        let session_id = localStorage.getItem(`lg_session_${pageId}`);
+        fetch("/api/analytics", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            landing_page_id: pageId,
+            event_type: "form_submit",
+            session_id,
+          }),
+        });
+      }
     } catch (e: any) {
       setError(e.message || "Failed to submit");
     } finally {

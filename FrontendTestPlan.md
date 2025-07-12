@@ -36,6 +36,9 @@ This document tracks tests for API endpoints, backend logic, and critical fronte
 - [x] Auth flow (sign up/in/out) works end-to-end
 - [x] Dashboard loads user data
 - [x] Editor saves changes
+- [x] Analytics API records page views and form submits
+- [x] Dashboard analytics UI displays correct counts and conversion rate
+- [x] Landing page delete removes page and associated leads/analytics
 
 ### Test Log Template
 | Date | Flow | Test | Result | Notes |

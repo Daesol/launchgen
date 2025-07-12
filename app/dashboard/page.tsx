@@ -2,7 +2,8 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import React from 'react'; // Added missing import for React
+import React from 'react'; // Removed useState
+import DashboardClient from "@/components/DashboardClient";
 
 export default async function DashboardPage() {
   const supabase = createServerComponentClient({ cookies });
@@ -13,7 +14,7 @@ export default async function DashboardPage() {
   }
 
   // Fetch landing pages for the user (new columns)
-  const { data: pages, error } = await supabase
+  const { data: pages, error: pagesError } = await supabase
     .from('landing_pages')
     .select('id, title, slug, created_at, template_id, page_content, page_style')
     .eq('owner_id', session.user.id)
@@ -36,6 +37,24 @@ export default async function DashboardPage() {
     }
   }
 
+  // Fetch analytics for each page
+  let analyticsByPage: Record<string, { views: number; submits: number }> = {};
+  if (pages && pages.length > 0) {
+    const pageIds = pages.map((p: any) => p.id);
+    const { data: analytics } = await supabase
+      .from('analytics_events')
+      .select('landing_page_id, event_type')
+      .in('landing_page_id', pageIds);
+    if (analytics) {
+      analyticsByPage = analytics.reduce((acc: any, event: any) => {
+        if (!acc[event.landing_page_id]) acc[event.landing_page_id] = { views: 0, submits: 0 };
+        if (event.event_type === 'page_view') acc[event.landing_page_id].views++;
+        if (event.event_type === 'form_submit') acc[event.landing_page_id].submits++;
+        return acc;
+      }, {});
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-700 via-indigo-900 to-slate-950 p-4">
       <div className="max-w-5xl mx-auto mt-12">
@@ -47,69 +66,7 @@ export default async function DashboardPage() {
           </div>
           <Link href="/dashboard/generate" className="inline-block bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:from-purple-700 hover:to-indigo-700 transition text-lg">+ Create New Landing Page</Link>
         </div>
-
-        {/* Landing Pages List */}
-        <div className="bg-white/90 rounded-xl shadow-xl p-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">Your Landing Pages</h2>
-          {pages && pages.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-200">
-                <thead>
-                  <tr>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">Title</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">Template</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">Created</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">Leads</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {pages.map((page: any) => (
-                    <React.Fragment key={page.id}>
-                      <tr className="hover:bg-slate-50">
-                        <td className="px-4 py-2 font-semibold text-slate-900">
-                          {page.page_content?.hero?.headline || page.title || 'Untitled'}
-                        </td>
-                        <td className="px-4 py-2 text-slate-600">{page.template_id || 'default'}</td>
-                        <td className="px-4 py-2 text-slate-600">{new Date(page.created_at).toLocaleDateString()}</td>
-                        <td className="px-4 py-2 text-slate-600">
-                          {leadsByPage[page.id]?.length || 0}
-                        </td>
-                        <td className="px-4 py-2 flex gap-2">
-                          <Link href={`/dashboard/page/${page.id}`} className="text-indigo-600 hover:underline">Edit</Link>
-                          <Link href={`/page/${page.slug}`} className="text-purple-600 hover:underline" target="_blank">View</Link>
-                        </td>
-                      </tr>
-                      {leadsByPage[page.id]?.length > 0 && (
-                        <tr>
-                          <td colSpan={5} className="bg-slate-50 px-4 py-2">
-                            <div className="text-slate-700 font-semibold mb-2">Leads:</div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                              {leadsByPage[page.id].map((lead: any) => (
-                                <div key={lead.id} className="p-2 border rounded bg-white flex flex-col">
-                                  <span><b>Name:</b> {lead.name || <span className="text-slate-400">(none)</span>}</span>
-                                  <span><b>Email:</b> {lead.email}</span>
-                                  <span className="text-xs text-slate-400">{new Date(lead.created_at).toLocaleString()}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="text-center text-slate-400 py-12">
-              <div className="text-3xl mb-2">🚀</div>
-              <div className="mb-2">You haven&apos;t created any landing pages yet.</div>
-              <Link href="/dashboard/generate" className="inline-block mt-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:from-purple-700 hover:to-indigo-700 transition text-lg">Create Your First Landing Page</Link>
-            </div>
-          )}
-        </div>
-
+        <DashboardClient pages={pages || []} leadsByPage={leadsByPage} analyticsByPage={analyticsByPage} />
         {/* Navigation */}
         <div className="flex justify-end mt-8 gap-4">
           <Link href="/dashboard/profile" className="text-slate-400 hover:text-slate-700">Profile</Link>

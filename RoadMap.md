@@ -32,7 +32,11 @@ LaunchGen is a platform to generate AI-powered landing pages, capture leads, and
 - Integrate lead form into landing pages ✅
 - Test lead capture and storage ✅
 - Display leads per page ✅
-- Show basic analytics in dashboard
+- Show basic analytics in dashboard ✅
+- Build analytics_events table and API ✅
+- Track page views and form submits ✅
+- Dashboard analytics UI (views, submits, conversion rate) ✅
+- Delete landing page with confirmation modal ✅
 
 ### 3. Editing & Polish
 - Build page editor interface (inline editing, theme controls)
