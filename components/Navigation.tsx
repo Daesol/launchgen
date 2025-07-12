@@ -15,6 +15,8 @@ export default function Navigation() {
             <a href="#features" className="text-slate-300 hover:text-white transition-colors">Features</a>
             <a href="#demo" className="text-slate-300 hover:text-white transition-colors">Demo</a>
             <a href="#pricing" className="text-slate-300 hover:text-white transition-colors">Pricing</a>
+            <a href="/auth/signin" className="text-slate-300 hover:text-white transition-colors">Sign In</a>
+            <a href="/auth/signin?mode=signup" className="ml-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-semibold shadow hover:from-purple-700 hover:to-indigo-700 transition">Sign Up</a>
           </div>
         </div>
       </div>

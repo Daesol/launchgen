@@ -10,13 +10,30 @@ This document tracks specific action items, tasks, and progress for each phase o
 - [ ] Initialize Next.js + TypeScript project
 - [ ] Set up Supabase project and connect
 - [ ] Create database tables (users, landing_pages, leads, analytics_events)
-- [ ] Implement Supabase Auth (sign up, sign in)
+- [ ] Implement Supabase Auth (sign up, sign in)  <-- Next step
 - [ ] Integrate OpenAI API for page generation
-- [ ] Build basic landing page template component
 - [ ] Implement page generation API and flow
+- [ ] Build basic landing page template component  <-- Next step
+- [ ] Make landing page editable, saveable, and publishable (in progress)
+- [ ] Adjust layout and UX of /generate page for better usability
 - [ ] Test prompt-to-page creation end-to-end
 
 ### Completed Tasks
+**[2024-07-07]** Task completed: Set up Supabase project and connected local project via CLI
+**[2024-07-07]** Task completed: Created database tables (users, landing_pages, leads, analytics_events) via migration and applied with Supabase CLI
+**[2024-07-07]** Task completed: Implemented Supabase Auth (sign up, sign in) page and integrated with Supabase authentication in Next.js
+**[2024-07-07]** Task completed: Integrated OpenAI API for page generation and implemented frontend form and API flow at /generate
+**[2024-07-07]** Task completed: Built basic landing page template component and integrated live preview into the page generation flow
+**[2024-07-07]** Task completed: Implemented modern inline PageEditor and integrated it into the /generate flow for seamless editing and preview
+**[2024-07-11]** Task completed: Implemented robust landing page save/publish flow (API, frontend, DB, dashboard integration)
+**[2024-07-11]** Task completed: Dashboard lists, edits, and links to public view for all user landing pages
+**[2024-07-11]** Task completed: Editing and updating landing pages works (no duplicates)
+**[2024-07-11]** Task completed: Public view by slug implemented
+**[2024-07-11]** Task completed: Cleaned up landing_pages table columns and migrated to new content/style/template architecture
+**[2024-07-11]** Task completed: Implemented lead capture API and reusable LeadForm component
+**[2024-07-11]** Task completed: Integrated lead form into public and edit landing page views
+**[2024-07-11]** Task completed: Dashboard now displays leads per landing page
+**[2024-07-11]** Task completed: Live preview of lead form in editor
 
 ---
 

@@ -1,13 +1,13 @@
 # .cursorrules for LaunchGen
 
-# Purpose: Ensure project planning and progress documents are always up to date.
+# Purpose: Ensure project planning, progress, and test documents are always up to date.
 
 [rule]
-description = "Whenever you make a significant change to the codebase (feature, bugfix, refactor, etc.), you must update both RoadMap.md and RoadMapLog.md to reflect the change, progress, or new tasks."
-files = ["RoadMap.md", "RoadMapLog.md"]
+description = "Whenever you make a significant change to the codebase (feature, bugfix, refactor, etc.), you must update RoadMap.md, RoadMapLog.md, FrontendRoadMap.md, and FrontendTestPlan.md to reflect the change, progress, new tasks, or test coverage."
+files = ["RoadMap.md", "RoadMapLog.md", "FrontendRoadMap.md", "FrontendTestPlan.md"]
 
 [reminder]
-description = "Before merging or committing, review RoadMap.md and RoadMapLog.md to ensure they accurately reflect the current project status and next steps."
+description = "Before merging or committing, review all roadmap and test documents to ensure they accurately reflect the current project status, next steps, and test coverage."
 
 [enforcement]
-description = "PRs or commits that implement new features, fix bugs, or change project direction should be blocked or flagged if RoadMap.md and RoadMapLog.md are not updated." 
+description = "PRs or commits that implement new features, fix bugs, or change project direction should be blocked or flagged if any roadmap or test documents are not updated." 
