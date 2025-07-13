@@ -51,6 +51,11 @@ This document tracks tests for API endpoints, backend logic, and critical fronte
 - [x] Page generation shows loading animation and success feedback
 - [x] Generated pages automatically save and appear in sidebar
 - [x] Auto-navigation to edit page after successful generation
+- [x] Dashboard navigation bar height is optimized for better space utilization
+- [x] Auto-resizing textareas in landing page editor adjust to content height
+- [x] Preview header remains sticky during scrolling in landing page editor
+- [x] Sidebar remains always expanded for consistent navigation experience
+- [x] No duplicate UI elements in collapsed edit panel
 
 ### Test Log Template
 | Date | Flow | Test | Result | Notes |
@@ -71,4 +76,14 @@ This document tracks tests for API endpoints, backend logic, and critical fronte
 - [x] After login (including Google OAuth), user is correctly routed to /dashboard.
 - [x] No redirect loop after login or OAuth.
 - [x] Dashboard data loads only after session is confirmed.
-- [x] All dashboard features work as expected after refactor. 
+- [x] All dashboard features work as expected after refactor.
+
+## Recent UI/UX Test Results
+- [x] **Dashboard Sidebar**: Sticky positioning works correctly, user's pages list loads and navigates properly
+- [x] **Landing Page Editor**: Full-width preview with collapsible side panel functions as expected
+- [x] **Mobile/Desktop Toggle**: Responsive preview switching works correctly for design testing
+- [x] **Page Generation Flow**: Loading animation, auto-save, and navigation to edit page work seamlessly
+- [x] **Navigation Optimization**: Reduced top bar height improves space utilization without affecting functionality
+- [x] **Auto-resizing Textareas**: Textareas adjust height based on content for better editing experience
+- [x] **Sticky Preview Header**: Header remains visible during scrolling for persistent editing controls
+- [x] **Always-expanded Sidebar**: Consistent navigation experience without toggle complexity 

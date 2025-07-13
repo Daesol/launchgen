@@ -97,6 +97,11 @@ graph TD;
 - [x] Full-width landing page editor with collapsible side panel
 - [x] Mobile/desktop preview toggle for responsive design testing
 - [x] Enhanced page generation flow with loading states and auto-navigation
+- [x] Optimized dashboard navigation bar height for better space utilization
+- [x] Auto-resizing textareas in landing page editor for improved UX
+- [x] Sticky preview header in landing page editor for persistent controls
+- [x] Always-expanded sidebar for consistent navigation experience
+- [x] Clean UI with removed duplicate elements and improved visual hierarchy
 
 ---
 
@@ -111,4 +116,11 @@ graph TD;
 - Refactored dashboard to use client-side session/auth logic only.
 - Removed server-side session check and redirect.
 - All dashboard data fetching now happens on the client after session is confirmed.
-- Fixes redirect loop after login and OAuth. 
+- Fixes redirect loop after login and OAuth.
+
+## Recent UI/UX Improvements
+- **Dashboard Sidebar**: Sticky positioning with user's generated pages list for quick navigation
+- **Landing Page Editor**: Full-width preview with collapsible side panel and mobile/desktop toggle
+- **Page Generation**: Enhanced flow with loading animation, auto-save, and navigation to edit page
+- **Navigation**: Optimized top bar height and always-expanded sidebar for better space utilization
+- **Editor Experience**: Auto-resizing textareas and sticky preview header for improved usability 

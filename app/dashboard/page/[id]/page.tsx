@@ -29,7 +29,7 @@ export default async function LandingPageEditor({ params }: PageProps) {
   }
 
   return (
-    <div className="h-full">
+    <div className="h-full w-full lg:h-full">
       <PageEditor initialConfig={page} />
     </div>
   );
