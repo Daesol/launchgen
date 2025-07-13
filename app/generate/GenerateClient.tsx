@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
 const PageEditor = dynamic(() => import("@/components/PageEditor"), { ssr: false });
@@ -10,13 +11,16 @@ export default function GenerateClient() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [config, setConfig] = useState<any>(null);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setConfig(null);
     setLoading(true);
+    
     try {
+      // Step 1: Generate the page config
       const res = await fetch("/api/generate-page", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -24,7 +28,9 @@ export default function GenerateClient() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to generate page");
-      setConfig({
+      
+      // Step 2: Save the generated page to database
+      const pageConfig = {
         page_content: {
           hero: data.config.hero,
           features: data.config.features,
@@ -33,7 +39,30 @@ export default function GenerateClient() {
           themeColors: data.config.theme_colors || data.config.themeColors,
         },
         template_id: "default"
+      };
+
+      const saveRes = await fetch("/api/landing-pages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pageConfig),
       });
+      
+      const saveData = await saveRes.json();
+      if (!saveRes.ok) throw new Error(saveData.error || "Failed to save page");
+      
+      // Step 3: Set the config for immediate preview
+      setConfig({
+        ...pageConfig,
+        id: saveData.page.id,
+        slug: saveData.page.slug
+      });
+      
+      // Step 4: Trigger page refresh in sidebar and navigate to edit page
+      window.dispatchEvent(new Event('refresh-pages'));
+      setTimeout(() => {
+        router.push(`/dashboard/page/${saveData.page.id}`);
+      }, 1000);
+      
     } catch (err: any) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -72,7 +101,10 @@ export default function GenerateClient() {
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" /></svg>
+                <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                </svg>
                 Generating...
               </span>
             ) : (
@@ -81,11 +113,28 @@ export default function GenerateClient() {
           </button>
         </form>
       </div>
+      
+      {/* Success Message */}
+      {config && !loading && (
+        <div className="w-full max-w-lg mt-6 animate-fade-in-up">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+            <div className="flex items-center justify-center gap-2 text-green-600 mb-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="font-semibold">Page Generated Successfully!</span>
+            </div>
+            <p className="text-green-700 text-sm">Redirecting to editor...</p>
+          </div>
+        </div>
+      )}
+      
       {config && (
         <div className="w-full max-w-5xl mt-10 animate-fade-in-up">
           <PageEditor initialConfig={config} />
         </div>
       )}
+      
       <style jsx global>{`
         @keyframes fade-in-up {
           from { opacity: 0; transform: translateY(24px); }

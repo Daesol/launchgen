@@ -39,6 +39,18 @@ This document tracks tests for API endpoints, backend logic, and critical fronte
 - [x] Analytics API records page views and form submits
 - [x] Dashboard analytics UI displays correct counts and conversion rate
 - [x] Landing page delete removes page and associated leads/analytics
+- [x] Sidebar navigation is sticky and remains visible when scrolling
+- [x] User's generated pages list loads and displays correctly in sidebar
+- [x] Clicking on a page in sidebar navigates to the correct edit page
+- [x] Sidebar collapse/expand toggle works correctly
+- [x] Collapsed sidebar shows only icons with tooltips
+- [x] Sidebar state persists during navigation
+- [x] Landing page editor side panel collapses and expands correctly
+- [x] Mobile/desktop preview toggle switches between responsive views
+- [x] Full-width preview provides better editing experience
+- [x] Page generation shows loading animation and success feedback
+- [x] Generated pages automatically save and appear in sidebar
+- [x] Auto-navigation to edit page after successful generation
 
 ### Test Log Template
 | Date | Flow | Test | Result | Notes |

@@ -29,10 +29,8 @@ export default async function LandingPageEditor({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-700 via-indigo-900 to-slate-950 p-4 flex flex-col items-center">
-      <div className="max-w-5xl w-full mt-12">
-        <PageEditor initialConfig={page} />
-      </div>
+    <div className="h-full">
+      <PageEditor initialConfig={page} />
     </div>
   );
 } 
