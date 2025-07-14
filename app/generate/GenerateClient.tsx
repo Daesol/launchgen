@@ -32,11 +32,12 @@ export default function GenerateClient() {
       // Step 2: Save the generated page to database
       const pageConfig = {
         page_content: {
+          business: data.config.business || { name: '', logo: '' },
           hero: data.config.hero,
           features: data.config.features,
         },
         page_style: {
-          themeColors: data.config.theme_colors || data.config.themeColors,
+          theme: data.config.theme,
         },
         template_id: "default"
       };

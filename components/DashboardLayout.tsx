@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
+import { createPortal } from "react-dom";
 
 const sidebarLinks = [
   { href: "/dashboard", label: "Dashboard", icon: "🏠" },
@@ -51,6 +52,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       window.removeEventListener('refresh-pages', handlePageRefresh);
     };
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileOpen) {
+        setProfileOpen(false);
+      }
+    };
+
+    if (profileOpen) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [profileOpen]);
 
   const handleSignOut = async () => {
     await fetch("/api/signout", { method: "POST" });
@@ -157,10 +172,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </div>
             </div>
             
-            <div className="relative">
+            <div className="relative z-[70]">
               <button
                 className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
-                onClick={() => setProfileOpen(v => !v)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setProfileOpen(v => !v);
+                }}
               >
                 <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center">
                   <span className="text-white font-semibold text-xs">U</span>
@@ -171,11 +189,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </svg>
               </button>
               
-              {profileOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50">
+              {profileOpen && typeof window !== 'undefined' && createPortal(
+                <div 
+                  className="fixed w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-[9999]"
+                  style={{
+                    top: '80px',
+                    right: '24px',
+                    zIndex: 9999
+                  }}
+                >
                   <Link 
                     href="/dashboard/profile" 
                     className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 transition-colors"
+                    onClick={() => setProfileOpen(false)}
                   >
                     <span className="text-sm">👤</span>
                     Profile Settings
@@ -183,12 +209,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <hr className="my-2 border-slate-100" />
                   <button
                     className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors text-left"
-                    onClick={handleSignOut}
+                    onClick={() => {
+                      setProfileOpen(false);
+                      handleSignOut();
+                    }}
                   >
                     <span className="text-sm">🚪</span>
                     Sign Out
                   </button>
-                </div>
+                </div>,
+                document.body
               )}
             </div>
           </header>
@@ -289,10 +319,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           </div>
           
-          <div className="relative">
+          <div className="relative z-[70]">
             <button
               className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
-              onClick={() => setProfileOpen(v => !v)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setProfileOpen(v => !v);
+              }}
             >
               <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center">
                 <span className="text-white font-semibold text-xs">U</span>
@@ -303,11 +336,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </svg>
             </button>
             
-            {profileOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50">
+            {profileOpen && typeof window !== 'undefined' && createPortal(
+              <div 
+                className="fixed w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-[9999]"
+                style={{
+                  top: '80px',
+                  right: '24px',
+                  zIndex: 9999
+                }}
+              >
                 <Link 
                   href="/dashboard/profile" 
                   className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 transition-colors"
+                  onClick={() => setProfileOpen(false)}
                 >
                   <span className="text-sm">👤</span>
                   Profile Settings
@@ -315,12 +356,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <hr className="my-2 border-slate-100" />
                 <button
                   className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors text-left"
-                  onClick={handleSignOut}
+                  onClick={() => {
+                    setProfileOpen(false);
+                    handleSignOut();
+                  }}
                 >
                   <span className="text-sm">🚪</span>
                   Sign Out
                 </button>
-              </div>
+              </div>,
+              document.body
             )}
           </div>
         </header>

@@ -102,6 +102,15 @@ graph TD;
 - [x] Sticky preview header in landing page editor for persistent controls
 - [x] Always-expanded sidebar for consistent navigation experience
 - [x] Clean UI with removed duplicate elements and improved visual hierarchy
+- [x] Business name and logo customization in landing page templates
+- [x] AI-generated business names when not specified by user
+- [x] Default logo placeholder for pages without custom logos
+- [x] Business editing section in page editor with name and logo inputs
+- [x] Sophisticated light/dark theme system with single accent color
+- [x] Theme mode selector (light/dark) in page editor
+- [x] Accent color picker for buttons, icons, and highlights
+- [x] Dynamic opacity variations for accent color usage
+- [x] Theme-aware styling across all landing page components
 
 ---
 

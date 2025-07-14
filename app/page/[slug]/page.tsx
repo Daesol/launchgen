@@ -20,7 +20,7 @@ export default async function PublicLandingPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-white text-black">
-      <LandingPageTemplate config={{ ...page.page_content, themeColors: page.page_style?.themeColors }} pageId={page.id} />
+      <LandingPageTemplate config={{ ...page.page_content, theme: page.page_style?.theme }} pageId={page.id} />
     </div>
   );
 } 

@@ -1,18 +1,89 @@
 // Landing page schema and type
 export const landingPageSchema = {
+  business: {
+    name: "",
+    logo: ""
+  },
   hero: {
     headline: "",
+    headlineHighlights: [], // Array of words/phrases to highlight
     subheadline: "",
     cta: "",
+    heroTag: "",
+    heroTagIcon: "",
     backgroundImage: ""
   },
+  // Problem Amplification Section
+  problemSection: {
+    title: "",
+    subtitle: "",
+    painPoints: [
+      { text: "", icon: "" }
+    ]
+  },
+  // Solution Preview Section (NESB Framework)
+  solutionSection: {
+    title: "",
+    subtitle: "",
+    benefits: [
+      { 
+        title: "", 
+        description: "", 
+        icon: "",
+        type: "new" as "new" | "easy" | "safe" | "big" // NESB framework
+      }
+    ]
+  },
+  // Social Proof Section
+  socialProof: {
+    title: "",
+    subtitle: "",
+    testimonials: [
+      { 
+        name: "", 
+        role: "", 
+        company: "",
+        quote: "", 
+        rating: 5,
+        result: "" // Specific result/outcome
+      }
+    ],
+    stats: [
+      { number: "", label: "", description: "" }
+    ]
+  },
   features: [
-    { title: "", description: "", icon: "" }
+    { title: "", description: "", icon: "", benefit: "" } // Added benefit field
   ],
+  featuresTitle: "",
+  featuresSubtitle: "",
+  // Risk Reversal Section
+  guarantees: {
+    title: "",
+    subtitle: "",
+    guarantees: [
+      { title: "", description: "", icon: "" }
+    ]
+  },
+  // FAQ Section
+  faq: {
+    title: "",
+    subtitle: "",
+    questions: [
+      { question: "", answer: "" }
+    ]
+  },
+  ctaTitle: "",
+  ctaSubtitle: "",
+  // Urgency/Scarcity elements
+  urgency: {
+    enabled: false,
+    message: "",
+    deadline: ""
+  },
   theme: {
-    primaryColor: "",
-    secondaryColor: "",
-    fontFamily: ""
+    mode: "white", // "white" for light mode, "black" for dark mode
+    accentColor: "#6366f1" // Single accent color for buttons, icons, etc.
   },
   analytics: {
     googleAnalyticsId: "",
