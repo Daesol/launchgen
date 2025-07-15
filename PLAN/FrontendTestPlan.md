@@ -104,4 +104,10 @@ This document tracks tests for API endpoints, backend logic, and critical fronte
 - [x] **Desktop View Hiding**: Desktop view button is hidden on mobile screens
 - [x] **Mobile Preview Optimization**: Preview container has appropriate padding and border styling for mobile
 - [x] **Touch-Friendly Edit Panel**: Mobile edit panel has proper close button and touch-optimized scrolling
-- [x] **Responsive Error Toast**: Error notifications are properly positioned for mobile devices 
+- [x] **Responsive Error Toast**: Error notifications are properly positioned for mobile devices
+- [x] **Dashboard Chatbot**: Floating chatbot appears in bottom-right corner of dashboard
+- [x] **Chatbot Message Interface**: Users can type and send messages through the chat interface
+- [x] **Chatbot Webhook Integration**: Messages are successfully sent to the specified webhook URL
+- [x] **Chatbot User Data**: User information (ID, email, timestamp) is included in webhook payload
+- [x] **Chatbot Error Handling**: Graceful error handling when webhook fails
+- [x] **Chatbot Responsive Design**: Chatbot works properly on mobile and desktop devices 
