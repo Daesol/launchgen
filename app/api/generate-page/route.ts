@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generatePageConfig } from "@/lib/openai";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
@@ -14,6 +13,9 @@ export async function POST(req: NextRequest) {
     if (!prompt || typeof prompt !== "string") {
       return NextResponse.json({ error: "Prompt is required." }, { status: 400 });
     }
+    
+    // Dynamic import to prevent build-time execution
+    const { generatePageConfig } = await import("@/lib/openai");
     
     // If existingConfig is provided, this is a regeneration
     if (existingConfig) {

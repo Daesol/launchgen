@@ -1,5 +1,33 @@
 # Road Map Log
 
+## 2024-12-19 - Dashboard Chatbot Integration
+
+### What was done:
+- **Added chatbot component** - Created a floating chatbot that appears in the bottom right corner of the dashboard
+- **User feedback system** - Users can send feedback and questions through the chatbot interface
+- **Webhook integration** - Messages are sent to the specified webhook URL with user information
+- **Real-time messaging** - Chat interface with message history, timestamps, and loading states
+- **User authentication integration** - Chatbot captures user session information for webhook data
+- **Responsive design** - Chatbot works on both desktop and mobile devices
+- **Global dashboard visibility** - Chatbot is now visible on all dashboard pages through layout integration
+
+### Technical details:
+- **Floating UI**: Fixed positioning in bottom-right corner with z-index for proper layering
+- **Message handling**: Real-time message display with user/bot message differentiation
+- **Webhook data**: Sends message content, user ID, email, creation date, timestamp, and source
+- **Error handling**: Graceful error handling with user-friendly error messages
+- **Auto-scroll**: Messages automatically scroll to bottom when new messages are added
+- **Loading states**: Visual feedback during message sending with animated dots
+- **Keyboard support**: Enter key sends messages, proper input focus management
+- **Layout integration**: Added to DashboardLayout component to ensure visibility across all dashboard pages
+
+### Files affected:
+- `components/Chatbot.tsx` - New chatbot component with webhook integration
+- `components/DashboardLayout.tsx` - Added chatbot to both edit page and regular dashboard layouts
+- `components/DashboardSessionGate.tsx` - Removed chatbot (now handled by layout)
+
+---
+
 ## 2024-12-19 - PageEditor Mobile Responsiveness Enhancement
 
 ### What was done:

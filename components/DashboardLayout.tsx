@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { createPortal } from "react-dom";
+import Chatbot from "@/components/Chatbot";
 
 const sidebarLinks = [
   { href: "/dashboard", label: "Dashboard", icon: "🏠" },
@@ -218,6 +219,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {children}
           </main>
         </div>
+        
+        {/* Chatbot */}
+        <Chatbot webhookUrl="https://hook.us2.make.com/dr7nyyotheprkpszho9koo288wblvogc" />
       </div>
     );
   }
@@ -356,6 +360,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {children}
         </main>
       </div>
+      
+      {/* Chatbot */}
+      <Chatbot webhookUrl="https://hook.us2.make.com/dr7nyyotheprkpszho9koo288wblvogc" />
     </div>
   );
 }

@@ -1,7 +1,14 @@
 import OpenAI from "openai";
 import { getSchemaString, LandingPageConfig } from "./landingPageSchema";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Initialize OpenAI client only when API key is available
+const getOpenAI = () => {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("OPENAI_API_KEY environment variable is missing");
+  }
+  return new OpenAI({ apiKey });
+};
 
 // Function to repair common JSON issues
 function repairJson(jsonString: string): string {
@@ -216,6 +223,7 @@ Generate a landing page config for: ${userPrompt}
 Respond with ONLY the JSON object, no markdown formatting.`;
   }
 
+  const openai = getOpenAI();
   const completion = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [
