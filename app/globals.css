@@ -80,4 +80,18 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+}
+
+/* Ensure input text is always black on mobile devices */
+input, textarea, select {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Override any dark mode preferences for form inputs */
+@media (prefers-color-scheme: dark) {
+  input, textarea, select {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
 } 

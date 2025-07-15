@@ -134,13 +134,33 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
   const [published, setPublished] = useState(false);
   const [error, setError] = useState("");
   const [sidePanelCollapsed, setSidePanelCollapsed] = useState(false);
-  const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('mobile'); // Default to mobile
+  const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop'); // Default to desktop
   const [showSidePanel, setShowSidePanel] = useState(false); // For mobile
   const [regenerating, setRegenerating] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [autoSaveTimer, setAutoSaveTimer] = useState<NodeJS.Timeout | null>(null);
+  const [showPublishModal, setShowPublishModal] = useState(false);
+  const [publishedUrl, setPublishedUrl] = useState<string>('');
   
+  // Set preview mode based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) { // lg breakpoint
+        setPreviewMode('desktop');
+      } else {
+        setPreviewMode('mobile');
+      }
+    };
+
+    // Set initial mode
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Debug logging for initial content
   useEffect(() => {
     console.log('Initial content loaded:', initialContent);
@@ -590,6 +610,13 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
       
       setPublished(true);
       setSaving(false);
+      
+      // Generate the published URL and show modal
+      if (id && initialConfig.slug) {
+        const url = `${window.location.origin}/page/${initialConfig.slug}`;
+        setPublishedUrl(url);
+        setShowPublishModal(true);
+      }
     } catch (err) {
       setError("Failed to publish page");
       setSaving(false);
@@ -712,6 +739,63 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
     };
   }, [autoSaveTimer]);
 
+  // Auto-save when user leaves the page
+  useEffect(() => {
+    const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges && onSave) {
+        // Try to save synchronously if possible
+        try {
+          const config = {
+            page_content: pageContent,
+            page_style: pageStyle,
+            template_id: templateId,
+            id: id,
+            original_prompt: originalPrompt,
+          };
+          
+          // Use sendBeacon for reliable saving on page unload
+          const blob = new Blob([JSON.stringify(config)], { type: 'application/json' });
+          navigator.sendBeacon('/api/landing-pages', blob);
+          
+          // Clear the unsaved changes flag
+          setHasUnsavedChanges(false);
+        } catch (error) {
+          console.error('Failed to auto-save on page unload:', error);
+        }
+      }
+    };
+
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'hidden' && hasUnsavedChanges && onSave) {
+        // Save when page becomes hidden (user switches tabs or minimizes)
+        try {
+          const config = {
+            page_content: pageContent,
+            page_style: pageStyle,
+            template_id: templateId,
+            id: id,
+            original_prompt: originalPrompt,
+          };
+          
+          await onSave(config);
+          setHasUnsavedChanges(false);
+        } catch (error) {
+          console.error('Failed to auto-save on visibility change:', error);
+        }
+      }
+    };
+
+    // Add event listeners
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [hasUnsavedChanges, pageContent, pageStyle, templateId, id, originalPrompt, onSave]);
+
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-gray-100">
       {/* Preview Panel */}
@@ -719,7 +803,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
         sidePanelCollapsed ? 'ml-0' : 'ml-0'
       }`}>
         {/* Preview Header */}
-        <div className="bg-white border-b border-gray-200 p-3 sm:p-4">
+        <div className="bg-white border-b border-gray-200 p-3 sm:p-4 sticky top-0 z-40">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
               <h1 className="text-lg sm:text-xl font-semibold text-gray-800">Landing Page Editor</h1>
@@ -823,7 +907,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
         </div>
 
         {/* Preview Content */}
-        <div className="flex-1 overflow-auto p-2 sm:p-4">
+        <div className="flex-1 overflow-auto p-2 sm:p-4 lg:pb-4 pb-20">
           <div className={`mx-auto transition-all duration-300 ${
             previewMode === 'mobile' ? 'max-w-sm' : 'max-w-4xl'
           }`}>
@@ -1204,6 +1288,82 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                 isExpanded={expandedSections.urgency}
                 onToggle={() => toggleSection('urgency')}
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sticky Show Editor Button - Mobile Only */}
+      {!showSidePanel && (
+        <div className="lg:hidden fixed bottom-4 left-4 right-4 z-40">
+          <button
+            onClick={() => setShowSidePanel(true)}
+            className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            Show Editor
+          </button>
+        </div>
+      )}
+
+      {/* Publish Success Modal */}
+      {showPublishModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Page Published Successfully!</h3>
+              <p className="text-sm text-gray-600 mb-4">Your landing page is now live and ready to share.</p>
+              
+              <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                <label className="block text-xs font-medium text-gray-700 mb-2">Published URL</label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    value={publishedUrl}
+                    readOnly
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md bg-white"
+                  />
+                  <button
+                    onClick={() => navigator.clipboard.writeText(publishedUrl)}
+                    className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+
+              {/* QR Code */}
+              <div className="mb-4">
+                <label className="block text-xs font-medium text-gray-700 mb-2">QR Code</label>
+                <div className="flex justify-center">
+                  <MobilePreviewQR 
+                    pageUrl={publishedUrl}
+                    pageId={id || ''}
+                  />
+                </div>
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowPublishModal(false)}
+                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => {
+                    window.open(publishedUrl, '_blank');
+                    setShowPublishModal(false);
+                  }}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  View Page
+                </button>
+              </div>
             </div>
           </div>
         </div>

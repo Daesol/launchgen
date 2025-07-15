@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import EditorSection from "./EditorSection";
+import { heroIconOptions, IconPreview } from "@/lib/iconUtils";
 
 interface HeroSectionProps {
   hero: {
@@ -17,11 +18,6 @@ interface HeroSectionProps {
   isExpanded: boolean;
   onToggle: () => void;
 }
-
-const iconOptions = [
-  "rocket", "star", "heart", "shield", "zap", "check", "arrow-up", "trophy",
-  "gem", "crown", "fire", "bolt", "diamond", "medal", "target", "lightning"
-];
 
 export default function HeroSection({
   hero,
@@ -56,17 +52,25 @@ export default function HeroSection({
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Hero Tag Icon
           </label>
-          <select
-            value={hero.heroTagIcon}
-            onChange={(e) => onHeroChange("heroTagIcon", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {iconOptions.map((icon) => (
-              <option key={icon} value={icon}>
-                {icon.charAt(0).toUpperCase() + icon.slice(1)}
-              </option>
+          <div className="grid grid-cols-4 gap-2">
+            {heroIconOptions.map((icon) => (
+              <button
+                key={icon}
+                type="button"
+                onClick={() => onHeroChange("heroTagIcon", icon)}
+                className={`p-3 border rounded-lg flex flex-col items-center gap-1 transition-colors ${
+                  hero.heroTagIcon === icon
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-300 hover:border-gray-400"
+                }`}
+              >
+                <IconPreview iconName={icon} className="h-5 w-5" />
+                <span className="text-xs text-gray-600 capitalize">
+                  {icon.replace('-', ' ')}
+                </span>
+              </button>
             ))}
-          </select>
+          </div>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -80,7 +84,7 @@ export default function HeroSection({
             placeholder="Enter your main headline"
           />
           {headlineWords.length > 0 && (
-            <div className="mt-2">
+            <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Highlight Words (click to toggle):
               </label>
