@@ -21,52 +21,11 @@ import {
 import { DemoComponent } from './demo'
 
 interface HeroSectionProps {
-  email: string
-  setEmail: (email: string) => void
-  isSubmitted: boolean
-  isSubmitting: boolean
-  isWaitlistFull: boolean
-  handleSubmit: (e: React.FormEvent) => Promise<void>
+  onGenerateLandingPage: () => void
 }
 
-export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWaitlistFull, handleSubmit }: HeroSectionProps) {
+export function HeroSection({ onGenerateLandingPage }: HeroSectionProps) {
   const [showFloatingDock, setShowFloatingDock] = useState(false)
-  const [emailError, setEmailError] = useState('')
-
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-    return emailRegex.test(email)
-  }
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setEmail(value)
-    
-    // Clear error when user starts typing
-    if (emailError) {
-      setEmailError('')
-    }
-  }
-
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!email.trim()) {
-      setEmailError('Email is required')
-      return
-    }
-    
-    if (!validateEmail(email)) {
-      setEmailError('Please enter a valid email address')
-      return
-    }
-    
-    // Clear any existing errors
-    setEmailError('')
-    
-    // Call the original handleSubmit
-    await handleSubmit(e)
-  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -114,69 +73,17 @@ export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWait
                 </p>
               </div>
 
-              {/* Email Signup */}
+              {/* Generate Landing Page Button */}
               <div className="space-y-4">
-                {!isSubmitted && !isWaitlistFull ? (
-                  <form onSubmit={handleFormSubmit} className="flex flex-col sm:flex-row gap-3">
-                    <div className="flex-1">
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={handleEmailChange}
-                        placeholder="Enter your email for early access"
-                        className={`w-full px-6 py-4 bg-slate-900/50 border rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition-colors ${
-                          emailError ? 'border-red-500 focus:ring-red-500' : 'border-slate-700 focus:ring-purple-500'
-                        }`}
-                        required
-                        disabled={isSubmitting}
-                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                        title="Please enter a valid email address"
-                      />
-                      {emailError && (
-                        <p className="text-red-400 text-sm mt-1 ml-1">{emailError}</p>
-                      )}
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-purple-800 disabled:to-pink-800 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          Submitting...
-                        </>
-                      ) : (
-                        <>
-                          Join Waitlist
-                          <ArrowRight className="w-5 h-5" />
-                        </>
-                      )}
-                    </button>
-                  </form>
-                ) : isSubmitted ? (
-                  <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-400" />
-                      <div>
-                        <div className="font-semibold text-green-400">Welcome to the waitlist!</div>
-                        <div className="text-sm text-slate-400">We'll notify you as soon as LaunchGen launches</div>
-                      </div>
-                    </div>
-                  </div>
-                ) : isWaitlistFull ? (
-                  <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 text-orange-400 font-bold">⚠</div>
-                      <div>
-                        <div className="font-semibold text-orange-400">The current waitlist is full</div>
-                        <div className="text-sm text-slate-400">Please contact <a href="mailto:daesol@webproagency.ca" className="text-orange-400 hover:underline">daesol@webproagency.ca</a> to join waitlist</div>
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
+                <button
+                  onClick={onGenerateLandingPage}
+                  className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                >
+                  Generate A Landing Page
+                  <ArrowRight className="w-5 h-5" />
+                </button>
                 <p className="text-sm text-slate-400">
-                  🚀 Join 2,000+ founders already on the waitlist
+                  🚀 Start creating your landing page in minutes
                 </p>
               </div>
 
@@ -215,12 +122,10 @@ export function HeroSection({ email, setEmail, isSubmitted, isSubmitting, isWait
         showFloatingDock ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
       }`}>
         <button
-          onClick={() => {
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-          }}
+          onClick={onGenerateLandingPage}
           className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition-all duration-300 flex items-center gap-2 text-sm"
         >
-          <span>Join Waitlist</span>
+          <span>Generate</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
