@@ -8,9 +8,10 @@ interface LeadFormProps {
     mode: "white" | "black";
   };
   ctaText?: string;
+  previewMode?: 'desktop' | 'mobile';
 }
 
-export default function LeadForm({ pageId, theme, ctaText = "Submit" }: LeadFormProps) {
+export default function LeadForm({ pageId, theme, ctaText = "Submit", previewMode = 'desktop' }: LeadFormProps) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -64,42 +65,51 @@ export default function LeadForm({ pageId, theme, ctaText = "Submit" }: LeadForm
     }
   };
 
+  const isMobilePreview = previewMode === 'mobile';
+
   return (
-    <div className="w-full">
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row w-full gap-2 sm:gap-2 items-stretch sm:items-center">
-        <input
-          className={`flex-1 px-4 py-2 border rounded focus:ring-2 focus:ring-opacity-60 focus:outline-none ${inputBg} ${borderClass}`}
+    <div className="w-full flex justify-center">
+      <form onSubmit={handleSubmit} className={`flex gap-2 items-stretch ${
+        isMobilePreview ? 'flex-col w-full' : 'flex-col sm:flex-row sm:items-center'
+      }`}>
+      <input
+          className={`px-4 py-2 border rounded focus:ring-2 focus:ring-opacity-60 focus:outline-none ${inputBg} ${borderClass}`}
           style={{
             borderColor: accent,
-            boxShadow: `0 0 0 2px ${accent}22`
+            boxShadow: `0 0 0 2px ${accent}22`,
+            minWidth: isMobilePreview ? '100%' : '200px',
+            width: isMobilePreview ? '100%' : '280px'
           }}
-          placeholder="Your Email"
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-          disabled={loading}
+        placeholder="Your Email"
+        type="email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        required
+        disabled={loading}
           aria-label="Email address"
-        />
-        <button
-          type="submit"
-          className="font-semibold px-5 py-2 rounded-lg shadow transition text-base disabled:opacity-60 w-full sm:w-auto"
+      />
+      <button
+        type="submit"
+          className={`font-semibold px-6 py-2 rounded-lg shadow transition whitespace-nowrap ${
+            isMobilePreview ? 'w-full text-sm' : 'text-base w-full sm:w-auto'
+          }`}
           style={{
             background: accent,
             color: isDark ? "#fff" : "#fff",
             boxShadow: `0 2px 8px 0 ${accent}33`,
             border: `1px solid ${accent}`,
+            minWidth: isMobilePreview ? '100%' : '140px'
           }}
           disabled={loading || !validateEmail(email)}
           aria-label={ctaText}
-        >
+      >
           {loading ? "..." : ctaText}
-        </button>
-      </form>
+      </button>
+    </form>
       {(error || success) && (
         <div className="mt-2 min-h-[1.5em]">
-          {error && <div className="text-red-500 text-xs">{error}</div>}
-          {success && <div className="text-green-600 text-xs">Thank you!</div>}
+          {error && <div className={`text-red-500 ${isMobilePreview ? 'text-xs' : 'text-xs'}`}>{error}</div>}
+          {success && <div className={`text-green-600 ${isMobilePreview ? 'text-xs' : 'text-xs'}`}>Thank you!</div>}
         </div>
       )}
     </div>

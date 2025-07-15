@@ -1,297 +1,347 @@
 # Road Map Log
 
-## 2025-07-14 - Section Visibility Toggle Feature
+## 2024-12-19 - Home Page Navigation Simplification
 
-### 👁️ **Feature Added: Section Visibility Toggle System**
+### What was done:
+- **Removed navigation links** - Eliminated "Features", "Demo", and "Pricing" links from the home page navigation bar
+- **Simplified navigation** - Navigation now only contains the logo, Sign In, and Sign Up buttons (or Sign Out for authenticated users)
+- **Cleaner interface** - Reduced navigation clutter and focused on core authentication actions
 
-**Description:** Implemented a comprehensive section visibility toggle system that allows users to hide or show individual sections on their landing pages.
+### Technical details:
+- **Removed links**: Eliminated anchor links to #features, #demo, and #pricing sections
+- **Maintained functionality**: Kept authentication-related navigation (Sign In, Sign Up, Sign Out)
+- **Preserved styling**: Maintained existing navigation layout and styling for remaining elements
+- **Responsive design**: Navigation remains responsive and properly spaced
 
-**Key Features:**
-- **Section Visibility Controls**: Toggle buttons in the edit panel for content sections
-- **Visual Indicators**: Clear "Visible"/"Hidden" status indicators with color coding
-- **Real-time Preview**: Sections immediately hide/show in the preview
-- **Persistent State**: Visibility settings are maintained during editing
-- **Content Sections Only**: Features, CTA, Problem, Solution, Social Proof, Guarantees, FAQ (Business, Hero, Urgency, and Theme settings are always visible)
-
-**Technical Implementation:**
-- Added `visibleSections` state management in PageEditor
-- Enhanced CollapsibleSection component with visibility toggle
-- Updated LandingPageTemplate to conditionally render sections
-- Added visibility toggle handlers and UI controls
-- Implemented section visibility checks throughout template
-
-**Files Modified:**
-- `components/PageEditor.tsx` - Added visibility state and toggle handlers
-- `components/CollapsibleSection.tsx` - Enhanced with visibility toggle UI
-- `components/LandingPageTemplate.tsx` - Conditional section rendering
-- `PLAN/RoadMapLog.md` - Updated documentation
-
-**User Experience:**
-- Toggle buttons in content section headers showing current status
-- Green "Visible" / Red "Hidden" indicators
-- Immediate preview updates when toggling
-- Intuitive click-to-toggle functionality
-- Content sections can be independently controlled
-- Essential sections (Business, Hero, Urgency, Theme) are always visible
-
-**Testing Status:** ✅ Implemented and ready for testing
+### Files affected:
+- `components/Navigation.tsx` - Removed Features, Demo, and Pricing navigation links
 
 ---
 
-## 2025-07-14 - Text Highlighting Feature Implementation
+## 2024-12-19 - Home Page Demo Auto-Play Enhancement
 
-### 🎯 **Feature Added: Hero Headline Text Highlighting**
+### What was done:
+- **Enabled auto-play demo** - Demo now starts automatically when the home page loads
+- **Removed play button** - Eliminated the DemoOverlay component and play button interface
+- **Maintained loop functionality** - Demo continues to loop automatically as it was already implemented
+- **Simplified user experience** - Users immediately see the demo in action without needing to click play
 
-**Description:** Implemented a sophisticated text highlighting system for the hero headline that allows both AI and users to control which words are highlighted with the accent color.
+### Technical details:
+- **Auto-start**: Added useEffect hook to call startDemo() when component mounts
+- **Removed overlay**: Eliminated DemoOverlay component and related state management
+- **Clean interface**: Removed isDemoStarted state and DemoOverlay import
+- **Seamless loop**: Demo automatically restarts after completion (existing functionality)
+- **Immediate engagement**: Users see the demo animation as soon as they visit the home page
 
-**Key Features:**
-- **AI-Generated Highlights**: AI automatically selects 1-3 impactful words to highlight based on common patterns
-- **User Control**: Interactive word buttons in the editor allow users to toggle highlighting on/off
-- **Visual Feedback**: Highlighted words display in accent color with bold font weight
-- **Smart Suggestions**: System identifies highlightable words based on impact keywords
-
-**Technical Implementation:**
-- Created `lib/textHighlightUtils.ts` with utility functions for text processing
-- Created `components/HighlightedText.tsx` React component for rendering
-- Updated schema to include `headlineHighlights: []` array in hero section
-- Enhanced AI prompt to generate appropriate highlight suggestions
-- Added interactive highlight toggle UI in PageEditor
-- Updated template to use new HighlightedText component
-
-**Files Modified:**
-- `lib/landingPageSchema.ts` - Added headlineHighlights field
-- `components/LandingPageTemplate.tsx` - Integrated HighlightedText component
-- `components/PageEditor.tsx` - Added highlight toggle functionality
-- `lib/openai.ts` - Updated AI prompt for highlight generation
-- `PLAN/UpdatingTemplate.md` - Updated documentation
-
-**User Experience:**
-- Users see clickable word buttons below the headline input
-- Selected highlights are visually indicated with purple styling
-- Current highlights are displayed as a summary
-- AI intelligently suggests impactful words during generation
-- Highlights persist through save/load and regeneration cycles
-
-**Testing Status:** ✅ Implemented and ready for testing
+### Files affected:
+- `components/demo/DemoComponent.tsx` - Added auto-start useEffect, removed DemoOverlay and related state
 
 ---
 
-## 2025-07-13 - Theme System Enhancement
+## 2024-12-19 - Home Page Waitlist to Sign-in Conversion
 
-### 🎨 **Feature Added: Sophisticated Theme System**
+### What was done:
+- **Replaced waitlist forms with sign-in buttons** - Converted all waitlist email forms on the home page to "Generate A Landing Page" buttons
+- **Updated navigation flow** - Buttons now redirect users to the signin/signup page instead of collecting emails
+- **Simplified user journey** - Removed complex waitlist logic and webhook integrations
+- **Updated messaging** - Changed copy from waitlist-focused to action-oriented landing page generation
 
-**Description:** Implemented a comprehensive theme system with light/dark modes and accent color control for all UI elements.
+### Technical details:
+- **Main landing page**: Removed email state management, webhook integration, and waitlist submission logic
+- **HeroSection**: Replaced email form with "Generate A Landing Page" button that redirects to /auth/signin
+- **FinalCTASection**: Replaced waitlist form with matching "Generate A Landing Page" button
+- **Mobile floating button**: Updated to "Generate" button that redirects to signin page
+- **Props interface**: Updated component interfaces to accept onGenerateLandingPage callback instead of email-related props
+- **User flow**: Direct path from home page → signin/signup → dashboard → landing page generation
 
-**Key Features:**
-- **Light/Dark Modes**: "white" and "black" theme modes
-- **Accent Color Control**: Single accent color controls buttons, icons, highlights, and section backgrounds
-- **Opacity Variations**: Automatic opacity variations for different UI elements
-- **Theme Utilities**: Centralized theme utility functions for consistent styling
-
-**Technical Implementation:**
-- Created `lib/themeUtils.ts` with theme utility functions
-- Updated schema to use new `theme` structure with `mode` and `accentColor`
-- Enhanced AI prompt to generate appropriate theme configurations
-- Added theme controls to PageEditor interface
-- Implemented backward compatibility for old `themeColors` structure
-
-**Files Modified:**
-- `lib/landingPageSchema.ts` - Updated theme structure
-- `lib/themeUtils.ts` - New theme utility functions
-- `components/LandingPageTemplate.tsx` - Theme-aware styling
-- `components/PageEditor.tsx` - Theme controls
-- `lib/openai.ts` - Theme generation in AI prompt
-- Migration script for converting old theme data
-
-**User Experience:**
-- Simple theme mode selection (Light/Dark)
-- Color picker for accent color
-- Real-time preview of theme changes
-- Automatic opacity variations for visual hierarchy
-- Consistent theming across all components
-
-**Testing Status:** ✅ Implemented and tested
+### Files affected:
+- `landing-page.tsx` - Removed waitlist logic, added router navigation to signin page
+- `components/HeroSection.tsx` - Replaced email form with "Generate A Landing Page" button
+- `components/FinalCTASection.tsx` - Replaced waitlist form with "Generate A Landing Page" button
 
 ---
 
-## 2025-07-12 - Business Customization Features
+## 2024-12-19 - Authentication Logo Update
 
-### 🏢 **Feature Added: Business Name and Logo Customization**
+### What was done:
+- **Updated authentication page logo** - Replaced the SVG logo with the PNG logo from public/images/logos/default-launchgen-logo.png
+- **Maintained styling** - Kept the same size (w-24 h-24) and animation (animate-fade-in-up delay-200) for consistency
 
-**Description:** Enhanced the landing page system to support custom business names and logos instead of default "LaunchGen" branding.
+### Technical details:
+- **Logo path change**: Updated from `/logo.svg` to `/images/logos/default-launchgen-logo.png`
+- **File format**: Changed from SVG to PNG format for better compatibility
+- **Visual consistency**: Maintained the same dimensions and positioning in the left branding panel
 
-**Key Features:**
-- **Business Name Input**: Users can set custom business names
-- **Logo URL Support**: Users can provide custom logo URLs
-- **AI-Generated Names**: AI suggests appropriate business names based on the concept
-- **Default Fallbacks**: Graceful fallbacks when custom values aren't provided
-
-**Technical Implementation:**
-- Updated schema to include `business.name` and `business.logo` fields
-- Enhanced AI prompt to generate business names
-- Added business name and logo inputs to PageEditor
-- Updated template to use custom business branding
-- Added validation and fallback logic
-
-**Files Modified:**
-- `lib/landingPageSchema.ts` - Added business fields
-- `components/LandingPageTemplate.tsx` - Custom business branding
-- `components/PageEditor.tsx` - Business name/logo inputs
-- `lib/openai.ts` - Business name generation in AI prompt
-
-**User Experience:**
-- Business name field in editor with AI suggestions
-- Logo URL input with validation
-- Custom branding displayed throughout the landing page
-- Fallback to "LaunchGen" when no custom name is provided
-
-**Testing Status:** ✅ Implemented and tested
+### Files affected:
+- `app/auth/signin/page.tsx` - Updated logo source path to use the PNG logo
 
 ---
 
-## 2025-07-11 - Landing Page Editor Enhancements
+## 2024-12-19 - Authentication UI Enhancement
 
-### ✏️ **Feature Added: Enhanced Landing Page Editor**
+### What was done:
+- **Repositioned Google sign-in button** - Moved "Sign in with Google" button to be right under the main "Sign In" or "Sign Up" button
+- **Added visual divider** - Added an "or" divider between the main form and Google sign-in option
+- **Improved button text** - Updated Google button text to dynamically show "Sign in with Google" or "Sign up with Google" based on current mode
+- **Enhanced animations** - Added proper animation delays for the new layout with divider and repositioned button
 
-**Description:** Implemented a comprehensive landing page editor with collapsible side panel, mobile responsiveness, and advanced editing capabilities.
+### Technical details:
+- **Button repositioning**: Moved Google sign-in button from top of form to bottom, after the main submit button
+- **Visual divider**: Added a horizontal line with "or" text to separate email/password form from Google OAuth option
+- **Dynamic text**: Google button text now adapts to current mode (signin/signup) for better UX
+- **Animation timing**: Added delay-600 and delay-700 classes for smooth staggered animations
+- **Layout improvement**: Better visual hierarchy with primary action (email/password) first, then alternative option (Google)
 
-**Key Features:**
-- **Collapsible Edit Panel**: Right-side panel that can be collapsed to expand preview
-- **Mobile Responsive**: Dedicated mobile edit interface with overlay panel
-- **Real-time Preview**: Live preview updates as users edit content
-- **Advanced Controls**: Rich text editing for all content sections
-- **Theme Customization**: Color picker and theme mode selection
-- **Error Handling**: Improved error display with dismissible notifications
-
-**Technical Implementation:**
-- Redesigned PageEditor component with collapsible functionality
-- Added mobile-specific edit interface
-- Implemented real-time preview updates
-- Enhanced error handling with toast notifications
-- Added theme customization controls
-
-**Files Modified:**
-- `components/PageEditor.tsx` - Complete redesign
-- `components/LandingPageTemplate.tsx` - Enhanced preview support
-- `components/DashboardLayout.tsx` - Layout improvements
-
-**User Experience:**
-- Collapsible edit panel for focused preview
-- Mobile-friendly editing interface
-- Real-time content updates
-- Improved error feedback
-- Enhanced theme controls
-
-**Testing Status:** ✅ Implemented and tested
+### Files affected:
+- `app/auth/signin/page.tsx` - Repositioned Google button, added divider, updated animations and button text
 
 ---
 
-## 2025-07-10 - Landing Page Generation System
+## 2024-12-19 - Social Proof Statistics Enhancement
 
-### 🤖 **Feature Added: AI-Powered Landing Page Generation**
+### What was done:
+- **Enhanced AI prompt for statistics generation** - Updated AI prompts to specifically request EXACTLY 3 statistics in the Social Proof section
+- **Improved statistics structure** - Enhanced prompt to specify that each statistic should have number, label, and description fields
+- **Updated fallback configuration** - Added 3 default statistics to fallback configuration instead of empty array
+- **Enhanced validation** - Added check to ensure stats array has content and provides fallback if empty
 
-**Description:** Implemented a sophisticated AI-powered landing page generation system using OpenAI's GPT models.
+### Technical details:
+- **AI prompt enhancement**: Updated both new generation and regeneration prompts to specify "Array of EXACTLY 3 impressive statistics"
+- **Statistics structure**: Each stat now includes number (e.g., "10,000+"), label (e.g., "Happy Customers"), and description (e.g., "Trusted by businesses worldwide")
+- **Fallback improvement**: Replaced empty stats array with 3 meaningful default statistics in fallback configuration
+- **Validation enhancement**: Added length check to ensure stats array has content and provides fallback if empty
 
-**Key Features:**
-- **AI Content Generation**: Automatic generation of headlines, features, and copy
-- **JSON Schema Validation**: Structured output with validation and error handling
-- **Error Recovery**: Automatic JSON repair for malformed AI responses
-- **Original Prompt Preservation**: Maintains context for regeneration
-- **Real-time Generation**: Live generation with progress indicators
-
-**Technical Implementation:**
-- Created `/api/generate-page` endpoint with OpenAI integration
-- Implemented JSON schema validation and repair
-- Added error handling with user-friendly messages
-- Enhanced regeneration with context preservation
-- Integrated with PageEditor for seamless workflow
-
-**Files Modified:**
-- `lib/openai.ts` - OpenAI integration and JSON handling
-- `app/api/generate-page/route.ts` - Generation endpoint
-- `components/PageEditor.tsx` - Generation integration
-- `lib/landingPageSchema.ts` - Schema definition
-
-**User Experience:**
-- One-click landing page generation
-- Intelligent content creation
-- Error recovery with retry options
-- Context-aware regeneration
-- Real-time generation feedback
-
-**Testing Status:** ✅ Implemented and tested
+### Files affected:
+- `lib/openai.ts` - Updated AI prompts to specify exactly 3 statistics and enhanced fallback configuration
 
 ---
 
-## 2025-07-09 - Landing Page Template System
+## 2024-12-19 - Profile Navigation Removal
 
-### 📄 **Feature Added: Comprehensive Landing Page Template**
+### What was done:
+- **Removed Profile link from sidebar navigation** - Removed Profile option from the main dashboard sidebar
+- **Removed Profile Settings from dropdown menu** - Removed Profile Settings link from the profile dropdown in the top navbar
+- **Removed Profile link from dashboard page** - Removed Profile link from the bottom navigation on the main dashboard page
+- **Simplified navigation** - Dashboard now only shows Dashboard and Create Page in sidebar, with Sign Out in profile dropdown
 
-**Description:** Created a complete landing page template system with multiple sections and customizable content.
+### Technical details:
+- **Sidebar cleanup**: Removed Profile entry from sidebarLinks array in DashboardLayout
+- **Dropdown cleanup**: Removed Profile Settings link and divider from both profile dropdown menus (edit page and regular layout)
+- **Dashboard page cleanup**: Removed Profile link from navigation section in DashboardSessionGate
+- **Navigation simplification**: Streamlined navigation to focus on core functionality (dashboard, create page, sign out)
 
-**Key Features:**
-- **Hero Section**: Headline, subheadline, CTA, hero tag with icon
-- **Features Section**: Customizable feature cards with icons
-- **CTA Section**: Call-to-action with title and subtitle
-- **Lead Form**: Integrated lead capture form
-- **Responsive Design**: Mobile and desktop optimized layouts
-- **Theme Support**: Light and dark theme modes
-
-**Technical Implementation:**
-- Created LandingPageTemplate component
-- Implemented responsive design with Tailwind CSS
-- Added theme integration with light/dark modes
-- Integrated lead form functionality
-- Created comprehensive content structure
-
-**Files Modified:**
-- `components/LandingPageTemplate.tsx` - Main template component
-- `components/LeadForm.tsx` - Lead capture form
-- `lib/landingPageSchema.ts` - Content schema
-- `app/page/[slug]/page.tsx` - Public page rendering
-
-**User Experience:**
-- Professional landing page layouts
-- Mobile-responsive design
-- Theme customization options
-- Lead capture functionality
-- Easy content editing
-
-**Testing Status:** ✅ Implemented and tested
+### Files affected:
+- `components/DashboardLayout.tsx` - Removed Profile from sidebarLinks and Profile Settings from dropdown menus
+- `components/DashboardSessionGate.tsx` - Removed Profile link from bottom navigation
 
 ---
 
-## 2025-07-08 - Project Foundation
+## 2024-12-19 - PageEditor Regeneration Error Handling and Fallback Improvements
 
-### 🏗️ **Feature Added: Project Foundation and Setup**
+### What was done:
+- **Improved regeneration error handling** - Added proper fallback behavior that preserves existing content when regeneration fails
+- **Enhanced error messaging** - Better user-friendly error messages with clear instructions
+- **Added content validation** - Validates regenerated content before applying changes
+- **Implemented content backup** - Stores original content before regeneration and restores it on failure
+- **Improved error toast UI** - More informative error display with longer duration and better styling
+- **Enhanced regeneration prompt** - Updated AI prompt to avoid generating placeholder content
+- **Fixed fallback logic** - Prevents creation of placeholder content during regeneration failures
+- **Fixed original prompt usage** - Regeneration now properly uses the saved original prompt from the database
+- **Added prompt validation** - Checks for original prompt before allowing regeneration
+- **Enhanced AI prompt** - Updated regeneration prompt to emphasize using the original user request
 
-**Description:** Established the foundational structure for the LaunchGen landing page generator project.
+### Technical details:
+- **Content backup system**: Stores original pageContent and pageStyle before regeneration
+- **Error recovery**: Automatically restores original content when regeneration fails
+- **Content validation**: Checks that regenerated content has meaningful data before applying
+- **Enhanced error handling**: Better error messages with specific failure reasons
+- **Improved UI feedback**: Error toast shows for 8 seconds with clear instructions
+- **Prompt improvements**: Updated regeneration prompt to avoid generic placeholder content
+- **Fallback prevention**: Throws errors instead of creating fallback content for regenerations
+- **Original prompt validation**: Ensures original prompt exists before regeneration
+- **Database integration**: Properly uses saved original_prompt from database
+- **AI prompt enhancement**: Emphasizes using original user prompt as primary guide for regeneration
 
-**Key Features:**
-- **Next.js 14 Setup**: Modern React framework with App Router
-- **TypeScript Integration**: Full TypeScript support for type safety
-- **Tailwind CSS**: Utility-first CSS framework for styling
-- **Supabase Integration**: Database and authentication setup
-- **Project Structure**: Organized file structure and component architecture
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Enhanced handleRegenerate function with backup/restore logic, improved error handling, better UI feedback, and original prompt validation
+- `lib/openai.ts` - Updated regeneration prompt to emphasize original prompt usage and avoid placeholder content
 
-**Technical Implementation:**
-- Initialized Next.js project with TypeScript
-- Configured Tailwind CSS and PostCSS
-- Set up Supabase client and database schema
-- Created basic project structure and components
-- Implemented authentication system
+---
 
-**Files Created:**
-- Project configuration files (package.json, tsconfig.json, etc.)
-- Basic component structure
-- Database schema and migrations
-- Authentication setup
+## 2024-12-19 - Landing Page Template Section Visibility Fix
 
-**User Experience:**
-- Modern development environment
-- Type-safe development experience
-- Responsive design system
-- Database integration ready
-- Authentication system ready
+### What was done:
+- **Fixed section visibility issue** - All sections now render properly when creating new pages
+- **Updated default expansion state** - All editor sections now expanded by default for better visibility
+- **Removed content-based conditional rendering** - Sections now render based on visibility settings rather than content presence
+- **Added null safety checks** - Added optional chaining to prevent undefined property errors
 
-**Testing Status:** ✅ Foundation established 
+### Technical details:
+- **Root cause**: Sections were only rendering if they had content (title, subtitle, or array items)
+- **Solution**: Changed conditional logic to render sections based on visibility settings only
+- **Default state**: All editor sections now expanded by default for better user experience
+- **Null safety**: Added optional chaining (`?.`) to all config property accesses
+- **Section rendering**: All sections (problem, social proof, guarantees, FAQ) now render even with empty content
+
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Updated default expansion state to show all sections expanded
+- `components/LandingPageTemplate.tsx` - Fixed conditional rendering logic and added null safety checks
+
+---
+
+## 2024-12-19 - Original Prompt Saving and Regeneration Fix
+
+### What was done:
+- **Fixed original prompt not being saved** - Added original_prompt to page generation and saving process
+- **Updated API to handle original_prompt** - Modified landing-pages API to save and retrieve original_prompt
+- **Added debugging for regeneration** - Added console logging to track original prompt usage
+- **Fixed regeneration error** - Regeneration now properly uses saved original prompt from database
+
+### Technical details:
+- **Root cause**: Original prompt was not being saved to database during page generation
+- **GenerateClient fix**: Added original_prompt to pageConfig when saving generated pages
+- **API fix**: Updated landing-pages API to handle original_prompt field in requests
+- **Database integration**: Original prompt now properly stored and retrieved from database
+- **Debugging**: Added console logging to track original prompt flow through the system
+
+### Files affected:
+- `app/generate/GenerateClient.tsx` - Added original_prompt to pageConfig when saving
+- `app/api/landing-pages/route.ts` - Updated to handle original_prompt in requests
+- `components/PageEditorRefactored.tsx` - Added debugging for original prompt tracking
+
+---
+
+## 2024-12-19 - AI-Generated Content Population Fix
+
+### What was done:
+- **Fixed incomplete content saving** - Now saving all AI-generated sections to database
+- **Added missing sections** - Included problemSection, socialProof, guarantees, faq, ctaTitle, ctaSubtitle, urgency
+- **Enhanced debugging** - Added console logging to track content generation and saving
+- **Improved content flow** - All AI-generated content now properly flows from generation to display
+
+### Technical details:
+- **Root cause**: Only subset of AI-generated content was being saved (business, hero, features, theme)
+- **Missing sections**: problemSection, socialProof, guarantees, faq, ctaTitle, ctaSubtitle, urgency were not saved
+- **GenerateClient fix**: Updated pageConfig to include all generated sections
+- **Debugging**: Added logging to track AI generation and content saving process
+- **Content flow**: Complete content now flows from AI generation → database → editor → display
+
+### Files affected:
+- `app/generate/GenerateClient.tsx` - Updated to save all AI-generated sections and added debugging
+- `components/PageEditorRefactored.tsx` - Added debugging for content loading and display
+
+---
+
+## 2024-12-19 - PageEditor Save Functionality and Visual Indicators
+
+### What was done:
+- **Implemented proper save functionality** - Added working save/update functionality using the landing-pages API
+- **Added visual save status indicators** - Real-time indicators showing save status (saved, saving, unsaved changes)
+- **Implemented auto-save** - Automatic saving after 3 seconds of inactivity
+- **Enhanced save button** - Visual feedback showing when there are unsaved changes
+- **Added save status tracking** - Tracks last saved time and current save state
+- **Fixed database schema mismatch** - Added migration to support page_content and page_style columns
+- **Added schema compatibility** - Handles both old (config_json) and new (page_content/page_style) database formats
+- **Fixed regeneration array error** - Added safety checks for testimonial ratings and array mappings
+
+### Technical details:
+- **Save API integration**: Connected PageEditor to `/api/landing-pages` endpoint for proper save/update functionality
+- **Save status management**: Added state tracking for save status with visual indicators
+- **Auto-save timer**: Implements 3-second delay auto-save with proper cleanup
+- **Change tracking**: All form inputs now trigger unsaved changes detection
+- **Visual feedback**: Save button changes color and text when there are unsaved changes
+- **Status indicators**: Real-time display of save status with appropriate colors and icons
+- **Database migration**: Created migration to add page_content, page_style, template_id, original_prompt, and published columns
+- **Backward compatibility**: Added fallback logic to handle existing data in config_json format
+- **Array safety**: Added comprehensive validation for all array mappings to prevent "Invalid array length" errors
+- **Rating validation**: Added safe rating helper function to handle undefined/null rating values
+
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Added save status tracking, auto-save functionality, and visual indicators
+- `components/PageEditor.tsx` - Updated interface to support save status props
+- `app/dashboard/page/[id]/PageEditorWrapper.tsx` - New wrapper component providing save functionality
+- `app/dashboard/page/[id]/page.tsx` - Updated to use PageEditorWrapper with save functionality and added schema compatibility
+- `supabase/migrations/20250719000000_add_page_content_style.sql` - New migration to update database schema
+- `components/LandingPageTemplate.tsx` - Added safety checks for array mappings and rating validation
+
+---
+
+## 2024-12-19 - PageEditor Regeneration Error Fix
+
+### What was done:
+- **Fixed regeneration error** - Resolved "Cannot read properties of undefined (reading 'theme')" error
+- **Added comprehensive null safety checks** - Added optional chaining and fallback values throughout the component
+- **Fixed API response structure mismatch** - Corrected handling of flat config object returned by generate-page API
+- **Enhanced error handling** - Improved robustness when dealing with incomplete or malformed data
+- **Fixed default logo background** - Updated default logo background to use theme accent color instead of hardcoded purple gradient
+
+### Technical details:
+- **Root cause**: The generate-page API returns a flat config object with `theme` at root level, but PageEditor expected nested `page_style.theme` structure
+- **Regeneration handler fix**: Properly separates theme from content and creates correct page_style structure
+- **Null safety**: Added `?.` optional chaining and `|| {}` fallbacks to all property accesses
+- **Event handlers**: Updated all state update functions to handle undefined nested objects safely
+- **Component props**: Added safety checks for all section component props to prevent crashes
+- **Logo background fix**: Replaced hardcoded purple gradient with dynamic accent color from theme
+
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Fixed regeneration handler, added comprehensive null safety checks, updated all event handlers and component props
+- `components/LandingPageTemplate.tsx` - Updated default logo background to use theme accent color
+
+---
+
+## 2024-12-19 - PageEditor Additional Fixes
+
+### What was done:
+- **Fixed visibility toggle functionality** - Restructured EditorSection to properly handle visibility buttons
+- **Restored default collapsed state** - Only Business Info and Hero sections expanded by default
+- **Moved Theme Settings to top** - Theme Settings now appears at the top of the edit panel
+- **Restored Preview button** - Added back the Preview button in the header
+- **Improved mobile responsiveness** - Added proper mobile device frame styling for mobile preview mode
+- **Fixed mobile preview mode** - Page editor now properly passes previewMode prop to LandingPageTemplate
+- **Enhanced mobile responsiveness** - Improved lead form and navigation bar for mobile preview mode
+- **Added QR code feature** - Mobile preview now includes a QR code for easy mobile device testing
+- **Fixed undefined prop errors** - Added null checks and default values to prevent crashes when generating new pages
+
+### Technical details:
+- **Visibility toggle fix**: Separated expand/collapse button from visibility toggle button to prevent conflicts
+- **Default state**: Changed back to collapsed sections except Business Info and Hero
+- **Theme Settings positioning**: Moved outside DndContext to top of edit panel
+- **Preview button**: Restored with proper save-then-preview functionality
+- **Mobile preview**: Added device frame styling with rounded corners and border
+- **Mobile responsiveness fix**: Added previewMode prop to LandingPageTemplate to enable proper mobile layout
+- **Lead form improvements**: Enhanced mobile layout with full-width inputs and buttons, smaller text sizes
+- **Navigation improvements**: Made navigation visible in mobile preview with smaller text and compact spacing
+- **Header improvements**: Reduced header height and logo size for mobile preview mode
+- **QR code feature**: Added QR code component that generates a scannable code for mobile device testing
+- **Error prevention**: Added null checks and default values to all section components to prevent crashes
+
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Fixed preview header, mobile styling, section ordering, previewMode prop, QR code integration, and improved default values
+- `components/editor/EditorSection.tsx` - Fixed visibility toggle functionality
+- `components/LeadForm.tsx` - Enhanced mobile responsiveness with previewMode prop
+- `components/LandingPageTemplate.tsx` - Improved navigation and header for mobile preview mode
+- `components/MobilePreviewQR.tsx` - New component for QR code generation and mobile preview functionality
+- `components/editor/ProblemSection.tsx` - Added null checks and default values to prevent crashes
+- `components/editor/SocialProofSection.tsx` - Added null checks and default values to prevent crashes
+- `components/editor/GuaranteesSection.tsx` - Added null checks and default values to prevent crashes
+- `components/editor/FAQSection.tsx` - Added null checks and default values to prevent crashes
+
+---
+
+## 2024-12-19 - PageEditor Refactoring Fix
+
+### What was done:
+- **Fixed visibility issue with draggable sections** in the refactored PageEditor
+- **Identified root cause**: All draggable sections were collapsed by default, making them invisible
+- **Solution**: Changed default expansion state to show all sections expanded by default
+- **Updated DraggableSection component** to work properly with modular components
+- **Removed debugging code** and restored clean implementation
+
+### Technical details:
+- **Issue**: `expandedSections` state had all draggable sections set to `false` by default
+- **Fix**: Changed default state to `true` for all sections
+- **Result**: All sections now visible and expandable/collapsible as expected
+- **Drag-and-drop functionality**: Preserved and working correctly
+
+### Files affected:
+- `components/PageEditorRefactored.tsx`

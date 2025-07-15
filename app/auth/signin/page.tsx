@@ -82,7 +82,7 @@ export default function SignInPage() {
         <div className="z-10 text-center">
           <h1 className="text-4xl font-extrabold mb-4 drop-shadow-lg tracking-tight animate-fade-in-up">Welcome to LaunchGen</h1>
           <p className="text-lg mb-8 text-purple-100 animate-fade-in-up delay-100">AI-powered landing pages, leads, and analytics—all in one place.</p>
-          <img src="/logo.svg" alt="LaunchGen Logo" className="mx-auto mb-8 w-24 h-24 animate-fade-in-up delay-200" />
+          <img src="/images/logos/default-launchgen-logo.png" alt="LaunchGen Logo" className="mx-auto mb-8 w-24 h-24 animate-fade-in-up delay-200" />
           <div className="text-sm text-purple-200 animate-fade-in-up delay-300">Start building your next big idea today.</div>
         </div>
       </div>
@@ -91,15 +91,6 @@ export default function SignInPage() {
         <div className="w-full max-w-md mx-auto">
           {modeReady && (
             <>
-              <button
-                type="button"
-                onClick={handleGoogleSignIn}
-                className="w-full flex items-center justify-center gap-3 bg-white border border-slate-300 text-slate-700 font-semibold py-3 rounded-lg shadow hover:bg-slate-50 transition mb-6 disabled:opacity-60"
-                disabled={googleLoading}
-              >
-                <svg className="w-5 h-5" viewBox="0 0 48 48"><g><path fill="#4285F4" d="M24 9.5c3.54 0 6.7 1.22 9.19 3.23l6.85-6.85C35.64 2.36 30.18 0 24 0 14.82 0 6.71 5.82 2.69 14.09l7.98 6.2C12.13 13.13 17.56 9.5 24 9.5z"/><path fill="#34A853" d="M46.1 24.55c0-1.64-.15-3.22-.42-4.74H24v9.01h12.42c-.54 2.9-2.18 5.36-4.65 7.01l7.19 5.6C43.98 37.13 46.1 31.36 46.1 24.55z"/><path fill="#FBBC05" d="M10.67 28.29c-1.01-2.99-1.01-6.21 0-9.2l-7.98-6.2C.9 16.36 0 20.06 0 24c0 3.94.9 7.64 2.69 11.11l7.98-6.2z"/><path fill="#EA4335" d="M24 48c6.18 0 11.36-2.05 15.15-5.57l-7.19-5.6c-2.01 1.35-4.58 2.15-7.96 2.15-6.44 0-11.87-3.63-14.33-8.89l-7.98 6.2C6.71 42.18 14.82 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></g></svg>
-                {googleLoading ? "Signing in..." : "Sign in with Google"}
-              </button>
               <h2 className="text-3xl font-bold mb-2 text-slate-900 text-center animate-fade-in-up">{mode === "signin" ? "Sign In" : "Sign Up"}</h2>
               <p className="text-slate-500 mb-8 text-center animate-fade-in-up delay-100">
                 {mode === "signin" ? "Welcome back! Log in to your account." : "Create your LaunchGen account."}
@@ -141,7 +132,28 @@ export default function SignInPage() {
                   {loading ? "Loading..." : mode === "signin" ? "Sign In" : "Sign Up"}
                 </button>
               </form>
-              <div className="mt-8 text-center animate-fade-in-up delay-500">
+              
+              {/* Divider */}
+              <div className="relative my-6 animate-fade-in-up delay-500">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-slate-500">or</span>
+                </div>
+              </div>
+              
+              {/* Google Sign In Button */}
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                className="w-full flex items-center justify-center gap-3 bg-white border border-slate-300 text-slate-700 font-semibold py-3 rounded-lg shadow hover:bg-slate-50 transition animate-fade-in-up delay-600 disabled:opacity-60"
+                disabled={googleLoading}
+              >
+                <svg className="w-5 h-5" viewBox="0 0 48 48"><g><path fill="#4285F4" d="M24 9.5c3.54 0 6.7 1.22 9.19 3.23l6.85-6.85C35.64 2.36 30.18 0 24 0 14.82 0 6.71 5.82 2.69 14.09l7.98 6.2C12.13 13.13 17.56 9.5 24 9.5z"/><path fill="#34A853" d="M46.1 24.55c0-1.64-.15-3.22-.42-4.74H24v9.01h12.42c-.54 2.9-2.18 5.36-4.65 7.01l7.19 5.6C43.98 37.13 46.1 31.36 46.1 24.55z"/><path fill="#FBBC05" d="M10.67 28.29c-1.01-2.99-1.01-6.21 0-9.2l-7.98-6.2C.9 16.36 0 20.06 0 24c0 3.94.9 7.64 2.69 11.11l7.98-6.2z"/><path fill="#EA4335" d="M24 48c6.18 0 11.36-2.05 15.15-5.57l-7.19-5.6c-2.01 1.35-4.58 2.15-7.96 2.15-6.44 0-11.87-3.63-14.33-8.89l-7.98 6.2C6.71 42.18 14.82 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></g></svg>
+                {googleLoading ? "Signing in..." : `Sign ${mode === "signin" ? "in" : "up"} with Google`}
+              </button>
+              <div className="mt-8 text-center animate-fade-in-up delay-700">
                 {mode === "signin" ? (
                   <span>
                     Don&apos;t have an account?{' '}
@@ -190,6 +202,8 @@ export default function SignInPage() {
         .delay-300 { animation-delay: 0.3s; }
         .delay-400 { animation-delay: 0.4s; }
         .delay-500 { animation-delay: 0.5s; }
+        .delay-600 { animation-delay: 0.6s; }
+        .delay-700 { animation-delay: 0.7s; }
       `}</style>
     </div>
   );

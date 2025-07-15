@@ -67,9 +67,93 @@ function repairJson(jsonString: string): string {
   return repaired;
 }
 
-export async function generatePageConfig(userPrompt: string): Promise<LandingPageConfig> {
+export async function generatePageConfig(userPrompt: string, existingConfig?: any): Promise<LandingPageConfig> {
   const schemaString = getSchemaString();
-  const systemPrompt = `You are an expert SaaS landing page copywriter and designer. You must respond with ONLY a valid JSON object that follows this exact schema structure. Do not include any explanations, markdown formatting, or text outside the JSON object.
+  // Create different prompts for new generation vs regeneration
+  let systemPrompt: string;
+  
+  if (existingConfig) {
+    // Regeneration prompt - improve existing content
+    systemPrompt = `You are an expert SaaS landing page copywriter and designer. You are REGENERATING an existing landing page to improve its content based on the user's ORIGINAL PROMPT. You must respond with ONLY a valid JSON object that follows this exact schema structure. Do not include any explanations, markdown formatting, or text outside the JSON object.
+
+SCHEMA:
+${schemaString}
+
+ORIGINAL USER PROMPT (this is what the user originally requested):
+"${userPrompt}"
+
+EXISTING CONFIG (current landing page content - improve upon this):
+${JSON.stringify(existingConfig, null, 2)}
+
+CRITICAL REQUIREMENTS FOR REGENERATION:
+- Use the ORIGINAL USER PROMPT as your primary guide for regeneration
+- IMPROVE the existing content based on the original prompt, don't just repeat it
+- Fill in any empty sections with compelling content that matches the original prompt
+- Make the content more specific, detailed, and conversion-focused
+- Keep the same business name and theme if they exist and are relevant
+- Ensure ALL sections have meaningful content (not empty arrays or strings)
+- DO NOT generate placeholder or generic content - make it specific to the user's original prompt
+- The regeneration should better align with what the user originally requested
+
+CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
+- business.name: Keep existing name or improve it based on the original prompt. Must NOT be empty.
+- business.logo: Leave empty string "" for default logo placeholder.
+- hero.headline: Improve the existing headline or create a compelling, conversion-focused one that better matches the original prompt.
+- hero.headlineHighlights: Array of 1-3 key words from the headline that should be highlighted.
+- hero.heroTag: A short, catchy tag/badge text. Must NOT be empty.
+- hero.heroTagIcon: MUST be one of these exact values: "zap", "star", "shield", "rocket", "target", "trendingUp", "award", "sparkles".
+- hero.subheadline: A compelling subheadline that expands on the value proposition and aligns with the original prompt.
+- hero.cta: A clear call-to-action button text.
+
+// Problem Section - MUST have content
+- problemSection.title: A compelling title that identifies the problem mentioned in the original prompt.
+- problemSection.subtitle: A subtitle that amplifies the pain points.
+- problemSection.painPoints: Array of 3-5 specific pain points. MUST NOT be empty.
+
+// Social Proof Section - MUST have content
+- socialProof.title: A title that builds trust.
+- socialProof.subtitle: A subtitle that encourages social validation.
+- socialProof.stats: Array of EXACTLY 3 impressive statistics. Each stat must have: number, label, and description. MUST generate exactly 3 stats with meaningful data.
+- socialProof.testimonials: Array of 2-3 customer testimonials. MUST NOT be empty.
+
+// Features Section
+- featuresTitle: A compelling section title. Must NOT be empty.
+- featuresSubtitle: A descriptive subtitle. Must NOT be empty.
+- features: Array of 3-6 features with titles, descriptions, and benefits that align with the original prompt.
+
+// Risk Reversal Section - MUST have content
+- guarantees.title: A title that reduces risk.
+- guarantees.subtitle: A subtitle that builds confidence.
+- guarantees.guarantees: Array of 2-3 guarantees. MUST NOT be empty.
+
+// FAQ Section - MUST have content
+- faq.title: A title for frequently asked questions.
+- faq.subtitle: A subtitle that addresses concerns.
+- faq.questions: Array of 3-5 common questions and answers. MUST NOT be empty.
+
+// CTA Section
+- ctaTitle: An action-oriented CTA title. Must NOT be empty.
+- ctaSubtitle: A compelling reason to act. Must NOT be empty.
+
+// Urgency/Scarcity
+- urgency.enabled: Boolean to enable urgency banner.
+- urgency.message: Urgency message.
+- urgency.deadline: Specific deadline.
+
+// Theme
+- theme.mode: MUST be either "white" or "black".
+- theme.accentColor: A valid CSS color string.
+
+IMPORTANT: This is a REGENERATION based on the user's ORIGINAL PROMPT. Improve the existing content to better match what the user originally requested. Do not leave any sections with empty arrays or strings. DO NOT generate generic placeholder content - make everything specific and relevant to the user's original prompt.
+
+CRITICAL: Ensure your JSON is complete and properly formatted. If you cannot generate meaningful content for any section, DO NOT include that section rather than filling it with placeholder text.
+
+Regenerate and improve the landing page config to better match the original user request: "${userPrompt}"
+
+Respond with ONLY the JSON object, no markdown formatting.`;
+  } else {
+    // New generation prompt
+    systemPrompt = `You are an expert SaaS landing page copywriter and designer. You must respond with ONLY a valid JSON object that follows this exact schema structure. Do not include any explanations, markdown formatting, or text outside the JSON object.
 
 SCHEMA:
 ${schemaString}
@@ -89,19 +173,10 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 - problemSection.subtitle: A subtitle that amplifies the pain points and creates emotional connection.
 - problemSection.painPoints: Array of 3-5 specific pain points that your target audience faces. Each should be emotionally resonant and specific.
 
-// Solution Section (NESB Framework)
-- solutionSection.title: A title that introduces the solution (e.g., "The Solution", "How We Help", "Your Path Forward").
-- solutionSection.subtitle: A subtitle that explains how you solve the problems.
-- solutionSection.benefits: Array of 4 benefits following the NESB framework:
-  * NEW: What's unique/novel about your solution
-  * EASY: How simple it is to use/implement
-  * SAFE: Trust signals, guarantees, security
-  * BIG: Transformational results or outcomes
-
 // Social Proof Section
 - socialProof.title: A title that builds trust (e.g., "What Our Customers Say", "Trusted by Thousands", "Success Stories").
 - socialProof.subtitle: A subtitle that encourages social validation.
-- socialProof.stats: Array of 3-4 impressive statistics (e.g., "10,000+", "Happy Customers").
+- socialProof.stats: Array of EXACTLY 3 impressive statistics. Each stat should have: number (e.g., "10,000+", "95%", "$50K"), label (e.g., "Happy Customers", "Success Rate", "Revenue Increase"), and description (e.g., "Trusted by businesses worldwide", "Average customer satisfaction", "Average monthly growth"). MUST generate exactly 3 stats.
 - socialProof.testimonials: Array of 2-3 customer testimonials with specific results and outcomes.
 
 // Features Section
@@ -139,6 +214,7 @@ CRITICAL: Ensure your JSON is complete and properly formatted. Do not truncate o
 Generate a landing page config for: ${userPrompt}
 
 Respond with ONLY the JSON object, no markdown formatting.`;
+  }
 
   const completion = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
@@ -147,7 +223,7 @@ Respond with ONLY the JSON object, no markdown formatting.`;
       { role: "user", content: userPrompt }
     ],
     temperature: 0.7,
-    max_tokens: 2000
+    max_tokens: existingConfig ? 3000 : 2000 // More tokens for regeneration
   });
 
   // Extract JSON from markdown code block if present
@@ -186,8 +262,13 @@ Respond with ONLY the JSON object, no markdown formatting.`;
     } catch (repairError: any) {
       console.error("JSON repair failed:", repairError);
       
-      // Create a minimal valid config as fallback
-      console.log("Creating fallback config...");
+      // For regeneration, throw error instead of creating fallback
+      if (existingConfig) {
+        throw new Error("Failed to parse regenerated content. The AI response was malformed.");
+      }
+      
+      // Only create fallback for new generations, not regenerations
+      console.log("Creating fallback config for new generation...");
       config = {
         business: { name: "LaunchGen", logo: "" },
         hero: {
@@ -204,16 +285,15 @@ Respond with ONLY the JSON object, no markdown formatting.`;
           subtitle: "Are you struggling with these common challenges?",
           painPoints: []
         },
-        solutionSection: {
-          title: "The Solution",
-          subtitle: "Here's how we solve your problems",
-          benefits: []
-        },
         socialProof: {
           title: "What Our Customers Say",
           subtitle: "Join thousands of satisfied customers",
           testimonials: [],
-          stats: []
+          stats: [
+            { number: "10,000+", label: "Happy Customers", description: "Trusted by businesses worldwide" },
+            { number: "95%", label: "Success Rate", description: "Average customer satisfaction" },
+            { number: "$50K", label: "Revenue Increase", description: "Average monthly growth" }
+          ]
         },
         features: [
           { title: "AI-Powered Generation", description: "Generate landing pages with AI.", icon: "", benefit: "Save time and effort." }
@@ -297,17 +377,7 @@ Respond with ONLY the JSON object, no markdown formatting.`;
     config.problemSection.painPoints = [];
   }
 
-  // Solution Section fallbacks
-  if (!config.solutionSection) {
-    config.solutionSection = {
-      title: "The Solution",
-      subtitle: "Here's how we solve your problems",
-      benefits: []
-    };
-  }
-  if (!config.solutionSection.benefits || !Array.isArray(config.solutionSection.benefits)) {
-    config.solutionSection.benefits = [];
-  }
+
 
   // Social Proof fallbacks
   if (!config.socialProof) {
@@ -315,14 +385,22 @@ Respond with ONLY the JSON object, no markdown formatting.`;
       title: "What Our Customers Say",
       subtitle: "Join thousands of satisfied customers",
       testimonials: [],
-      stats: []
+      stats: [
+        { number: "10,000+", label: "Happy Customers", description: "Trusted by businesses worldwide" },
+        { number: "95%", label: "Success Rate", description: "Average customer satisfaction" },
+        { number: "$50K", label: "Revenue Increase", description: "Average monthly growth" }
+      ]
     };
   }
   if (!config.socialProof.testimonials || !Array.isArray(config.socialProof.testimonials)) {
     config.socialProof.testimonials = [];
   }
-  if (!config.socialProof.stats || !Array.isArray(config.socialProof.stats)) {
-    config.socialProof.stats = [];
+  if (!config.socialProof.stats || !Array.isArray(config.socialProof.stats) || config.socialProof.stats.length === 0) {
+    config.socialProof.stats = [
+      { number: "10,000+", label: "Happy Customers", description: "Trusted by businesses worldwide" },
+      { number: "95%", label: "Success Rate", description: "Average customer satisfaction" },
+      { number: "$50K", label: "Revenue Increase", description: "Average monthly growth" }
+    ];
   }
 
   // Features fallbacks

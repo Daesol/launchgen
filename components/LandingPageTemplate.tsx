@@ -31,17 +31,6 @@ interface LandingPageTemplateProps {
       subtitle?: string;
       painPoints?: Array<{ text: string; icon?: string }>;
     };
-    // Solution Preview Section (NESB Framework)
-    solutionSection?: {
-      title?: string;
-      subtitle?: string;
-      benefits?: Array<{ 
-        title: string; 
-        description: string; 
-        icon?: string;
-        type?: "new" | "easy" | "safe" | "big";
-      }>;
-    };
     // Social Proof Section
     socialProof?: {
       title?: string;
@@ -83,6 +72,8 @@ interface LandingPageTemplateProps {
       mode: "white" | "black";
       accentColor: string;
     };
+    // Section order for drag-and-drop functionality
+    sectionOrder?: string[];
     // Legacy support
     themeColors?: {
       primaryColor?: string;
@@ -97,9 +88,10 @@ interface LandingPageTemplateProps {
 
 export default function LandingPageTemplate({ config, pageId, previewMode = 'desktop', visibleSections }: LandingPageTemplateProps) {
   // Debug logging
-  console.log("LandingPageTemplate config:", config);
+  console.log('LandingPageTemplate received config:', config);
+  console.log('LandingPageTemplate received visibleSections:', visibleSections);
+  console.log('LandingPageTemplate received pageId:', pageId);
   console.log("Problem section:", config?.problemSection);
-  console.log("Solution section:", config?.solutionSection);
   console.log("Social proof:", config?.socialProof);
   console.log("Guarantees:", config?.guarantees);
   console.log("FAQ:", config?.faq);
@@ -183,158 +175,80 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
     return visibleSections[sectionName] !== false; // Show if not explicitly hidden
   };
 
-  return (
-    <div className={`flex flex-col min-h-screen ${themeClasses.background}`}>
-      {/* Header */}
-      <header className={`px-4 sm:px-6 lg:px-8 h-14 flex items-center border-b ${themeClasses.border} ${themeClasses.background}`}>
-        <Link className="flex items-center justify-center" href="#">
-          {business?.logo ? (
-            <img 
-              src={business.logo} 
-              alt={`${business.name || 'Business'} Logo`}
-              className="h-8 w-8 rounded-md object-cover"
-            />
-          ) : (
-            <div className={`h-8 w-8 rounded-md flex items-center justify-center font-bold text-sm ${theme.mode === 'black' ? 'bg-slate-800 text-white' : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white'}`}>
-              {business?.name ? business.name.charAt(0).toUpperCase() : 'L'}
-            </div>
-          )}
-          <span className={`ml-2 text-base sm:text-lg font-semibold ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''}`}>
-            {business?.name || 'LaunchGen'}
-          </span>
-        </Link>
-        <nav className="ml-auto hidden md:flex items-center gap-4 lg:gap-6">
-          <Link className={`text-sm font-medium hover:underline underline-offset-4 ${themeClasses.textSecondary} hover:${themeClasses.text}`} href="#features">
-            Features
-          </Link>
-          <Link className={`text-sm font-medium hover:underline underline-offset-4 ${themeClasses.textSecondary} hover:${themeClasses.text}`} href="#pricing">
-            Pricing
-          </Link>
-          <Link className={`text-sm font-medium hover:underline underline-offset-4 ${themeClasses.textSecondary} hover:${themeClasses.text}`} href="#about">
-            About
-          </Link>
-          <Link className={`text-sm font-medium hover:underline underline-offset-4 ${themeClasses.textSecondary} hover:${themeClasses.text}`} href="#contact">
-            Contact
-          </Link>
-          <Button 
-            size="sm" 
-            onClick={scrollToCTA}
-            className="transition-all duration-300 hover:scale-105 hover:shadow-md"
-            style={{ 
-              backgroundColor: theme.accentColor,
-              borderColor: theme.accentColor
-            }}
-          >
-            {hero.cta}
-          </Button>
-        </nav>
-        <Button variant="ghost" size="sm" className="ml-auto md:hidden">
-          <Menu className="h-4 w-4" />
-        </Button>
-      </header>
+  // Helper function to safely get rating for testimonials
+  const getSafeRating = (rating: any): number => {
+    if (rating === null || rating === undefined) return 5;
+    const numRating = Number(rating);
+    if (isNaN(numRating) || numRating < 1) return 5;
+    if (numRating > 5) return 5;
+    return Math.floor(numRating);
+  };
 
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="w-full py-8 sm:py-12 md:py-16 lg:py-24 xl:py-32">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col items-center space-y-6 sm:space-y-8 text-center">
-              <div className="space-y-4 sm:space-y-6">
-                <Badge 
-                  variant="secondary" 
-                  className={`mb-4 sm:mb-6 flex items-center gap-2 w-fit mx-auto ${theme.mode === 'black' ? 'text-white' : ''}`}
-                  style={{ 
-                    backgroundColor: getAccentColor(theme.accentColor, 0.1),
-                    color: theme.mode === 'black' ? '#fff' : theme.accentColor,
-                    borderColor: getAccentColor(theme.accentColor, 0.2)
-                  }}
-                >
-                  {hero.heroTagIcon && renderIcon(hero.heroTagIcon, "h-3 w-3")}
-                  {hero.heroTag || "AI-Powered Solution"}
-                </Badge>
-                <h1 className={`font-bold tracking-tighter leading-tight ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
-                  isMobilePreview 
-                    ? 'text-2xl' 
-                    : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl'
-                }`}>
-                  <HighlightedText
-                    text={hero.headline}
-                    highlights={hero.headlineHighlights || []}
-                    accentColor={theme.accentColor}
-                    className={themeClasses.text}
-                  />
-                </h1>
-                <p className={`mx-auto ${themeClasses.textSecondary} ${
-                  isMobilePreview 
-                    ? 'text-sm max-w-[300px]' 
-                    : 'text-base sm:text-lg md:text-xl max-w-[600px] sm:max-w-[700px] px-4 sm:px-0'
-                }`}>
-                  {hero.subheadline}
-                </p>
-              </div>
-              <div className="w-full flex justify-center">
-                <div className={isMobilePreview ? 'w-full' : 'w-full sm:w-auto min-w-[320px] max-w-[400px]'}>
-                  <LeadForm pageId={pageId || ''} theme={theme} ctaText={hero.cta} />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Problem Amplification Section */}
-        {isSectionVisible('problemSection') && config.problemSection && (config.problemSection.title || config.problemSection.subtitle || (config.problemSection.painPoints && config.problemSection.painPoints.length > 0)) && (
-          <section className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}>
+  // Add a function to render sections based on sectionOrder
+  const renderSection = (sectionName: string) => {
+    console.log(`Checking section ${sectionName}:`, {
+      isVisible: isSectionVisible(sectionName),
+      hasConfig: !!(config as any)[sectionName],
+      configData: (config as any)[sectionName]
+    });
+    switch (sectionName) {
+      case 'problemSection':
+        return isSectionVisible('problemSection') ? (
+          <section key="problemSection" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
-                <div className="space-y-3 sm:space-y-4">
-                  <h2 className={`font-bold tracking-tighter ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+              <div className={`grid gap-8 sm:gap-12 lg:gap-16 ${
+                isMobilePreview 
+                  ? 'grid-cols-1' 
+                  : 'grid-cols-1 lg:grid-cols-2'
+              }`}>
+                {/* Left Column - Headings */}
+                <div className="space-y-4 sm:space-y-6">
+                  <h2 className={`font-bold tracking-tighter text-left ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
                     isMobilePreview 
                       ? 'text-xl' 
                       : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
-                  }`}>{config.problemSection.title || "The Problem"}</h2>
-                  <p className={`${themeClasses.textSecondary} ${
+                  }`}>{config.problemSection?.title || "The Problem"}</h2>
+                  <p className={`text-left ${themeClasses.textSecondary} ${
                     isMobilePreview 
-                      ? 'text-xs max-w-[280px]' 
-                      : 'text-sm sm:text-base md:text-lg lg:text-xl max-w-[800px] sm:max-w-[900px] px-4 sm:px-0'
+                      ? 'text-sm' 
+                      : 'text-base sm:text-lg md:text-xl'
                   }`}>
-                    {config.problemSection.subtitle || "Are you struggling with these common challenges?"}
+                    {config.problemSection?.subtitle || "Are you struggling with these common challenges?"}
                   </p>
                 </div>
-              </div>
-              {config.problemSection.painPoints && config.problemSection.painPoints.length > 0 && (
-                <div className={`mx-auto grid items-center gap-4 sm:gap-6 lg:gap-8 py-8 sm:py-12 ${
-                  isMobilePreview 
-                    ? 'grid-cols-1 max-w-sm' 
-                    : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl'
-                }`}>
-                  {config.problemSection.painPoints.map((painPoint, i) => (
-                    <Card key={i} className={`h-full ${themeClasses.surface} ${themeClasses.border} transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-opacity-80`}>
-                      <CardHeader className="pb-4">
-                        <div className="flex items-center gap-3 mb-3">
+                
+                {/* Right Column - Pain Points */}
+                {config.problemSection?.painPoints && config.problemSection.painPoints.length > 0 && (
+                  <div className="space-y-3 sm:space-y-4">
+                    {config.problemSection.painPoints.filter(painPoint => painPoint && typeof painPoint === 'object').map((painPoint, i) => (
+                      <Card key={i} className={`${themeClasses.surface} ${themeClasses.border} transition-all duration-300 hover:shadow-lg hover:scale-[1.02] hover:border-opacity-80 p-4 sm:p-5`}>
+                        <div className="flex items-center gap-3">
                           <div 
-                            className="p-2 rounded-lg flex items-center justify-center"
+                            className="p-2 rounded-lg flex items-center justify-center flex-shrink-0"
                             style={{ 
                               backgroundColor: getAccentColor(theme.accentColor, 0.1),
                               color: theme.accentColor
                             }}
                           >
-                            {painPoint.icon ? renderIcon(painPoint.icon, "h-5 w-5") : renderIcon(getDefaultIcon(i), "h-5 w-5")}
+                            {painPoint.icon ? renderIcon(painPoint.icon, "h-4 w-4") : renderIcon(getDefaultIcon(i), "h-4 w-4")}
                           </div>
-                          <CardTitle className={`${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
-                            isMobilePreview ? 'text-base' : 'text-lg sm:text-xl'
-                          }`}>{painPoint.text}</CardTitle>
+                          <div className={`${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                            isMobilePreview ? 'text-sm' : 'text-base sm:text-lg'
+                          }`}>
+                            {painPoint.text}
+                          </div>
                         </div>
-                      </CardHeader>
-                    </Card>
-                  ))}
-                </div>
-              )}
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </section>
-        )}
-
-        {/* Solution Preview Section (NESB Framework) */}
-        {isSectionVisible('solutionSection') && config.solutionSection && (config.solutionSection.title || config.solutionSection.subtitle || (config.solutionSection.benefits && config.solutionSection.benefits.length > 0)) && (
-          <section className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.muted}`}>
+        ) : null;
+      case 'features':
+        return isSectionVisible('features') ? (
+          <section key="features" id="features" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.muted}`}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
                 <div className="space-y-3 sm:space-y-4">
@@ -342,70 +256,61 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
                     isMobilePreview 
                       ? 'text-xl' 
                       : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
-                  }`}>{config.solutionSection.title || "The Solution"}</h2>
+                  }`}>{config.featuresTitle || "Solutions/Features"}</h2>
                   <p className={`${themeClasses.textSecondary} ${
                     isMobilePreview 
                       ? 'text-xs max-w-[280px]' 
                       : 'text-sm sm:text-base md:text-lg lg:text-xl max-w-[800px] sm:max-w-[900px] px-4 sm:px-0'
                   }`}>
-                    {config.solutionSection.subtitle || "Here's how we solve your problems"}
+                    {config.featuresSubtitle || "Everything you need to build, deploy, and scale your applications with confidence."}
                   </p>
                 </div>
               </div>
-              {config.solutionSection.benefits && config.solutionSection.benefits.length > 0 && (
-                <div className={`mx-auto grid items-center gap-4 sm:gap-6 lg:gap-8 py-8 sm:py-12 ${
-                  isMobilePreview 
-                    ? 'grid-cols-1 max-w-sm' 
-                    : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl'
-                }`}>
-                  {config.solutionSection.benefits.map((benefit, i) => (
-                    <Card key={i} className={`h-full ${themeClasses.surface} ${themeClasses.border} transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-opacity-80`}>
-                      <CardHeader className="pb-4">
-                        <div className="flex items-center gap-3 mb-3">
-                          <div 
-                            className="p-2 rounded-lg flex items-center justify-center"
-                            style={{ 
-                              backgroundColor: getAccentColor(theme.accentColor, 0.1),
-                              color: theme.accentColor
-                            }}
-                          >
-                            {benefit.icon ? renderIcon(benefit.icon, "h-5 w-5") : renderIcon(getDefaultIcon(i), "h-5 w-5")}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <CardTitle className={`${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
-                              isMobilePreview ? 'text-base' : 'text-lg sm:text-xl'
-                            }`}>{benefit.title}</CardTitle>
-                            {benefit.type && (
-                              <Badge 
-                                variant="secondary" 
-                                className="text-xs"
-                                style={{ 
-                                  backgroundColor: getAccentColor(theme.accentColor, 0.1),
-                                  color: theme.accentColor
-                                }}
-                              >
-                                {benefit.type.toUpperCase()}
-                              </Badge>
-                            )}
-                          </div>
+              <div className={`mx-auto grid items-center gap-4 sm:gap-6 lg:gap-8 py-8 sm:py-12 ${
+                isMobilePreview 
+                  ? 'grid-cols-1 max-w-sm' 
+                  : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl'
+              }`}>
+                                  {features.filter(feature => feature && typeof feature === 'object').map((feature, i) => (
+                  <Card key={i} className={`h-full ${themeClasses.surface} ${themeClasses.border} transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-opacity-80`}>
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div 
+                          className="p-2 rounded-lg flex items-center justify-center"
+                          style={{ 
+                            backgroundColor: getAccentColor(theme.accentColor, 0.1),
+                            color: theme.accentColor
+                          }}
+                        >
+                          {feature.icon ? renderIcon(feature.icon, "h-5 w-5") : renderIcon(getDefaultIcon(i), "h-5 w-5")}
                         </div>
-                        <CardDescription className={`${themeClasses.textSecondary} ${
-                          isMobilePreview ? 'text-xs' : 'text-sm sm:text-base'
-                        }`}>
-                          {benefit.description}
-                        </CardDescription>
-                      </CardHeader>
-                    </Card>
-                  ))}
-                </div>
-              )}
+                        <CardTitle className={`${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                          isMobilePreview ? 'text-base' : 'text-lg sm:text-xl'
+                        }`}>{feature.title}</CardTitle>
+                      </div>
+                      <CardDescription className={`${themeClasses.textSecondary} ${
+                        isMobilePreview ? 'text-xs' : 'text-sm sm:text-base'
+                      }`}>
+                        {feature.description}
+                      </CardDescription>
+                      {feature.benefit && (
+                        <div className={`text-sm font-semibold ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''}`} style={{ color: theme.accentColor }}>
+                          What this means for you: {feature.benefit}
+                        </div>
+                      )}
+                    </CardHeader>
+                    <CardContent>
+                      {/* Removed "Feature included" text as requested */}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
           </section>
-        )}
-
-        {/* Social Proof Section */}
-        {isSectionVisible('socialProof') && config.socialProof && (config.socialProof.title || config.socialProof.subtitle || (config.socialProof.testimonials && config.socialProof.testimonials.length > 0) || (config.socialProof.stats && config.socialProof.stats.length > 0)) && (
-          <section className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}>
+        ) : null;
+      case 'socialProof':
+        return isSectionVisible('socialProof') ? (
+          <section key="socialProof" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
                 <div className="space-y-3 sm:space-y-4">
@@ -413,25 +318,25 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
                     isMobilePreview 
                       ? 'text-xl' 
                       : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
-                  }`}>{config.socialProof.title || "What Our Customers Say"}</h2>
+                  }`}>{config.socialProof?.title || "What Our Customers Say"}</h2>
                   <p className={`${themeClasses.textSecondary} ${
                     isMobilePreview 
                       ? 'text-xs max-w-[280px]' 
                       : 'text-sm sm:text-base md:text-lg lg:text-xl max-w-[800px] sm:max-w-[900px] px-4 sm:px-0'
                   }`}>
-                    {config.socialProof.subtitle || "Join thousands of satisfied customers"}
+                    {config.socialProof?.subtitle || "Join thousands of satisfied customers"}
                   </p>
                 </div>
               </div>
               
               {/* Stats */}
-              {config.socialProof.stats && config.socialProof.stats.length > 0 && (
+              {config.socialProof?.stats && config.socialProof.stats.length > 0 && (
                 <div className={`mx-auto grid items-center gap-4 sm:gap-6 lg:gap-8 py-8 sm:py-12 ${
                   isMobilePreview 
                     ? 'grid-cols-1 max-w-sm' 
                     : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl'
                 }`}>
-                  {config.socialProof.stats.map((stat, i) => (
+                  {config.socialProof.stats.filter(stat => stat && typeof stat === 'object').map((stat, i) => (
                     <Card key={i} className={`h-full ${themeClasses.surface} ${themeClasses.border} text-center transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-opacity-80`}>
                       <CardHeader className="pb-4">
                         <div className="space-y-2">
@@ -454,18 +359,18 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
               )}
 
               {/* Testimonials */}
-              {config.socialProof.testimonials && config.socialProof.testimonials.length > 0 && (
+              {config.socialProof?.testimonials && Array.isArray(config.socialProof.testimonials) && config.socialProof.testimonials.length > 0 && (
                 <div className={`mx-auto grid items-center gap-4 sm:gap-6 lg:gap-8 py-8 sm:py-12 ${
                   isMobilePreview 
                     ? 'grid-cols-1 max-w-sm' 
                     : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl'
                 }`}>
-                  {config.socialProof.testimonials.map((testimonial, i) => (
+                  {config.socialProof.testimonials.filter(testimonial => testimonial && typeof testimonial === 'object').map((testimonial, i) => (
                     <Card key={i} className={`h-full ${themeClasses.surface} ${themeClasses.border} transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-opacity-80`}>
                       <CardHeader className="pb-4">
                         <div className="space-y-3">
                           <div className="flex items-center gap-1">
-                            {[...Array(testimonial.rating || 5)].map((_, starIndex) => (
+                            {[...Array(getSafeRating(testimonial.rating))].map((_, starIndex) => (
                               <Star key={starIndex} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                             ))}
                           </div>
@@ -497,74 +402,10 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
               )}
             </div>
           </section>
-        )}
-
-        {/* Features Section */}
-        {isSectionVisible('features') && (
-          <section id="features" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.muted}`}>
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
-              <div className="space-y-3 sm:space-y-4">
-                <h2 className={`font-bold tracking-tighter ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
-                  isMobilePreview 
-                    ? 'text-xl' 
-                    : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
-                }`}>{config.featuresTitle || "Powerful Features"}</h2>
-                <p className={`${themeClasses.textSecondary} ${
-                  isMobilePreview 
-                    ? 'text-xs max-w-[280px]' 
-                    : 'text-sm sm:text-base md:text-lg lg:text-xl max-w-[800px] sm:max-w-[900px] px-4 sm:px-0'
-                }`}>
-                  {config.featuresSubtitle || "Everything you need to build, deploy, and scale your applications with confidence."}
-                </p>
-              </div>
-            </div>
-            <div className={`mx-auto grid items-center gap-4 sm:gap-6 lg:gap-8 py-8 sm:py-12 ${
-              isMobilePreview 
-                ? 'grid-cols-1 max-w-sm' 
-                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl'
-            }`}>
-              {features.map((feature, i) => (
-                <Card key={i} className={`h-full ${themeClasses.surface} ${themeClasses.border} transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-opacity-80`}>
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div 
-                        className="p-2 rounded-lg flex items-center justify-center"
-                        style={{ 
-                          backgroundColor: getAccentColor(theme.accentColor, 0.1),
-                          color: theme.accentColor
-                        }}
-                      >
-                        {feature.icon ? renderIcon(feature.icon, "h-5 w-5") : renderIcon(getDefaultIcon(i), "h-5 w-5")}
-                      </div>
-                      <CardTitle className={`${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
-                        isMobilePreview ? 'text-base' : 'text-lg sm:text-xl'
-                      }`}>{feature.title}</CardTitle>
-                    </div>
-                    <CardDescription className={`${themeClasses.textSecondary} ${
-                      isMobilePreview ? 'text-xs' : 'text-sm sm:text-base'
-                    }`}>
-                      {feature.description}
-                    </CardDescription>
-                    {feature.benefit && (
-                      <div className={`text-sm font-semibold ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''}`} style={{ color: theme.accentColor }}>
-                        What this means for you: {feature.benefit}
-                      </div>
-                    )}
-                  </CardHeader>
-                  <CardContent>
-                    {/* Removed "Feature included" text as requested */}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-        )}
-
-        {/* Risk Reversal Section */}
-        {isSectionVisible('guarantees') && config.guarantees && (config.guarantees.title || config.guarantees.subtitle || (config.guarantees.guarantees && config.guarantees.guarantees.length > 0)) && (
-          <section className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}>
+        ) : null;
+      case 'guarantees':
+        return isSectionVisible('guarantees') ? (
+          <section key="guarantees" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
                 <div className="space-y-3 sm:space-y-4">
@@ -572,23 +413,23 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
                     isMobilePreview 
                       ? 'text-xl' 
                       : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
-                  }`}>{config.guarantees.title || "Our Guarantees"}</h2>
+                  }`}>{config.guarantees?.title || "Our Guarantees"}</h2>
                   <p className={`${themeClasses.textSecondary} ${
                     isMobilePreview 
                       ? 'text-xs max-w-[280px]' 
                       : 'text-sm sm:text-base md:text-lg lg:text-xl max-w-[800px] sm:max-w-[900px] px-4 sm:px-0'
                   }`}>
-                    {config.guarantees.subtitle || "We're confident you'll love our solution"}
+                    {config.guarantees?.subtitle || "We're confident you'll love our solution"}
                   </p>
                 </div>
               </div>
-              {config.guarantees.guarantees && config.guarantees.guarantees.length > 0 && (
+              {config.guarantees?.guarantees && config.guarantees.guarantees.length > 0 && (
                 <div className={`mx-auto grid items-center gap-4 sm:gap-6 lg:gap-8 py-8 sm:py-12 ${
                   isMobilePreview 
                     ? 'grid-cols-1 max-w-sm' 
                     : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl'
                 }`}>
-                  {config.guarantees.guarantees.map((guarantee, i) => (
+                  {config.guarantees.guarantees.filter(guarantee => guarantee && typeof guarantee === 'object').map((guarantee, i) => (
                     <Card key={i} className={`h-full ${themeClasses.surface} ${themeClasses.border} transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-opacity-80`}>
                       <CardHeader className="pb-4">
                         <div className="flex items-center gap-3 mb-3">
@@ -617,11 +458,10 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
               )}
             </div>
           </section>
-        )}
-
-        {/* FAQ Section */}
-        {isSectionVisible('faq') && config.faq && (config.faq.title || config.faq.subtitle || (config.faq.questions && config.faq.questions.length > 0)) && (
-          <section className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.muted}`}>
+        ) : null;
+      case 'faq':
+        return isSectionVisible('faq') ? (
+          <section key="faq" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.muted}`}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
                 <div className="space-y-3 sm:space-y-4">
@@ -629,19 +469,19 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
                     isMobilePreview 
                       ? 'text-xl' 
                       : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
-                  }`}>{config.faq.title || "Frequently Asked Questions"}</h2>
+                  }`}>{config.faq?.title || "Frequently Asked Questions"}</h2>
                   <p className={`${themeClasses.textSecondary} ${
                     isMobilePreview 
                       ? 'text-xs max-w-[280px]' 
                       : 'text-sm sm:text-base md:text-lg lg:text-xl max-w-[800px] sm:max-w-[900px] px-4 sm:px-0'
                   }`}>
-                    {config.faq.subtitle || "Everything you need to know"}
+                    {config.faq?.subtitle || "Everything you need to know"}
                   </p>
                 </div>
               </div>
-              {config.faq.questions && config.faq.questions.length > 0 && (
+              {config.faq?.questions && config.faq.questions.length > 0 && (
                 <div className={`mx-auto max-w-4xl py-8 sm:py-12 space-y-4 sm:space-y-6`}>
-                  {config.faq.questions.map((faq, i) => (
+                  {config.faq.questions.filter(faq => faq && typeof faq === 'object').map((faq, i) => (
                     <Card key={i} className={`${themeClasses.surface} ${themeClasses.border} transition-all duration-300 hover:shadow-lg hover:border-opacity-80`}>
                       <CardHeader>
                         <CardTitle className={`${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
@@ -661,15 +501,10 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
               )}
             </div>
           </section>
-        )}
-
-        {/* CTA Section with Lead Form */}
-        {isSectionVisible('cta') && pageId && (
-          <section 
-            id="cta-section" 
-            className="w-full py-8 sm:py-12 md:py-16 lg:py-24"
-            style={{ backgroundColor: getAccentColor(theme.accentColor, 0.9) }}
-          >
+        ) : null;
+      case 'cta':
+        return isSectionVisible('cta') ? (
+          <section key="cta" id="cta-section" className="w-full py-8 sm:py-12 md:py-16 lg:py-24" style={{ backgroundColor: getAccentColor(theme.accentColor, 0.9) }}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col items-center justify-center space-y-6 sm:space-y-8 text-center">
                 {/* Urgency Banner */}
@@ -704,7 +539,7 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
                   isMobilePreview ? 'max-w-xs' : 'max-w-sm sm:max-w-md'
                 }`}>
                   <div className={`${themeClasses.background} rounded-lg p-4 sm:p-6`}>
-                    <LeadForm pageId={pageId} theme={theme} />
+                    <LeadForm pageId={pageId || ''} theme={theme} previewMode={previewMode} />
                   </div>
                   <p className={`${themeClasses.textSecondary} ${
                     isMobilePreview ? 'text-xs' : 'text-xs sm:text-sm'
@@ -712,8 +547,127 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
                 </div>
               </div>
             </div>
-          </section>
-        )}
+        </section>
+        ) : null;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className={`flex flex-col min-h-screen ${themeClasses.background}`}>
+      {/* Header */}
+      <header className={`px-4 sm:px-6 lg:px-8 flex items-center border-b ${themeClasses.border} ${themeClasses.background} ${
+        isMobilePreview ? 'h-12' : 'h-14'
+      }`}>
+        <Link className="flex items-center justify-center" href="#">
+          {business?.logo ? (
+            <img 
+              src={business.logo} 
+              alt={`${business.name || 'Business'} Logo`}
+              className={`rounded-md object-cover ${
+                isMobilePreview ? 'h-6 w-6' : 'h-8 w-8'
+              }`}
+            />
+          ) : (
+            <div className={`rounded-md flex items-center justify-center font-bold ${
+              isMobilePreview ? 'h-6 w-6 text-xs' : 'h-8 w-8 text-sm'
+            } text-white`}
+            style={{ 
+              backgroundColor: theme.mode === 'black' ? '#1e293b' : theme.accentColor
+            }}>
+              {business?.name ? business.name.charAt(0).toUpperCase() : 'L'}
+            </div>
+          )}
+          <span className={`ml-2 font-semibold ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+            isMobilePreview ? 'text-sm' : 'text-base sm:text-lg'
+          }`}>
+            {business?.name || 'LaunchGen'}
+          </span>
+        </Link>
+        <nav className="ml-auto hidden md:flex items-center gap-4 lg:gap-6">
+          <Link className={`text-sm font-medium hover:underline underline-offset-4 ${themeClasses.textSecondary} hover:${themeClasses.text}`} href="#features">
+            Features
+          </Link>
+          <Link className={`text-sm font-medium hover:underline underline-offset-4 ${themeClasses.textSecondary} hover:${themeClasses.text}`} href="#pricing">
+            Pricing
+          </Link>
+          <Link className={`text-sm font-medium hover:underline underline-offset-4 ${themeClasses.textSecondary} hover:${themeClasses.text}`} href="#about">
+            About
+          </Link>
+          <Link className={`text-sm font-medium hover:underline underline-offset-4 ${themeClasses.textSecondary} hover:${themeClasses.text}`} href="#contact">
+            Contact
+          </Link>
+          <Button 
+            size="sm" 
+            onClick={scrollToCTA}
+            className="transition-all duration-300 hover:scale-105 hover:shadow-md"
+            style={{ 
+              backgroundColor: theme.accentColor,
+              borderColor: theme.accentColor
+            }}
+    >
+            {hero.cta}
+          </Button>
+        </nav>
+        <Button variant="ghost" size="sm" className="ml-auto md:hidden">
+          <Menu className="h-4 w-4" />
+        </Button>
+      </header>
+
+      <main className="flex-1">
+      {/* Hero Section */}
+        <section className="w-full py-8 sm:py-12 md:py-16 lg:py-24 xl:py-32">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col items-center space-y-6 sm:space-y-8 text-center">
+              <div className="space-y-4 sm:space-y-6">
+                <Badge 
+                  variant="secondary" 
+                  className={`mb-4 sm:mb-6 flex items-center gap-2 w-fit mx-auto px-4 py-2 ${theme.mode === 'black' ? 'text-white' : ''}`}
+                  style={{ 
+                    backgroundColor: getAccentColor(theme.accentColor, 0.1),
+                    color: theme.mode === 'black' ? '#fff' : theme.accentColor,
+                    borderColor: getAccentColor(theme.accentColor, 0.2)
+                  }}
+                >
+                  {hero.heroTagIcon && renderIcon(hero.heroTagIcon, "h-3 w-3")}
+                  {hero.heroTag || "AI-Powered Solution"}
+                </Badge>
+                <h1 className={`font-bold tracking-tighter leading-tight ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                  isMobilePreview 
+                    ? 'text-2xl' 
+                    : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl'
+                }`}>
+                  <HighlightedText
+                    text={hero.headline}
+                    highlights={hero.headlineHighlights || []}
+                    accentColor={theme.accentColor}
+                    className={themeClasses.text}
+                  />
+        </h1>
+                <p className={`mx-auto ${themeClasses.textSecondary} ${
+                  isMobilePreview 
+                    ? 'text-sm max-w-[300px]' 
+                    : 'text-base sm:text-lg md:text-xl max-w-[600px] sm:max-w-[700px] px-4 sm:px-0'
+                }`}>
+          {hero.subheadline}
+        </p>
+              </div>
+              <div className="w-full flex justify-center items-center">
+                <div className={`flex justify-center ${isMobilePreview ? 'w-full' : 'w-full sm:w-auto min-w-[320px] max-w-[400px]'}`}>
+                  <LeadForm pageId={pageId || ''} theme={theme} ctaText={hero.cta} previewMode={previewMode} />
+                </div>
+              </div>
+          </div>
+        </div>
+      </section>
+
+        {/* Render sections in order */}
+        {(config.sectionOrder || ['problemSection', 'features', 'socialProof', 'guarantees', 'faq', 'cta']).map(sectionName => {
+          const renderedSection = renderSection(sectionName);
+          console.log(`Rendering section ${sectionName}:`, renderedSection ? 'SHOWN' : 'HIDDEN');
+          return renderedSection;
+        })}
       </main>
 
       {/* Footer */}

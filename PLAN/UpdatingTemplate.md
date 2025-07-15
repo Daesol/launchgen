@@ -73,19 +73,15 @@ This document tracks all files and steps needed when updating the landing page t
 - **Template**: Displays pain points in cards with icons
 - **Editor**: Full CRUD interface for pain points
 
-#### **2. Solution Preview Section (NESB Framework)**
-- **Purpose**: Present solution using New-Easy-Safe-Big framework
-- **Schema**: `solutionSection: { title, subtitle, benefits: [{ title, description, icon, type }] }`
-- **Template**: Benefits displayed with NESB badges
-- **Editor**: Type selector (NEW/EASY/SAFE/BIG) for each benefit
 
-#### **3. Social Proof Section**
+
+#### **4. Social Proof Section**
 - **Purpose**: Build trust through testimonials and statistics
 - **Schema**: `socialProof: { title, subtitle, testimonials: [{ name, role, company, quote, rating, result }], stats: [{ number, label, description }] }`
 - **Template**: Star ratings, customer quotes, and impressive statistics
 - **Editor**: Separate interfaces for testimonials and stats
 
-#### **4. Enhanced Features Section**
+#### **2. Enhanced Features Section**
 - **Purpose**: Show features with clear benefits
 - **Schema**: `features: [{ title, description, icon, benefit }]` (added benefit field)
 - **Template**: "What this means for you" explanations

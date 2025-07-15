@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Zap } from 'lucide-react'
-import { DemoOverlay } from './DemoOverlay'
 import { DemoHeader } from './DemoHeader'
 import { TerminalInput } from './TerminalInput'
 import { GenerationProgress } from './GenerationProgress'
@@ -26,7 +25,6 @@ export function DemoComponent() {
   const [showLeads, setShowLeads] = useState(false)
   const [showAnalytics, setShowAnalytics] = useState(false)
   const [leadCount, setLeadCount] = useState(0)
-  const [isDemoStarted, setIsDemoStarted] = useState(false)
 
   const demoPrompt = 'AI-powered meal planning app for busy professionals'
   const steps = [
@@ -47,7 +45,6 @@ export function DemoComponent() {
     setShowLeads(false)
     setShowAnalytics(false)
     setLeadCount(0)
-    setIsDemoStarted(false)
     setPreviewAnimations({
       header: false,
       content: false,
@@ -86,7 +83,7 @@ export function DemoComponent() {
   }
 
   const startDemo = async () => {
-    // Reset everything except isDemoStarted
+    // Reset everything
     setCurrentStep(0)
     setTypedText('')
     setIsGenerating(false)
@@ -101,9 +98,6 @@ export function DemoComponent() {
       cta: false,
       features: false
     })
-    
-    // Set demo as started (this will hide the overlay)
-    setIsDemoStarted(true)
 
     // Phase 1: Enter your product idea
     setCurrentStep(0)
@@ -208,13 +202,13 @@ export function DemoComponent() {
     }
   }
 
+  // Start demo automatically when component mounts
+  useEffect(() => {
+    startDemo()
+  }, [])
+
   return (
     <div className="relative h-screen md:h-full flex flex-col">
-      {/* Demo Overlay */}
-      {!isDemoStarted && (
-        <DemoOverlay onStartDemo={startDemo} />
-      )}
-
       {/* Demo Content Area - Fixed height with padding for bottom footer */}
       <div className="flex-1 pb-24 overflow-hidden">
         <div className="h-full space-y-4 min-h-0 flex flex-col">

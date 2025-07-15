@@ -21,19 +21,6 @@ export const landingPageSchema = {
       { text: "", icon: "" }
     ]
   },
-  // Solution Preview Section (NESB Framework)
-  solutionSection: {
-    title: "",
-    subtitle: "",
-    benefits: [
-      { 
-        title: "", 
-        description: "", 
-        icon: "",
-        type: "new" as "new" | "easy" | "safe" | "big" // NESB framework
-      }
-    ]
-  },
   // Social Proof Section
   socialProof: {
     title: "",
@@ -62,7 +49,7 @@ export const landingPageSchema = {
     title: "",
     subtitle: "",
     guarantees: [
-      { title: "", description: "", icon: "" }
+    { title: "", description: "", icon: "" }
     ]
   },
   // FAQ Section
@@ -85,6 +72,15 @@ export const landingPageSchema = {
     mode: "white", // "white" for light mode, "black" for dark mode
     accentColor: "#6366f1" // Single accent color for buttons, icons, etc.
   },
+  // Section order for drag-and-drop functionality
+  sectionOrder: [
+    "problemSection",
+    "features", 
+    "socialProof",
+    "guarantees",
+    "faq",
+    "cta"
+  ],
   analytics: {
     googleAnalyticsId: "",
     facebookPixelId: ""

@@ -125,7 +125,7 @@ graph TD;
 - Refactored dashboard to use client-side session/auth logic only.
 - Removed server-side session check and redirect.
 - All dashboard data fetching now happens on the client after session is confirmed.
-- Fixes redirect loop after login and OAuth.
+- Fixes redirect loop after login and OAuth. 
 
 ## Recent UI/UX Improvements
 - **Dashboard Sidebar**: Sticky positioning with user's generated pages list for quick navigation

@@ -50,9 +50,6 @@ export default function Navigation() {
             <span className="text-xl font-bold">LaunchGen</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-slate-300 hover:text-white transition-colors">Features</a>
-            <a href="#demo" className="text-slate-300 hover:text-white transition-colors">Demo</a>
-            <a href="#pricing" className="text-slate-300 hover:text-white transition-colors">Pricing</a>
             {!isAuthenticated ? (
               <>
                 <a href="/auth/signin" className="text-slate-300 hover:text-white transition-colors">Sign In</a>

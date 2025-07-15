@@ -105,7 +105,6 @@ export default function DashboardSessionGate() {
         <DashboardClient pages={pages || []} leadsByPage={leadsByPage} analyticsByPage={analyticsByPage} />
         {/* Navigation */}
         <div className="flex justify-end mt-8 gap-4">
-          <Link href="/dashboard/profile" className="text-slate-400 hover:text-slate-700">Profile</Link>
           <Link href="/auth/signin?signout=true" className="text-slate-400 hover:text-slate-700">Sign Out</Link>
         </div>
       </div>

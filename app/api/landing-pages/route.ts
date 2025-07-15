@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
   }
   try {
-    const { id, template_id, page_content, page_style } = await req.json();
+    const { id, template_id, page_content, page_style, original_prompt } = await req.json();
     if (!page_content || typeof page_content !== "object") {
       return NextResponse.json({ error: "page_content is required." }, { status: 400 });
     }
@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
       template_id: template_id || "default",
       page_content,
       page_style,
+      original_prompt: original_prompt || null,
       slug,
     };
     if (id) upsertData["id"] = id;

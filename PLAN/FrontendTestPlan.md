@@ -86,4 +86,16 @@ This document tracks tests for API endpoints, backend logic, and critical fronte
 - [x] **Navigation Optimization**: Reduced top bar height improves space utilization without affecting functionality
 - [x] **Auto-resizing Textareas**: Textareas adjust height based on content for better editing experience
 - [x] **Sticky Preview Header**: Header remains visible during scrolling for persistent editing controls
-- [x] **Always-expanded Sidebar**: Consistent navigation experience without toggle complexity 
+- [x] **Always-expanded Sidebar**: Consistent navigation experience without toggle complexity
+- [x] **Page Regeneration**: Regenerate button works without errors, handles API response structure correctly
+- [x] **Null Safety**: Component handles undefined or incomplete data gracefully without crashes
+- [x] **Error Recovery**: Component recovers from malformed data and provides fallback values
+- [x] **Save Functionality**: Save button properly saves changes to database via API
+- [x] **Auto-save**: Changes are automatically saved after 3 seconds of inactivity
+- [x] **Save Status Indicators**: Visual indicators show current save status (saved, saving, unsaved)
+- [x] **Save Button Feedback**: Save button changes appearance when there are unsaved changes
+- [x] **Regeneration Error Handling**: Regeneration failures preserve original content and show clear error messages
+- [x] **Content Backup System**: Original content is backed up before regeneration and restored on failure
+- [x] **Error Toast UI**: Error messages display clearly with instructions and longer duration
+- [x] **Content Validation**: Regenerated content is validated before being applied
+- [x] **Fallback Prevention**: No placeholder content is created during regeneration failures 

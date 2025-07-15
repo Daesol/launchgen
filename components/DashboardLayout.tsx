@@ -8,7 +8,6 @@ import { createPortal } from "react-dom";
 const sidebarLinks = [
   { href: "/dashboard", label: "Dashboard", icon: "🏠" },
   { href: "/dashboard/generate", label: "Create Page", icon: "➕" },
-  { href: "/dashboard/profile", label: "Profile", icon: "👤" },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -198,15 +197,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     zIndex: 9999
                   }}
                 >
-                  <Link 
-                    href="/dashboard/profile" 
-                    className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 transition-colors"
-                    onClick={() => setProfileOpen(false)}
-                  >
-                    <span className="text-sm">👤</span>
-                    Profile Settings
-                  </Link>
-                  <hr className="my-2 border-slate-100" />
                   <button
                     className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors text-left"
                     onClick={() => {
@@ -345,15 +335,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   zIndex: 9999
                 }}
               >
-                <Link 
-                  href="/dashboard/profile" 
-                  className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 transition-colors"
-                  onClick={() => setProfileOpen(false)}
-                >
-                  <span className="text-sm">👤</span>
-                  Profile Settings
-                </Link>
-                <hr className="my-2 border-slate-100" />
                 <button
                   className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors text-left"
                   onClick={() => {

@@ -29,18 +29,34 @@ export default function GenerateClient() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to generate page");
       
+      // Debug: Log the generated config
+      console.log('AI Generated Config:', data.config);
+      
       // Step 2: Save the generated page to database
       const pageConfig = {
         page_content: {
           business: data.config.business || { name: '', logo: '' },
           hero: data.config.hero,
           features: data.config.features,
+          featuresTitle: data.config.featuresTitle,
+          featuresSubtitle: data.config.featuresSubtitle,
+          problemSection: data.config.problemSection,
+          socialProof: data.config.socialProof,
+          guarantees: data.config.guarantees,
+          faq: data.config.faq,
+          ctaTitle: data.config.ctaTitle,
+          ctaSubtitle: data.config.ctaSubtitle,
+          urgency: data.config.urgency,
         },
         page_style: {
           theme: data.config.theme,
         },
-        template_id: "default"
+        template_id: "default",
+        original_prompt: prompt // Save the original prompt
       };
+
+      // Debug: Log what's being saved
+      console.log('Page Config being saved:', pageConfig);
 
       const saveRes = await fetch("/api/landing-pages", {
         method: "POST",
