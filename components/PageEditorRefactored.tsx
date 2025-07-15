@@ -134,7 +134,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
   const [published, setPublished] = useState(false);
   const [error, setError] = useState("");
   const [sidePanelCollapsed, setSidePanelCollapsed] = useState(false);
-  const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
+  const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('mobile'); // Default to mobile
   const [showSidePanel, setShowSidePanel] = useState(false); // For mobile
   const [regenerating, setRegenerating] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -713,115 +713,117 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
   }, [autoSaveTimer]);
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex flex-col lg:flex-row h-screen bg-gray-100">
       {/* Preview Panel */}
       <div className={`flex-1 flex flex-col transition-all duration-300 ${
         sidePanelCollapsed ? 'ml-0' : 'ml-0'
       }`}>
         {/* Preview Header */}
-        <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-xl font-semibold text-gray-800">Landing Page Editor</h1>
-            <div className="flex items-center space-x-2">
+        <div className="bg-white border-b border-gray-200 p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+              <h1 className="text-lg sm:text-xl font-semibold text-gray-800">Landing Page Editor</h1>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setPreviewMode('desktop')}
+                  className={`px-3 py-1 text-sm rounded hidden sm:block ${
+                    previewMode === 'desktop'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  Desktop
+                </button>
+                <button
+                  onClick={() => setPreviewMode('mobile')}
+                  className={`px-3 py-1 text-sm rounded ${
+                    previewMode === 'mobile'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  Mobile
+                </button>
+              </div>
+              {/* Save Status Indicator */}
+              <div className="flex items-center space-x-2">
+                {saving ? (
+                  <div className="flex items-center space-x-1 text-blue-600">
+                    <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-sm">Saving...</span>
+                  </div>
+                ) : hasUnsavedChanges ? (
+                  <div className="flex items-center space-x-1 text-orange-600">
+                    <div className="w-2 h-2 bg-orange-600 rounded-full"></div>
+                    <span className="text-sm">Unsaved changes</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-1 text-green-600">
+                    <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                    <span className="text-sm">
+                      {lastSaved ? `Saved ${lastSaved.toLocaleTimeString()}` : 'Saved'}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-2 sm:space-x-3">
               <button
-                onClick={() => setPreviewMode('desktop')}
-                className={`px-3 py-1 text-sm rounded ${
-                  previewMode === 'desktop'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                onClick={() => setShowSidePanel(!showSidePanel)}
+                className="lg:hidden px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm"
+              >
+                {showSidePanel ? 'Hide Editor' : 'Show Editor'}
+              </button>
+              
+              <button
+                onClick={() => {
+                  // Save current state first, then open preview
+                  handleSave().then(() => {
+                    if (id) {
+                      window.open(`/page/${initialConfig.slug}`, '_blank');
+                    }
+                  });
+                }}
+                disabled={saving}
+                className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 text-sm"
+              >
+                Preview
+              </button>
+              
+              <button
+                onClick={handleRegenerate}
+                disabled={regenerating}
+                className="px-3 sm:px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 text-sm"
+              >
+                {regenerating ? 'Regenerating...' : 'Regenerate'}
+              </button>
+              
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className={`px-3 sm:px-4 py-2 text-white rounded disabled:opacity-50 text-sm ${
+                  hasUnsavedChanges 
+                    ? 'bg-orange-500 hover:bg-orange-600' 
+                    : 'bg-blue-500 hover:bg-blue-600'
                 }`}
               >
-                Desktop
+                {saving ? 'Saving...' : hasUnsavedChanges ? 'Save*' : 'Save'}
               </button>
+              
               <button
-                onClick={() => setPreviewMode('mobile')}
-                className={`px-3 py-1 text-sm rounded ${
-                  previewMode === 'mobile'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
+                onClick={handlePublish}
+                disabled={saving || published}
+                className="px-3 sm:px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 text-sm"
               >
-                Mobile
+                {published ? 'Published' : 'Publish'}
               </button>
             </div>
-            {/* Save Status Indicator */}
-            <div className="flex items-center space-x-2 ml-4">
-              {saving ? (
-                <div className="flex items-center space-x-1 text-blue-600">
-                  <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-sm">Saving...</span>
-                </div>
-              ) : hasUnsavedChanges ? (
-                <div className="flex items-center space-x-1 text-orange-600">
-                  <div className="w-2 h-2 bg-orange-600 rounded-full"></div>
-                  <span className="text-sm">Unsaved changes</span>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-1 text-green-600">
-                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                  <span className="text-sm">
-                    {lastSaved ? `Saved ${lastSaved.toLocaleTimeString()}` : 'Saved'}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={() => setSidePanelCollapsed(!sidePanelCollapsed)}
-              className="lg:hidden px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-            >
-              {sidePanelCollapsed ? 'Show Editor' : 'Hide Editor'}
-            </button>
-            
-            <button
-              onClick={() => {
-                // Save current state first, then open preview
-                handleSave().then(() => {
-                  if (id) {
-                    window.open(`/page/${initialConfig.slug}`, '_blank');
-                  }
-                });
-              }}
-              disabled={saving}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-            >
-              Preview
-            </button>
-            
-            <button
-              onClick={handleRegenerate}
-              disabled={regenerating}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
-            >
-              {regenerating ? 'Regenerating...' : 'Regenerate'}
-            </button>
-            
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
-                hasUnsavedChanges 
-                  ? 'bg-orange-500 hover:bg-orange-600' 
-                  : 'bg-blue-500 hover:bg-blue-600'
-              }`}
-            >
-              {saving ? 'Saving...' : hasUnsavedChanges ? 'Save*' : 'Save'}
-            </button>
-            
-            <button
-              onClick={handlePublish}
-              disabled={saving || published}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-            >
-              {published ? 'Published' : 'Publish'}
-            </button>
           </div>
         </div>
 
         {/* Preview Content */}
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-2 sm:p-4">
           <div className={`mx-auto transition-all duration-300 ${
             previewMode === 'mobile' ? 'max-w-sm' : 'max-w-4xl'
           }`}>
@@ -845,7 +847,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
             )}
             
             <div className={`bg-white shadow-lg rounded-lg overflow-hidden ${
-              previewMode === 'mobile' ? 'border-8 border-gray-800 rounded-3xl' : ''
+              previewMode === 'mobile' ? 'border-4 sm:border-8 border-gray-800 rounded-2xl sm:rounded-3xl' : ''
             }`}>
               <LandingPageTemplate
                 config={{
@@ -861,10 +863,10 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
         </div>
       </div>
 
-      {/* Edit Panel */}
-      <div className={`${
+      {/* Edit Panel - Desktop Sidebar */}
+      <div className={`hidden lg:flex ${
         sidePanelCollapsed ? 'w-0 overflow-hidden' : 'w-96'
-      } bg-white border-l border-gray-200 flex flex-col transition-all duration-300`}>
+      } bg-white border-l border-gray-200 flex-col transition-all duration-300`}>
         <div className="p-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-800">Edit Page</h2>
         </div>
@@ -1029,9 +1031,187 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
         </div>
       </div>
 
+      {/* Edit Panel - Mobile Overlay */}
+      {showSidePanel && (
+        <div className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl max-h-[85vh] flex flex-col">
+            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-800">Edit Page</h2>
+              <button
+                onClick={() => setShowSidePanel(false)}
+                className="p-2 text-gray-500 hover:text-gray-700"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4">
+              {/* Theme Settings - Moved to top */}
+              <ThemeSection
+                theme={pageStyle?.theme || { mode: 'white', accentColor: '#6366f1' }}
+                onThemeChange={handleThemeChange}
+                isExpanded={expandedSections.theme}
+                onToggle={() => toggleSection('theme')}
+              />
+
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={sectionOrder}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {/* Business Info Section */}
+                  <BusinessInfoSection
+                    business={pageContent?.business || {}}
+                    onBusinessChange={handleBusinessChange}
+                    isExpanded={expandedSections.business}
+                    onToggle={() => toggleSection('business')}
+                  />
+
+                  {/* Hero Section */}
+                  <HeroSection
+                    hero={pageContent?.hero || {}}
+                    onHeroChange={handleHeroChange}
+                    onHighlightToggle={handleHighlightToggle}
+                    isExpanded={expandedSections.hero}
+                    onToggle={() => toggleSection('hero')}
+                  />
+
+                  {/* Draggable Sections */}
+                  {sectionOrder.map((sectionId) => {
+                    switch (sectionId) {
+                      case 'problemSection':
+                        return (
+                          <DraggableSection key={sectionId} id={sectionId}>
+                            <ProblemSection
+                              problemSection={pageContent?.problemSection || {}}
+                              onProblemSectionChange={handleProblemSectionChange}
+                              onPainPointsChange={handlePainPointsChange}
+                              onAddPainPoint={handleAddPainPoint}
+                              onRemovePainPoint={handleRemovePainPoint}
+                              isExpanded={expandedSections.problemSection}
+                              onToggle={() => toggleSection('problemSection')}
+                              isVisible={visibleSections.problemSection}
+                              onToggleVisibility={() => toggleSectionVisibility('problemSection')}
+                            />
+                          </DraggableSection>
+                        );
+                      
+                      case 'features':
+                        return (
+                          <DraggableSection key={sectionId} id={sectionId}>
+                            <FeaturesSection
+                              features={pageContent?.features || []}
+                              featuresTitle={pageContent?.featuresTitle || ''}
+                              featuresSubtitle={pageContent?.featuresSubtitle || ''}
+                              onFeatureChange={handleFeatureChange}
+                              onAddFeature={handleAddFeature}
+                              onRemoveFeature={handleRemoveFeature}
+                              onPageContentChange={handlePageContentChange}
+                              isExpanded={expandedSections.features}
+                              onToggle={() => toggleSection('features')}
+                              isVisible={visibleSections.features}
+                              onToggleVisibility={() => toggleSectionVisibility('features')}
+                            />
+                          </DraggableSection>
+                        );
+                      
+                      case 'socialProof':
+                        return (
+                          <DraggableSection key={sectionId} id={sectionId}>
+                            <SocialProofSection
+                              socialProof={pageContent?.socialProof || {}}
+                              onSocialProofChange={handleSocialProofChange}
+                              onTestimonialsChange={handleTestimonialsChange}
+                              onStatsChange={handleStatsChange}
+                              onAddTestimonial={handleAddTestimonial}
+                              onAddStat={handleAddStat}
+                              onRemoveTestimonial={handleRemoveTestimonial}
+                              onRemoveStat={handleRemoveStat}
+                              isExpanded={expandedSections.socialProof}
+                              onToggle={() => toggleSection('socialProof')}
+                              isVisible={visibleSections.socialProof}
+                              onToggleVisibility={() => toggleSectionVisibility('socialProof')}
+                            />
+                          </DraggableSection>
+                        );
+                      
+                      case 'guarantees':
+                        return (
+                          <DraggableSection key={sectionId} id={sectionId}>
+                            <GuaranteesSection
+                              guarantees={pageContent?.guarantees || {}}
+                              onGuaranteesChange={handleGuaranteesChange}
+                              onGuaranteesArrayChange={handleGuaranteesArrayChange}
+                              onAddGuarantee={handleAddGuarantee}
+                              onRemoveGuarantee={handleRemoveGuarantee}
+                              isExpanded={expandedSections.guarantees}
+                              onToggle={() => toggleSection('guarantees')}
+                              isVisible={visibleSections.guarantees}
+                              onToggleVisibility={() => toggleSectionVisibility('guarantees')}
+                            />
+                          </DraggableSection>
+                        );
+                      
+                      case 'faq':
+                        return (
+                          <DraggableSection key={sectionId} id={sectionId}>
+                            <FAQSection
+                              faq={pageContent?.faq || {}}
+                              onFAQChange={handleFAQChange}
+                              onQuestionsChange={handleQuestionsChange}
+                              onAddQuestion={handleAddQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              isExpanded={expandedSections.faq}
+                              onToggle={() => toggleSection('faq')}
+                              isVisible={visibleSections.faq}
+                              onToggleVisibility={() => toggleSectionVisibility('faq')}
+                            />
+                          </DraggableSection>
+                        );
+                      
+                      case 'cta':
+                        return (
+                          <DraggableSection key={sectionId} id={sectionId}>
+                            <CTASection
+                              ctaTitle={pageContent?.ctaTitle || ''}
+                              ctaSubtitle={pageContent?.ctaSubtitle || ''}
+                              onPageContentChange={handlePageContentChange}
+                              isExpanded={expandedSections.cta}
+                              onToggle={() => toggleSection('cta')}
+                              isVisible={visibleSections.cta}
+                              onToggleVisibility={() => toggleSectionVisibility('cta')}
+                            />
+                          </DraggableSection>
+                        );
+                      
+                      default:
+                        return null;
+                    }
+                  })}
+                </SortableContext>
+              </DndContext>
+
+              {/* Non-draggable sections */}
+              <UrgencySection
+                urgency={pageContent?.urgency || {}}
+                onUrgencyChange={handleUrgencyChange}
+                isExpanded={expandedSections.urgency}
+                onToggle={() => toggleSection('urgency')}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Error Toast */}
       {showErrorToast && error && (
-        <div className="fixed bottom-4 right-4 bg-red-500 text-white p-4 rounded-lg shadow-lg z-50 max-w-md">
+        <div className="fixed bottom-4 left-4 right-4 sm:right-4 sm:left-auto bg-red-500 text-white p-4 rounded-lg shadow-lg z-50 max-w-md mx-auto sm:mx-0">
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0 mt-1">
               <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
