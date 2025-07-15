@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Check, Menu, Github, Twitter, Linkedin, Zap, Star, Shield, Rocket, Target, TrendingUp, Award, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Menu, Star } from "lucide-react";
+import { renderIcon, getDefaultIcon } from "@/lib/iconUtils";
 import Link from "next/link";
 import LeadForm from "./LeadForm";
 import { getThemeClasses, getAccentColor } from "@/lib/themeUtils";
@@ -96,6 +97,9 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
   console.log("Guarantees:", config?.guarantees);
   console.log("FAQ:", config?.faq);
   
+  // Mobile menu state
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
   if (!config || !config.hero || !config.features) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 text-red-600 text-lg font-semibold">
@@ -125,17 +129,25 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
         session_id = crypto.randomUUID();
         localStorage.setItem(`lg_session_${pageId}`, session_id);
       }
-      fetch("/api/analytics", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          landing_page_id: pageId,
-          event_type: "page_view",
-          referrer: document.referrer,
-          utm_source: new URLSearchParams(window.location.search).get("utm_source"),
-          session_id,
-        }),
-      });
+      
+      // Check if we've already recorded a page view for this session
+      const pageViewRecorded = localStorage.getItem(`lg_pageview_${pageId}_${session_id}`);
+      if (!pageViewRecorded) {
+        fetch("/api/analytics", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            landing_page_id: pageId,
+            event_type: "page_view",
+            referrer: document.referrer,
+            utm_source: new URLSearchParams(window.location.search).get("utm_source"),
+            session_id,
+          }),
+        });
+        
+        // Mark that we've recorded a page view for this session
+        localStorage.setItem(`lg_pageview_${pageId}_${session_id}`, 'true');
+      }
     }
   }, [pageId]);
 
@@ -144,30 +156,25 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
     if (ctaSection) {
       ctaSection.scrollIntoView({ behavior: 'smooth' });
     }
+    setIsMobileMenuOpen(false);
+  };
+
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+    setIsMobileMenuOpen(false);
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   // Force mobile layout when in mobile preview mode
   const isMobilePreview = previewMode === 'mobile';
 
-  // Function to render icon based on icon name
-  const renderIcon = (iconName: string, className: string = "h-4 w-4") => {
-    const iconMap: { [key: string]: React.ReactNode } = {
-      zap: <Zap className={className} />,
-      star: <Star className={className} />,
-      shield: <Shield className={className} />,
-      rocket: <Rocket className={className} />,
-      target: <Target className={className} />,
-      trendingUp: <TrendingUp className={className} />,
-      award: <Award className={className} />,
-      sparkles: <Sparkles className={className} />,
-    };
-    return iconMap[iconName.toLowerCase()] || <Sparkles className={className} />;
-  };
 
-  const getDefaultIcon = (index: number) => {
-    const defaultIcons = ['zap', 'star', 'shield', 'rocket', 'target', 'trendingUp', 'award', 'sparkles'];
-    return defaultIcons[index % defaultIcons.length];
-  };
 
   // Helper function to check if a section should be visible
   const isSectionVisible = (sectionName: string): boolean => {
@@ -194,7 +201,7 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
     switch (sectionName) {
       case 'problemSection':
         return isSectionVisible('problemSection') ? (
-          <section key="problemSection" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}>
+          <section key="problemSection" id="problem-section" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className={`grid gap-8 sm:gap-12 lg:gap-16 ${
                 isMobilePreview 
@@ -310,7 +317,7 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
         ) : null;
       case 'socialProof':
         return isSectionVisible('socialProof') ? (
-          <section key="socialProof" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}>
+          <section key="socialProof" id="social-proof" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
                 <div className="space-y-3 sm:space-y-4">
@@ -405,7 +412,7 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
         ) : null;
       case 'guarantees':
         return isSectionVisible('guarantees') ? (
-          <section key="guarantees" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}>
+          <section key="guarantees" id="guarantees" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
                 <div className="space-y-3 sm:space-y-4">
@@ -461,7 +468,7 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
         ) : null;
       case 'faq':
         return isSectionVisible('faq') ? (
-          <section key="faq" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.muted}`}>
+          <section key="faq" id="faq" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.muted}`}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
                 <div className="space-y-3 sm:space-y-4">
@@ -610,14 +617,90 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
             {hero.cta}
           </Button>
         </nav>
-        <Button variant="ghost" size="sm" className="ml-auto md:hidden">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className={`ml-auto md:hidden ${theme.mode === 'black' ? 'text-white hover:text-gray-200' : 'text-gray-700 hover:text-gray-900'}`}
+          onClick={toggleMobileMenu}
+        >
           <Menu className="h-4 w-4" />
         </Button>
       </header>
 
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+          <div className="absolute top-0 left-0 right-0 bg-white shadow-lg">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <span className="font-semibold text-gray-800">Menu</span>
+              <button
+                onClick={toggleMobileMenu}
+                className="p-2 text-gray-500 hover:text-gray-700"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <nav className="p-4 space-y-4">
+              {isSectionVisible('features') && (
+                <button
+                  onClick={() => scrollToSection('features')}
+                  className={`block w-full text-left py-2 px-3 rounded-lg transition-colors ${themeClasses.textSecondary} hover:${themeClasses.text} hover:bg-gray-100`}
+                >
+                  Features
+                </button>
+              )}
+              {isSectionVisible('problemSection') && (
+                <button
+                  onClick={() => scrollToSection('problem-section')}
+                  className={`block w-full text-left py-2 px-3 rounded-lg transition-colors ${themeClasses.textSecondary} hover:${themeClasses.text} hover:bg-gray-100`}
+                >
+                  Problems
+                </button>
+              )}
+              {isSectionVisible('socialProof') && (
+                <button
+                  onClick={() => scrollToSection('social-proof')}
+                  className={`block w-full text-left py-2 px-3 rounded-lg transition-colors ${themeClasses.textSecondary} hover:${themeClasses.text} hover:bg-gray-100`}
+                >
+                  Social Proof
+                </button>
+              )}
+              {isSectionVisible('guarantees') && (
+                <button
+                  onClick={() => scrollToSection('guarantees')}
+                  className={`block w-full text-left py-2 px-3 rounded-lg transition-colors ${themeClasses.textSecondary} hover:${themeClasses.text} hover:bg-gray-100`}
+                >
+                  Guarantees
+                </button>
+              )}
+              {isSectionVisible('faq') && (
+                <button
+                  onClick={() => scrollToSection('faq')}
+                  className={`block w-full text-left py-2 px-3 rounded-lg transition-colors ${themeClasses.textSecondary} hover:${themeClasses.text} hover:bg-gray-100`}
+                >
+                  FAQ
+                </button>
+              )}
+              <button
+                onClick={scrollToCTA}
+                className={`block w-full text-left py-2 px-3 rounded-lg transition-colors font-medium`}
+                style={{ 
+                  backgroundColor: theme.accentColor,
+                  color: 'white'
+                }}
+              >
+                {hero.cta}
+              </button>
+            </nav>
+          </div>
+        </div>
+      )}
+
       <main className="flex-1">
       {/* Hero Section */}
-        <section className="w-full py-8 sm:py-12 md:py-16 lg:py-24 xl:py-32">
+        <section className={`w-full ${isMobilePreview ? 'min-h-[90vh] flex items-center justify-center' : 'py-8 sm:py-12 md:py-16 lg:py-24 xl:py-32'}`}>
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col items-center space-y-6 sm:space-y-8 text-center">
               <div className="space-y-4 sm:space-y-6">
@@ -675,31 +758,6 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
         <p className={`${themeClasses.textSecondary} text-center ${
           isMobilePreview ? 'text-xs' : 'text-xs sm:text-sm'
         }`}>© 2024 {business?.name || 'LaunchGen'} AI. All rights reserved.</p>
-        <nav className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:ml-auto items-center">
-          <div className="flex gap-3 sm:gap-4">
-            <Link className={`hover:underline underline-offset-4 ${themeClasses.textSecondary} hover:${themeClasses.text} ${
-              isMobilePreview ? 'text-xs' : 'text-xs sm:text-sm'
-            }`} href="#">
-              Terms of Service
-            </Link>
-            <Link className={`hover:underline underline-offset-4 ${themeClasses.textSecondary} hover:${themeClasses.text} ${
-              isMobilePreview ? 'text-xs' : 'text-xs sm:text-sm'
-            }`} href="#">
-              Privacy Policy
-            </Link>
-          </div>
-          <div className="flex items-center space-x-3 sm:space-x-2">
-            <Link href="#" className={`${themeClasses.textSecondary} hover:${themeClasses.text}`}>
-              <Github className="h-4 w-4" />
-            </Link>
-            <Link href="#" className={`${themeClasses.textSecondary} hover:${themeClasses.text}`}>
-              <Twitter className="h-4 w-4" />
-            </Link>
-            <Link href="#" className={`${themeClasses.textSecondary} hover:${themeClasses.text}`}>
-              <Linkedin className="h-4 w-4" />
-            </Link>
-          </div>
-        </nav>
       </footer>
     </div>
   );
