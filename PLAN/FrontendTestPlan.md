@@ -77,6 +77,10 @@ This document tracks tests for API endpoints, backend logic, and critical fronte
 - [x] No redirect loop after login or OAuth.
 - [x] Dashboard data loads only after session is confirmed.
 - [x] All dashboard features work as expected after refactor.
+- [x] Signed-in users are automatically redirected to /dashboard when visiting the main landing page.
+- [x] Loading spinner shows while checking authentication status on landing page.
+- [x] Authentication state changes are properly handled (sign-in/sign-out scenarios).
+- [x] Landing page content only shows for non-authenticated users.
 
 ## Recent UI/UX Test Results
 - [x] **Dashboard Sidebar**: Sticky positioning works correctly, user's pages list loads and navigates properly
@@ -110,4 +114,38 @@ This document tracks tests for API endpoints, backend logic, and critical fronte
 - [x] **Chatbot Webhook Integration**: Messages are successfully sent to the specified webhook URL
 - [x] **Chatbot User Data**: User information (ID, email, timestamp) is included in webhook payload
 - [x] **Chatbot Error Handling**: Graceful error handling when webhook fails
-- [x] **Chatbot Responsive Design**: Chatbot works properly on mobile and desktop devices 
+- [x] **Chatbot Responsive Design**: Chatbot works properly on mobile and desktop devices
+- [x] **AI Background Image Generation**: DALL-E API generates appropriate background images based on hero content
+- [x] **Background Image Toggle**: Users can enable/disable background images in hero section
+- [x] **Background Image Opacity Control**: Opacity slider works correctly and updates in real-time
+- [x] **Background Image Preview**: Image preview displays correctly in the editor
+- [x] **Background Image Rendering**: Background images display properly on landing pages with opacity overlay
+- [x] **Manual Image URL Input**: Users can enter custom image URLs as alternative to AI generation
+- [x] **Image Generation Error Handling**: Proper error messages display when image generation fails
+- [x] **Business Name Integration**: Business name is included in image generation prompts for context
+- [x] **Template Selection**: Users can switch between Classic and Image-Rich templates
+- [x] **Template Preview**: Template selector shows visual previews and feature descriptions
+- [x] **Template Persistence**: Template selection is saved and restored correctly
+- [x] **Image-Rich Template Rendering**: Image-rich template displays with all image elements
+- [x] **Hero Images**: Hero section images display correctly in image-rich template
+- [x] **Section Background Images**: Background images render properly for all sections
+- [x] **Card Images**: Feature, testimonial, and guarantee card images display correctly
+- [x] **User Avatars**: Testimonial user avatars render properly
+- [x] **Public Page Template Rendering**: Public pages use correct template based on template_id
+- [x] **Template Switching**: Users can switch templates and see immediate preview changes
+
+## Admin System & Analytics Tests
+- [ ] **Admin Authentication**: Admin login page loads correctly at `/admin/auth`
+- [ ] **Admin Credential Validation**: Correct admin credentials authenticate successfully
+- [ ] **Admin Route Protection**: Unauthorized users are redirected to login when accessing admin routes
+- [ ] **Admin Dashboard Access**: Authenticated admin can access dashboard at `/admin/dashboard`
+- [ ] **Admin Metrics Display**: Dashboard shows total users, active users, pages generated, and conversion rates
+- [ ] **Time Range Selection**: Daily, weekly, monthly, and yearly metrics filters work correctly
+- [ ] **Metrics API Integration**: `/api/admin/metrics` endpoint returns accurate data from database
+- [ ] **Growth Rate Calculation**: User growth rates are calculated and displayed correctly
+- [ ] **Conversion Rate Display**: Lead conversion rates are calculated and shown accurately
+- [ ] **Admin Logout**: Logout button clears session and redirects to login page
+- [ ] **JWT Token Validation**: Admin tokens are properly validated and expire after 24 hours
+- [ ] **Middleware Protection**: All admin routes except `/admin/auth` require authentication
+- [ ] **Error Handling**: Invalid credentials show appropriate error messages
+- [ ] **Responsive Dashboard**: Admin dashboard displays correctly on mobile and desktop devices 

@@ -1,6 +1,7 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import LandingPageTemplate from '@/components/LandingPageTemplate';
+import LandingPageTemplateImage from '@/components/LandingPageTemplateImage';
 
 interface PageProps {
   params: { slug: string };
@@ -20,7 +21,11 @@ export default async function PublicLandingPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-white text-black">
-      <LandingPageTemplate config={{ ...page.page_content, theme: page.page_style?.theme }} pageId={page.id} />
+      {page.template_id === 'image-rich' ? (
+        <LandingPageTemplateImage config={{ ...page.page_content, theme: page.page_style?.theme }} pageId={page.id} />
+      ) : (
+        <LandingPageTemplate config={{ ...page.page_content, theme: page.page_style?.theme }} pageId={page.id} />
+      )}
     </div>
   );
 } 

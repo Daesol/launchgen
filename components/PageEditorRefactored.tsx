@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import LandingPageTemplate from "./LandingPageTemplate";
+import LandingPageTemplateImage from "./LandingPageTemplateImage";
+import TemplateSelector from "./TemplateSelector";
 import DraggableSection from "./DraggableSection";
 import MobilePreviewQR from "./MobilePreviewQR";
 import {
@@ -128,6 +130,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
   const [pageContent, setPageContent] = useState<any>(mergedContent);
   const [pageStyle, setPageStyle] = useState<any>(processedInitialStyle);
   const [templateId, setTemplateId] = useState<string>(initialTemplateId);
+  const [currentTemplate, setCurrentTemplate] = useState<string>(initialTemplateId);
   const [id, setId] = useState<string | undefined>(initialId);
   const [saving, setSaving] = useState(false);
   const [originalPrompt, setOriginalPrompt] = useState<string>(initialOriginalPrompt);
@@ -188,6 +191,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
     faq: true,
     urgency: true,
     theme: true,
+    template: false,
   });
 
   // Section visibility state - default: all sections visible
@@ -277,7 +281,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
     markAsUnsaved();
   };
 
-  const handleHeroChange = (field: string, value: string) => {
+  const handleHeroChange = (field: string, value: string | boolean | number) => {
     setPageContent((prev: any) => ({
       ...prev,
       hero: { ...(prev?.hero || {}), [field]: value }
@@ -376,6 +380,12 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
       ...prev,
       urgency: { ...prev.urgency, [field]: value }
     }));
+  };
+
+  const handleTemplateChange = (templateId: string) => {
+    setCurrentTemplate(templateId);
+    setTemplateId(templateId);
+    markAsUnsaved();
   };
 
   // Array change handlers
@@ -933,15 +943,27 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
             <div className={`bg-white shadow-lg rounded-lg overflow-hidden ${
               previewMode === 'mobile' ? 'border-4 sm:border-8 border-gray-800 rounded-2xl sm:rounded-3xl' : ''
             }`}>
-              <LandingPageTemplate
-                config={{
-                  ...pageContent,
-                  ...(pageStyle || {}),
-                }}
-                pageId={id}
-                previewMode={previewMode}
-                visibleSections={visibleSections}
-              />
+              {currentTemplate === 'image-rich' ? (
+                <LandingPageTemplateImage
+                  config={{
+                    ...pageContent,
+                    ...(pageStyle || {}),
+                  }}
+                  pageId={id}
+                  previewMode={previewMode}
+                  visibleSections={visibleSections}
+                />
+              ) : (
+                <LandingPageTemplate
+                  config={{
+                    ...pageContent,
+                    ...(pageStyle || {}),
+                  }}
+                  pageId={id}
+                  previewMode={previewMode}
+                  visibleSections={visibleSections}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -962,6 +984,14 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
             onThemeChange={handleThemeChange}
             isExpanded={expandedSections.theme}
             onToggle={() => toggleSection('theme')}
+          />
+
+          {/* Template Selection */}
+          <TemplateSelector
+            currentTemplate={currentTemplate}
+            onTemplateChange={handleTemplateChange}
+            isExpanded={expandedSections.template}
+            onToggle={() => toggleSection('template')}
           />
 
           <DndContext
@@ -988,6 +1018,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                 onHighlightToggle={handleHighlightToggle}
                 isExpanded={expandedSections.hero}
                 onToggle={() => toggleSection('hero')}
+                businessName={pageContent?.business?.name}
               />
 
               {/* Draggable Sections */}
@@ -1140,6 +1171,14 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                 onToggle={() => toggleSection('theme')}
               />
 
+              {/* Template Selection */}
+              <TemplateSelector
+                currentTemplate={currentTemplate}
+                onTemplateChange={handleTemplateChange}
+                isExpanded={expandedSections.template}
+                onToggle={() => toggleSection('template')}
+              />
+
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -1164,6 +1203,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                     onHighlightToggle={handleHighlightToggle}
                     isExpanded={expandedSections.hero}
                     onToggle={() => toggleSection('hero')}
+                    businessName={pageContent?.business?.name}
                   />
 
                   {/* Draggable Sections */}

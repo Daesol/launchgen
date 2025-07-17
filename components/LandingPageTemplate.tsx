@@ -23,6 +23,8 @@ interface LandingPageTemplateProps {
       subheadline: string;
       cta: string;
       backgroundImage?: string;
+      backgroundImageEnabled?: boolean;
+      backgroundImageOpacity?: number;
       heroTag?: string;
       heroTagIcon?: string;
     };
@@ -700,8 +702,18 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
 
       <main className="flex-1">
       {/* Hero Section */}
-        <section className={`w-full ${isMobilePreview ? 'min-h-[90vh] flex items-center justify-center' : 'py-8 sm:py-12 md:py-16 lg:py-24 xl:py-32'}`}>
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section 
+          className={`w-full relative ${isMobilePreview ? 'min-h-[90vh] flex items-center justify-center' : 'py-8 sm:py-12 md:py-16 lg:py-24 xl:py-32'}`}
+          style={{
+            backgroundImage: hero.backgroundImageEnabled && hero.backgroundImage 
+              ? `linear-gradient(rgba(255, 255, 255, ${1 - (hero.backgroundImageOpacity || 30) / 100}), rgba(255, 255, 255, ${1 - (hero.backgroundImageOpacity || 30) / 100})), url(${hero.backgroundImage})`
+              : undefined,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="flex flex-col items-center space-y-6 sm:space-y-8 text-center">
               <div className="space-y-4 sm:space-y-6">
                 <Badge 

@@ -111,6 +111,9 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 - hero.heroTagIcon: MUST be one of these exact values: "zap", "star", "shield", "rocket", "target", "trendingUp", "award", "sparkles".
 - hero.subheadline: A compelling subheadline that expands on the value proposition and aligns with the original prompt.
 - hero.cta: A clear call-to-action button text.
+- hero.backgroundImage: Leave empty string "" for no background image.
+- hero.backgroundImageEnabled: Set to false for no background image.
+- hero.backgroundImageOpacity: Set to 30 for default opacity.
 
 // Problem Section - MUST have content
 - problemSection.title: A compelling title that identifies the problem mentioned in the original prompt.
@@ -174,6 +177,9 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 - hero.heroTagIcon: MUST be one of these exact values: "zap", "star", "shield", "rocket", "target", "trendingUp", "award", "sparkles" and it must NOT be empty.
 - hero.subheadline: A compelling subheadline that expands on the value proposition and creates intrigue.
 - hero.cta: A clear call-to-action button text (e.g., "Get Started", "Start Free Trial", "Learn More").
+- hero.backgroundImage: Leave empty string "" for no background image.
+- hero.backgroundImageEnabled: Set to false for no background image.
+- hero.backgroundImageOpacity: Set to 30 for default opacity.
 
 // Problem Section (DIC Framework - Disrupt)
 - problemSection.title: A compelling title that identifies the problem (e.g., "The Problem", "Common Challenges", "What's Holding You Back").
@@ -286,7 +292,9 @@ Respond with ONLY the JSON object, no markdown formatting.`;
           cta: "Get Started",
           heroTag: "AI-Powered",
           heroTagIcon: "sparkles",
-          backgroundImage: ""
+          backgroundImage: "",
+          backgroundImageEnabled: false,
+          backgroundImageOpacity: 30
         },
         problemSection: {
           title: "The Problem",
