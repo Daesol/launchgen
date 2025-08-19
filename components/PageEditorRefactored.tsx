@@ -1009,56 +1009,10 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
 
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-gray-100">
-      {/* Preview Panel */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${
-        sidePanelCollapsed ? 'ml-0' : 'ml-0'
-      }`}>
-        
-        {/* Preview Content */}
-        <div className="flex-1 overflow-auto p-2 sm:p-4 lg:pb-4 pb-20">
-          <div className={`mx-auto transition-all duration-300 ${
-            previewMode === 'mobile' ? 'max-w-sm' : 'w-full max-w-none'
-          }`}>
-            {/* QR Code for Mobile Preview - At the top */}
-            {previewMode === 'mobile' && id && initialConfig.slug && (
-              <div className="mb-4">
-                <MobilePreviewQR 
-                  pageUrl={`${window.location.origin}/page/${initialConfig.slug}`}
-                  pageId={id}
-                />
-              </div>
-            )}
-            
-            {/* Save reminder for QR code - At the top */}
-            {previewMode === 'mobile' && (!id || !initialConfig.slug) && (
-              <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                <p className="text-sm text-yellow-800">
-                  💡 Save your page to generate a QR code for mobile preview
-                </p>
-              </div>
-            )}
-            
-            <div className={`bg-white shadow-lg rounded-lg overflow-hidden ${
-              previewMode === 'mobile' ? 'border-4 sm:border-8 border-gray-800 rounded-2xl sm:rounded-3xl' : ''
-            }`}>
-              <LandingPageTemplate
-                config={{
-                  ...pageContent,
-                  ...(pageStyle || {}),
-                }}
-                pageId={id}
-                previewMode={previewMode}
-                visibleSections={visibleSections}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Edit Panel - Desktop Sidebar */}
+      {/* Edit Panel - Desktop Sidebar - Now on the left */}
       <div className={`hidden lg:flex ${
         sidePanelCollapsed ? 'w-0 overflow-hidden' : 'w-96'
-      } bg-white border-l border-gray-200 flex-col transition-all duration-300`}>
+      } bg-white border-r border-gray-200 flex-col transition-all duration-300`}>
         <div className="p-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-800">Edit Page</h2>
         </div>
@@ -1119,7 +1073,6 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                         />
                       </DraggableSection>
                     );
-                  
                   case 'features':
                     return (
                       <DraggableSection key={sectionId} id={sectionId}>
@@ -1138,7 +1091,6 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                         />
                       </DraggableSection>
                     );
-                  
                   case 'socialProof':
                     return (
                       <DraggableSection key={sectionId} id={sectionId}>
@@ -1148,8 +1100,8 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                           onTestimonialsChange={handleTestimonialsChange}
                           onStatsChange={handleStatsChange}
                           onAddTestimonial={handleAddTestimonial}
-                          onAddStat={handleAddStat}
                           onRemoveTestimonial={handleRemoveTestimonial}
+                          onAddStat={handleAddStat}
                           onRemoveStat={handleRemoveStat}
                           isExpanded={expandedSections.socialProof}
                           onToggle={() => toggleSection('socialProof')}
@@ -1158,7 +1110,6 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                         />
                       </DraggableSection>
                     );
-                  
                   case 'guarantees':
                     return (
                       <DraggableSection key={sectionId} id={sectionId}>
@@ -1175,7 +1126,6 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                         />
                       </DraggableSection>
                     );
-                  
                   case 'faq':
                     return (
                       <DraggableSection key={sectionId} id={sectionId}>
@@ -1192,7 +1142,6 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                         />
                       </DraggableSection>
                     );
-                  
                   case 'cta':
                     return (
                       <DraggableSection key={sectionId} id={sectionId}>
@@ -1207,7 +1156,6 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                         />
                       </DraggableSection>
                     );
-                  
                   default:
                     return null;
                 }
@@ -1215,13 +1163,59 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
             </SortableContext>
           </DndContext>
 
-          {/* Non-draggable sections */}
+          {/* Urgency Section - Always at bottom */}
           <UrgencySection
             urgency={pageContent?.urgency || {}}
             onUrgencyChange={handleUrgencyChange}
             isExpanded={expandedSections.urgency}
             onToggle={() => toggleSection('urgency')}
           />
+        </div>
+      </div>
+
+      {/* Preview Panel - Now on the right */}
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${
+        sidePanelCollapsed ? 'ml-0' : 'ml-0'
+      }`}>
+        
+        {/* Preview Content */}
+        <div className="flex-1 overflow-auto p-2 sm:p-4 lg:pb-4 pb-20">
+          <div className={`mx-auto transition-all duration-300 ${
+            previewMode === 'mobile' ? 'max-w-sm' : 'w-full max-w-none'
+          }`}>
+            {/* QR Code for Mobile Preview - At the top */}
+            {previewMode === 'mobile' && id && initialConfig.slug && (
+              <div className="mb-4">
+                <MobilePreviewQR 
+                  pageUrl={`${window.location.origin}/page/${initialConfig.slug}`}
+                  pageId={id}
+                />
+              </div>
+            )}
+            
+            {/* Save reminder for QR code - At the top */}
+            {previewMode === 'mobile' && (!id || !initialConfig.slug) && (
+              <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <p className="text-sm text-yellow-800">
+                  💡 Save your page to generate a QR code for mobile preview
+                </p>
+              </div>
+            )}
+            
+            <div className={`bg-white shadow-lg rounded-lg overflow-hidden ${
+              previewMode === 'mobile' ? 'border-4 sm:border-8 border-gray-800 rounded-2xl sm:rounded-3xl' : ''
+            }`}>
+              <LandingPageTemplate
+                config={{
+                  ...pageContent,
+                  ...(pageStyle || {}),
+                }}
+                pageId={id}
+                previewMode={previewMode}
+                visibleSections={visibleSections}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

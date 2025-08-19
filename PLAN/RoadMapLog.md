@@ -1,5 +1,25 @@
 # Road Map Log
 
+## 2024-12-19 - Edit Panel Layout Optimization - Moved to Left Side
+
+### What was done:
+- **Repositioned edit panel** - Moved the edit panel from the right side to the left side of the page editor
+- **Improved layout flow** - Edit panel now appears on the left, preview panel on the right for more intuitive editing workflow
+- **Enhanced user experience** - Left-to-right reading flow (edit → preview) matches natural user behavior and common design patterns
+- **Better sidebar integration** - Edit panel positioning now works better with the left-side sidebar overlay functionality
+- **Consistent border styling** - Updated border from left to right to properly separate edit panel from preview panel
+
+### Technical details:
+- **Layout reordering**: Changed flex order so edit panel appears before preview panel in the DOM
+- **Border adjustment**: Changed from `border-l` to `border-r` since panel is now on the left
+- **Mobile consistency**: Mobile edit panel remains as overlay for responsive design
+- **Maintained functionality**: All edit panel features and sections remain unchanged, only position changed
+
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Repositioned edit panel from right to left side
+
+---
+
 ## 2024-12-19 - Dashboard Scrolling Issue Fix - Eliminated Black Space Overscroll
 
 ### What was done:
