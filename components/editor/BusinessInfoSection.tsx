@@ -8,6 +8,7 @@ interface BusinessInfoSectionProps {
     logo: string;
   };
   onBusinessChange: (field: string, value: string) => void;
+  onBusinessBlur: (field: string, value: string) => void;
   isExpanded: boolean;
   onToggle: () => void;
 }
@@ -15,6 +16,7 @@ interface BusinessInfoSectionProps {
 export default function BusinessInfoSection({
   business,
   onBusinessChange,
+  onBusinessBlur,
   isExpanded,
   onToggle,
 }: BusinessInfoSectionProps) {
@@ -33,6 +35,7 @@ export default function BusinessInfoSection({
             type="text"
             value={business.name}
             onChange={(e) => onBusinessChange("name", e.target.value)}
+            onBlur={(e) => onBusinessBlur("name", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter your business name"
           />
@@ -45,6 +48,7 @@ export default function BusinessInfoSection({
             type="text"
             value={business.logo}
             onChange={(e) => onBusinessChange("logo", e.target.value)}
+            onBlur={(e) => onBusinessBlur("logo", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter logo URL or leave empty for default"
           />

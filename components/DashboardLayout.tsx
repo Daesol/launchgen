@@ -16,12 +16,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [profileOpen, setProfileOpen] = useState(false);
   const [pages, setPages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showSidebarOverlay, setShowSidebarOverlay] = useState(false);
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [pageTitle, setPageTitle] = useState("");
+  const [currentPageId, setCurrentPageId] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
   const supabase = createPagesBrowserClient();
 
   // Check if we're on an edit page
   const isEditPage = pathname?.includes('/dashboard/page/');
+
+  // Extract page ID from pathname
+  useEffect(() => {
+    if (isEditPage && pathname) {
+      const match = pathname.match(/\/dashboard\/page\/([^\/]+)/);
+      if (match) {
+        setCurrentPageId(match[1]);
+      }
+    }
+  }, [isEditPage, pathname]);
 
   // Fetch user's pages
   const fetchPages = async () => {
@@ -33,25 +47,108 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         .eq('owner_id', session.user.id)
         .order('created_at', { ascending: false });
       setPages(pages || []);
+      
+      // Set current page title if we're on an edit page
+      if (currentPageId && pages) {
+        const currentPage = pages.find(p => p.id === currentPageId);
+        if (currentPage) {
+          setPageTitle(currentPage.title || 'Untitled');
+        }
+      }
     }
     setLoading(false);
+  };
+
+  // Fetch current page data for title
+  const fetchCurrentPage = async () => {
+    if (currentPageId) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const { data: page, error } = await supabase
+            .from('landing_pages')
+            .select('title')
+            .eq('id', currentPageId)
+            .eq('owner_id', session.user.id)
+            .single();
+          
+          if (page && !error) {
+            console.log('Setting page title from database:', page.title);
+            setPageTitle(page.title || 'Untitled');
+          } else {
+            console.error('Error fetching page:', error);
+            // Fallback: try to get title from pages list
+            const fallbackPage = pages.find(p => p.id === currentPageId);
+            if (fallbackPage) {
+              console.log('Using fallback title from pages list:', fallbackPage.title);
+              setPageTitle(fallbackPage.title || 'Untitled');
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch current page:', error);
+        // Fallback: try to get title from pages list
+        const fallbackPage = pages.find(p => p.id === currentPageId);
+        if (fallbackPage) {
+          console.log('Using fallback title from pages list after error:', fallbackPage.title);
+          setPageTitle(fallbackPage.title || 'Untitled');
+        }
+      }
+    }
   };
 
   useEffect(() => {
     fetchPages();
   }, [supabase]);
 
+  useEffect(() => {
+    if (currentPageId) {
+      console.log('Current page ID changed, fetching page data:', currentPageId);
+      fetchCurrentPage();
+    }
+  }, [currentPageId]);
+
   // Listen for page refresh events
   useEffect(() => {
     const handlePageRefresh = () => {
       fetchPages();
+      if (currentPageId) {
+        fetchCurrentPage();
+      }
     };
 
     window.addEventListener('refresh-pages', handlePageRefresh);
     return () => {
       window.removeEventListener('refresh-pages', handlePageRefresh);
     };
-  }, []);
+  }, [currentPageId]);
+
+  // Listen for title update events from PageEditor
+  useEffect(() => {
+    const handleTitleUpdate = (event: CustomEvent) => {
+      if (event.detail && event.detail.title) {
+        setPageTitle(event.detail.title);
+        // Also update local pages list
+        setPages(prev => prev.map(p => 
+          p.id === currentPageId ? { ...p, title: event.detail.title } : p
+        ));
+      }
+    };
+
+    const handleTitleSync = (event: CustomEvent) => {
+      if (event.detail && event.detail.title) {
+        console.log('Syncing title from PageEditor:', event.detail.title);
+        setPageTitle(event.detail.title);
+      }
+    };
+
+    window.addEventListener('update-page-title', handleTitleUpdate as EventListener);
+    window.addEventListener('sync-page-title', handleTitleSync as EventListener);
+    return () => {
+      window.removeEventListener('update-page-title', handleTitleUpdate as EventListener);
+      window.removeEventListener('sync-page-title', handleTitleSync as EventListener);
+    };
+  }, [currentPageId]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -59,13 +156,108 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       if (profileOpen) {
         setProfileOpen(false);
       }
+      // Also handle title editing click outside
+      if (editingTitle) {
+        const target = event.target as Element;
+        if (!target.closest('.title-input-container')) {
+          handleTitleSave();
+        }
+      }
     };
 
-    if (profileOpen) {
+    if (profileOpen || editingTitle) {
       document.addEventListener('click', handleClickOutside);
       return () => document.removeEventListener('click', handleClickOutside);
     }
-  }, [profileOpen]);
+  }, [profileOpen, editingTitle]);
+
+  // Handle mouse movement for sidebar overlay on edit pages
+  useEffect(() => {
+    if (!isEditPage) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (e.clientX <= 20) {
+        setShowSidebarOverlay(true);
+      } else if (e.clientX > 280) {
+        setShowSidebarOverlay(false);
+      }
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    return () => document.removeEventListener('mousemove', handleMouseMove);
+  }, [isEditPage]);
+
+  // Handle title editing
+  const handleTitleEdit = () => {
+    setEditingTitle(true);
+  };
+
+  const handleTitleSave = async () => {
+    console.log('Saving title:', pageTitle, 'for page:', currentPageId);
+    if (currentPageId && pageTitle.trim()) {
+      try {
+        const response = await fetch('/api/landing-pages', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: currentPageId,
+            title: pageTitle.trim(),
+          }),
+        });
+
+        if (response.ok) {
+          const newTitle = pageTitle.trim();
+          console.log('Title saved successfully:', newTitle);
+          // Update local pages list
+          setPages(prev => prev.map(p => 
+            p.id === currentPageId ? { ...p, title: newTitle } : p
+          ));
+          
+          // Dispatch event to notify PageEditor of title change
+          window.dispatchEvent(new CustomEvent('page-title-updated', { 
+            detail: { id: currentPageId, title: newTitle } 
+          }));
+          
+          // Dispatch event to update other components
+          window.dispatchEvent(new CustomEvent('update-page-title', { 
+            detail: { title: newTitle } 
+          }));
+        } else {
+          console.error('Failed to save title, response not ok:', response.status);
+          // If save failed, revert to original title
+          const currentPage = pages.find(p => p.id === currentPageId);
+          if (currentPage) {
+            setPageTitle(currentPage.title || 'Untitled');
+          }
+        }
+      } catch (error) {
+        console.error('Failed to update title:', error);
+        // If save failed, revert to original title
+        const currentPage = pages.find(p => p.id === currentPageId);
+        if (currentPage) {
+          setPageTitle(currentPage.title || 'Untitled');
+        }
+      }
+    }
+    setEditingTitle(false);
+  };
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleTitleSave();
+    } else if (e.key === 'Escape') {
+      setEditingTitle(false);
+      // Reset to original title
+      if (currentPageId && pages) {
+        const currentPage = pages.find(p => p.id === currentPageId);
+        if (currentPage) {
+          setPageTitle(currentPage.title || 'Untitled');
+        }
+      }
+    }
+  };
 
   const handleSignOut = async () => {
     await fetch("/api/signout", { method: "POST" });
@@ -76,7 +268,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     });
     Object.keys(sessionStorage).forEach((key) => {
       if (key.startsWith("sb-") || key.includes("supabase")) {
-        sessionStorage.removeItem(key);
+        localStorage.removeItem(key);
       }
     });
     setTimeout(() => {
@@ -84,12 +276,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }, 200);
   };
 
-  // If it's an edit page, render a minimal layout for mobile
+  // If it's an edit page, render a minimal layout with overlay sidebar
   if (isEditPage) {
     return (
       <div className="flex min-h-screen bg-slate-50">
-        {/* Sidebar - Hidden on mobile for edit pages */}
-        <aside className={`fixed z-40 inset-y-0 left-0 w-64 bg-white shadow-xl border-r border-slate-200 flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-64"} lg:translate-x-0 lg:static lg:sticky lg:top-0 lg:h-screen`}>
+        {/* Sidebar Overlay - Only visible when hovering near left edge */}
+        <aside 
+          className={`fixed z-50 inset-y-0 left-0 w-64 bg-white shadow-2xl border-r border-slate-200 flex flex-col transition-all duration-300 ${
+            showSidebarOverlay ? "translate-x-0 opacity-100" : "-translate-x-64 opacity-0 pointer-events-none"
+          }`}
+          onMouseEnter={() => setShowSidebarOverlay(true)}
+          onMouseLeave={() => setShowSidebarOverlay(false)}
+        >
           <div className="flex items-center gap-3 px-6 py-6 border-b border-slate-100">
             <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <span className="text-white font-bold text-sm">🚀</span>
@@ -146,76 +344,123 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </aside>
 
-        {/* Mobile sidebar overlay */}
-        {sidebarOpen && (
-          <div 
-            className="fixed inset-0 z-30 bg-black/20 lg:hidden" 
-            onClick={() => setSidebarOpen(false)} 
-          />
-        )}
-
-        {/* Main content area - Full width on mobile for edit pages */}
-        <div className="flex-1 flex flex-col min-h-screen lg:ml-0">
-          {/* Top navbar - Minimal on mobile for edit pages */}
-          <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b border-slate-200 flex items-center justify-between px-3 sm:px-6 py-2">
-            <div className="flex items-center gap-3">
-              <button 
-                className="lg:hidden p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
-                onClick={() => setSidebarOpen(v => !v)}
-              >
-                <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              <div className="hidden lg:flex items-center gap-2">
-                <span className="text-base font-semibold text-slate-800">Dashboard</span>
-              </div>
-            </div>
-            
-            <div className="relative z-[70]">
-              <button
-                className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setProfileOpen(v => !v);
-                }}
-              >
-                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center">
-                  <span className="text-white font-semibold text-xs">U</span>
-                </div>
-                <span className="hidden sm:inline text-sm">Profile</span>
-                <svg className="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              
-              {profileOpen && typeof window !== 'undefined' && createPortal(
-                <div 
-                  className="fixed w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-[9999]"
-                  style={{
-                    top: '80px',
-                    right: '24px',
-                    zIndex: 9999
-                  }}
-                >
+        {/* Main content area - Full width for edit pages */}
+        <div className="flex-1 flex flex-col min-h-screen">
+          {/* Top navbar - Enhanced with page title and action buttons */}
+          <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b border-slate-200 px-6 py-3">
+            <div className="flex items-center justify-between">
+              {/* Left side - Editable page title */}
+              <div className="flex-1 min-w-0 title-input-container">
+                {editingTitle ? (
+                  <input
+                    type="text"
+                    value={pageTitle}
+                    onChange={(e) => setPageTitle(e.target.value)}
+                    onBlur={handleTitleSave}
+                    onKeyDown={handleTitleKeyDown}
+                    className="w-full text-lg font-semibold text-slate-800 bg-transparent border-b-2 border-slate-300 focus:border-slate-600 focus:outline-none px-1 py-1"
+                    autoFocus
+                  />
+                ) : (
                   <button
-                    className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors text-left"
-                    onClick={() => {
-                      setProfileOpen(false);
-                      handleSignOut();
+                    onClick={handleTitleEdit}
+                    className="text-lg font-semibold text-slate-800 hover:text-slate-600 hover:bg-slate-50 px-2 py-1 rounded transition-colors text-left w-full truncate"
+                    title="Click to edit title"
+                  >
+                    {pageTitle || 'Untitled'}
+                  </button>
+                )}
+              </div>
+
+              {/* Center - Action buttons */}
+              <div className="flex items-center space-x-2 mx-4">
+                {/* Desktop/Mobile view buttons */}
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('set-preview-mode', { detail: 'desktop' }))}
+                  className="p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded transition-colors"
+                  title="Desktop view"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('set-preview-mode', { detail: 'mobile' }))}
+                  className="p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded transition-colors"
+                  title="Mobile view"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                </button>
+
+                <div className="w-px h-6 bg-slate-300 mx-2"></div>
+
+                {/* Action buttons */}
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('preview-page'))}
+                  className="px-3 py-1.5 text-sm border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 rounded transition-colors"
+                  title="Preview page"
+                >
+                  Preview
+                </button>
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('regenerate-page'))}
+                  className="px-3 py-1.5 text-sm border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 rounded transition-colors"
+                  title="Regenerate page"
+                >
+                  Regenerate
+                </button>
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('publish-page'))}
+                  className="px-3 py-1.5 text-sm bg-slate-800 text-white hover:bg-slate-700 rounded transition-colors"
+                  title="Publish page"
+                >
+                  Publish
+                </button>
+              </div>
+              
+              {/* Right side - Profile icon */}
+              <div className="relative z-[70]">
+                <button
+                  className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setProfileOpen(v => !v);
+                  }}
+                  title="Profile"
+                >
+                  <span className="text-white font-semibold text-sm">U</span>
+                </button>
+                
+                {profileOpen && typeof window !== 'undefined' && createPortal(
+                  <div 
+                    className="fixed w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-[9999]"
+                    style={{
+                      top: '80px',
+                      right: '24px',
+                      zIndex: 9999
                     }}
                   >
-                    <span className="text-sm">🚪</span>
-                    Sign Out
-                  </button>
-                </div>,
-                document.body
-              )}
+                    <button
+                      className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors text-left"
+                      onClick={() => {
+                        setProfileOpen(false);
+                        handleSignOut();
+                      }}
+                    >
+                      <span className="text-sm">🚪</span>
+                      Sign Out
+                    </button>
+                  </div>,
+                  document.body
+                )}
+              </div>
             </div>
           </header>
 
           {/* Main content - Full width and height for edit pages */}
-          <main className="flex-1 p-0 lg:p-1">
+          <main className="flex-1 p-0">
             {children}
           </main>
         </div>
@@ -267,7 +512,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <Link
                   key={page.id}
                   href={`/dashboard/page/${page.id}`}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200 group"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors transition-all duration-200 group"
                   title={page.title || 'Untitled'}
                 >
                   <span className="text-xs group-hover:scale-110 transition-transform duration-200">📄</span>

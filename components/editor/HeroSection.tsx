@@ -14,6 +14,7 @@ interface HeroSectionProps {
     backgroundImage: string;
   };
   onHeroChange: (field: string, value: string) => void;
+  onHeroBlur: (field: string, value: string) => void;
   onHighlightToggle: (word: string) => void;
   isExpanded: boolean;
   onToggle: () => void;
@@ -22,6 +23,7 @@ interface HeroSectionProps {
 export default function HeroSection({
   hero,
   onHeroChange,
+  onHeroBlur,
   onHighlightToggle,
   isExpanded,
   onToggle,
@@ -44,6 +46,7 @@ export default function HeroSection({
             type="text"
             value={hero.heroTag}
             onChange={(e) => onHeroChange("heroTag", e.target.value)}
+            onBlur={(e) => onHeroBlur("heroTag", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="e.g., AI-Powered, New, Limited Time"
           />
@@ -79,6 +82,7 @@ export default function HeroSection({
           <textarea
             value={hero.headline}
             onChange={(e) => onHeroChange("headline", e.target.value)}
+            onBlur={(e) => onHeroBlur("headline", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             rows={3}
             placeholder="Enter your main headline"
@@ -117,6 +121,7 @@ export default function HeroSection({
           <textarea
             value={hero.subheadline}
             onChange={(e) => onHeroChange("subheadline", e.target.value)}
+            onBlur={(e) => onHeroBlur("subheadline", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             rows={2}
             placeholder="Enter your subheadline"
@@ -130,6 +135,7 @@ export default function HeroSection({
             type="text"
             value={hero.cta}
             onChange={(e) => onHeroChange("cta", e.target.value)}
+            onBlur={(e) => onHeroBlur("cta", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="e.g., Get Started, Learn More"
           />
@@ -142,6 +148,7 @@ export default function HeroSection({
             type="text"
             value={hero.backgroundImage}
             onChange={(e) => onHeroChange("backgroundImage", e.target.value)}
+            onBlur={(e) => onHeroBlur("backgroundImage", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter background image URL"
           />

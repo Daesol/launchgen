@@ -1,5 +1,106 @@
 # Road Map Log
 
+## 2024-12-19 - Manual Save UI Cleanup - Removed Save Button and Status Bar
+
+### What was done:
+- **Removed manual Save button** - Eliminated the Save button from the top toolbar since field-level auto-save now handles all saving automatically
+- **Removed save status bar** - Eliminated the save status indicator bar below the top toolbar that showed "Saving...", "Unsaved changes", and "Saved {time}" messages
+- **Cleaned up event listeners** - Removed save-page event listener and related handler functions that are no longer needed
+- **Simplified interface** - Top toolbar now only contains Preview, Regenerate, and Publish buttons for a cleaner, more focused interface
+- **Enhanced user experience** - Users no longer need to manually save or see save status messages since auto-save happens seamlessly in the background
+
+### Technical details:
+- **Save button removal**: Removed Save button from DashboardLayout top toolbar
+- **Status bar removal**: Removed entire save status bar section from PageEditorRefactored
+- **Event cleanup**: Removed handleSavePage function and save-page event listener
+- **Interface simplification**: Top toolbar now focuses on core actions (Preview, Regenerate, Publish)
+- **Auto-save reliance**: All saving is now handled automatically by the field-level auto-save system
+
+### Files affected:
+- `components/DashboardLayout.tsx` - Removed Save button from top toolbar
+- `components/PageEditorRefactored.tsx` - Removed save status bar and save-page event listener
+
+---
+
+## 2024-12-19 - Field-Level Auto-Save Implementation
+
+### What was done:
+- **Implemented field-level auto-save** - Added intelligent auto-save system that saves individual fields when users exit input fields (onBlur events)
+- **Prevented intermediate saves** - No more saving partial changes like "welcom" → "welco" → "welc" during typing
+- **Smart change detection** - Only saves fields that actually changed, preventing unnecessary database writes
+- **Real-time preview updates** - Content updates immediately for preview while auto-saving happens in background
+- **Enhanced user experience** - Users can now edit freely without worrying about losing work, with automatic saving when they finish editing a field
+- **Cost-effective implementation** - Uses minimal database operations by only saving changed fields and only when users exit input fields
+
+### Technical details:
+- **Field tracking system**: Added `originalValues` state to track initial field values for change detection
+- **Change queue management**: Implemented `fieldChangeQueue` to manage pending field changes
+- **Auto-save triggers**: Fields save on onBlur, Enter key, and when switching between editor sections
+- **Nested field support**: Handles complex field paths like `business.name`, `hero.headline` with proper database merging
+- **API enhancement**: Updated PATCH endpoint to handle partial field updates by merging with existing page_content
+- **Error handling**: Reverts field values to original state if auto-save fails
+- **Component updates**: Added onBlur handlers to BusinessInfoSection and HeroSection components
+
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Added field-level auto-save system with change tracking and auto-save functions
+- `components/editor/BusinessInfoSection.tsx` - Added onBlur events for auto-save functionality
+- `components/editor/HeroSection.tsx` - Added onBlur events for auto-save functionality
+- `app/api/landing-pages/route.ts` - Enhanced PATCH method to handle nested field updates with proper merging
+
+---
+
+## 2024-12-19 - Dashboard Top Bar Enhancement - Consolidated Action Buttons
+
+### What was done:
+- **Removed separate toolbar** - Eliminated the redundant toolbar below the top bar in the page editor for better space efficiency
+- **Consolidated action buttons** - Moved all action buttons (Preview, Regenerate, Save, Publish, Desktop/Mobile view) to the main top bar
+- **Added editable page title** - Implemented inline-editable page title on the left side of the top bar that updates the database
+- **Simplified profile section** - Removed "Profile" text and dropdown arrow, keeping only the profile icon with dropdown functionality
+- **Modern button styling** - Updated button design to use monochrome black/white color scheme with outline and background fill indicators
+- **Icon-based view toggles** - Replaced "Desktop" and "Mobile" text buttons with modern icons for better visual appeal
+- **Enhanced space utilization** - Top bar now serves as a comprehensive control center, eliminating the need for separate toolbar space
+
+### Technical details:
+- **Toolbar removal**: Completely removed the toolbar section from PageEditorRefactored component
+- **Event-driven communication**: Implemented custom event system between DashboardLayout and PageEditorRefactored for button actions
+- **Inline title editing**: Added click-to-edit functionality for page title with Enter/Escape key support and database updates
+- **Button consolidation**: All action buttons now positioned in the center of the top bar with logical grouping
+- **Icon integration**: Used SVG icons for Desktop/Mobile view toggles with proper hover states and tooltips
+- **Responsive design**: Maintained mobile responsiveness while consolidating controls
+- **Database integration**: Page title changes automatically save to database via API calls
+- **Event listeners**: Added comprehensive event handling for all top bar button actions
+
+### Files affected:
+- `components/DashboardLayout.tsx` - Added editable page title, consolidated action buttons, simplified profile section, and implemented custom event system
+- `components/PageEditorRefactored.tsx` - Removed toolbar section, added event listeners for top bar buttons, and simplified save status display
+
+---
+
+## 2024-12-19 - Dashboard Layout Enhancement - Sidebar Overlay on Edit Pages
+
+### What was done:
+- **Implemented sidebar overlay behavior** - Sidebar is now hidden on edit pages (`/dashboard/page/{id}`) and becomes an overlay when hovering near the left edge
+- **Enhanced user experience** - Edit pages now have full-width content area for better editing experience
+- **Smart sidebar detection** - Sidebar automatically detects edit page routes and switches to overlay mode
+- **Smooth transitions** - Sidebar overlay has smooth fade-in/fade-out animations with proper opacity and pointer-events management
+- **Mouse proximity detection** - Sidebar appears when mouse is within 20px of left edge and disappears when mouse moves beyond 280px
+- **Improved navigation** - Users can still access dashboard navigation and page list through the overlay sidebar
+
+### Technical details:
+- **Route detection**: Added `isEditPage` check using `pathname?.includes('/dashboard/page/')`
+- **Overlay state management**: Added `showSidebarOverlay` state to control sidebar visibility
+- **Mouse movement tracking**: Added `mousemove` event listener to detect mouse proximity to left edge
+- **Conditional rendering**: Sidebar renders as overlay on edit pages, normal sidebar on other dashboard pages
+- **Smooth animations**: Used `transition-all duration-300` with opacity and transform changes
+- **Pointer events management**: Overlay sidebar uses `pointer-events-none` when hidden to prevent interaction
+- **Z-index optimization**: Overlay sidebar uses `z-50` for proper layering above content
+- **Responsive design**: Maintained mobile responsiveness while adding overlay functionality
+
+### Files affected:
+- `components/DashboardLayout.tsx` - Added sidebar overlay behavior, mouse proximity detection, and conditional rendering based on route
+
+---
+
 ## 2024-12-19 - Landing Page Mobile Hero Section Enhancement
 
 ### What was done:

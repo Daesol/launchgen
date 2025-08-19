@@ -200,6 +200,10 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
     faq: true,
   });
 
+  // Track original values for change detection
+  const [originalValues, setOriginalValues] = useState<Record<string, any>>({});
+  const [fieldChangeQueue, setFieldChangeQueue] = useState<Record<string, any>>({});
+
   // Section order state for drag-and-drop
   const [sectionOrder, setSectionOrder] = useState<string[]>([
     'problemSection',
@@ -256,10 +260,210 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
     }));
   }, [sectionOrder]);
 
+  // Event listeners for top bar buttons
+  useEffect(() => {
+    const handleSetPreviewMode = (event: CustomEvent) => {
+      setPreviewMode(event.detail);
+    };
+
+    const handlePreviewPage = () => {
+      handleSave().then(() => {
+        if (id) {
+          window.open(`/page/${initialConfig.slug}`, '_blank');
+        }
+      });
+    };
+
+    const handleRegeneratePage = () => {
+      handleRegenerate();
+    };
+
+    const handlePublishPage = () => {
+      handlePublish();
+    };
+
+    // Add event listeners
+    window.addEventListener('set-preview-mode', handleSetPreviewMode as EventListener);
+    window.addEventListener('preview-page', handlePreviewPage);
+    window.addEventListener('regenerate-page', handleRegeneratePage);
+    window.addEventListener('publish-page', handlePublishPage);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('set-preview-mode', handleSetPreviewMode as EventListener);
+      window.removeEventListener('preview-page', handlePreviewPage);
+      window.removeEventListener('regenerate-page', handleRegeneratePage);
+      window.removeEventListener('publish-page', handlePublishPage);
+    };
+  }, [id, initialConfig.slug]);
+
+  // Listen for title updates from top bar
+  useEffect(() => {
+    const handleTitleUpdate = (event: CustomEvent) => {
+      if (event.detail && event.detail.title && id) {
+        // Update the initialConfig title to keep it in sync
+        if (initialConfig) {
+          initialConfig.title = event.detail.title;
+        }
+      }
+    };
+
+    window.addEventListener('page-title-updated', handleTitleUpdate as EventListener);
+    return () => {
+      window.removeEventListener('page-title-updated', handleTitleUpdate as EventListener);
+    };
+  }, [id, initialConfig]);
+
+  // Sync title with top bar when component mounts
+  useEffect(() => {
+    if (id && initialConfig?.title) {
+      // Dispatch event to sync title with top bar
+      window.dispatchEvent(new CustomEvent('sync-page-title', { 
+        detail: { title: initialConfig.title } 
+      }));
+    }
+  }, [id, initialConfig?.title]);
+
+  // Initialize field tracking for all existing content
+  useEffect(() => {
+    if (pageContent) {
+      const fieldsToTrack = [
+        'business.name',
+        'business.logo',
+        'hero.headline',
+        'hero.subheadline',
+        'hero.cta',
+        'hero.heroTag',
+        'hero.heroTagIcon',
+        'featuresTitle',
+        'featuresSubtitle',
+        'ctaTitle',
+        'ctaSubtitle'
+      ];
+
+      fieldsToTrack.forEach(fieldPath => {
+        const value = fieldPath.split('.').reduce((obj, key) => obj?.[key], pageContent);
+        if (value !== undefined) {
+          initializeFieldTracking(fieldPath, value);
+        }
+      });
+    }
+  }, [pageContent]);
+
   // Function to resize textarea to fit content
   const resizeTextarea = (element: HTMLTextAreaElement) => {
     element.style.height = 'auto';
     element.style.height = element.scrollHeight + 'px';
+  };
+
+  // Field-level auto-save functions
+  const initializeFieldTracking = (fieldPath: string, value: any) => {
+    if (originalValues[fieldPath] === undefined) {
+      setOriginalValues(prev => ({
+        ...prev,
+        [fieldPath]: value
+      }));
+    }
+  };
+
+  const handleFieldChange = (fieldPath: string, value: any) => {
+    // Update the page content immediately for real-time preview
+    setPageContent((prev: any) => {
+      const pathParts = fieldPath.split('.');
+      let newContent = { ...prev };
+      let current = newContent;
+      
+      // Navigate to the nested field
+      for (let i = 0; i < pathParts.length - 1; i++) {
+        if (!current[pathParts[i]]) {
+          current[pathParts[i]] = {};
+        }
+        current = current[pathParts[i]];
+      }
+      
+      // Set the final field value
+      current[pathParts[pathParts.length - 1]] = value;
+      
+      return newContent;
+    });
+
+    // Queue the change for potential auto-save
+    setFieldChangeQueue(prev => ({
+      ...prev,
+      [fieldPath]: value
+    }));
+
+    // Mark as having unsaved changes
+    markAsUnsaved();
+  };
+
+  const handleFieldBlur = async (fieldPath: string, currentValue: any) => {
+    const originalValue = originalValues[fieldPath];
+    
+    // Only save if the value actually changed
+    if (originalValue !== currentValue) {
+      try {
+        // Save this specific field to database
+        await saveFieldToDatabase(fieldPath, currentValue);
+        
+        // Update original values to reflect the new saved state
+        setOriginalValues(prev => ({
+          ...prev,
+          [fieldPath]: currentValue
+        }));
+        
+        // Remove from change queue
+        setFieldChangeQueue(prev => {
+          const newQueue = { ...prev };
+          delete newQueue[fieldPath];
+          return newQueue;
+        });
+        
+        // Clear unsaved changes if no more pending changes
+        if (Object.keys(fieldChangeQueue).length === 0) {
+          setHasUnsavedChanges(false);
+        }
+        
+        console.log(`Auto-saved field: ${fieldPath} = ${currentValue}`);
+      } catch (error) {
+        console.error(`Failed to auto-save field ${fieldPath}:`, error);
+        // Revert to original value on error
+        setPageContent((prev: any) => {
+          const pathParts = fieldPath.split('.');
+          let newContent = { ...prev };
+          let current = newContent;
+          
+          for (let i = 0; i < pathParts.length - 1; i++) {
+            if (!current[pathParts[i]]) {
+              current[pathParts[i]] = {};
+            }
+            current = current[pathParts[i]];
+          }
+          
+          current[pathParts[pathParts.length - 1]] = originalValue;
+          return newContent;
+        });
+      }
+    }
+  };
+
+  const saveFieldToDatabase = async (fieldPath: string, value: any) => {
+    if (!id || !onSave) return;
+
+    try {
+      // Create a minimal config with just the changed field
+      const config = {
+        page_content: { [fieldPath]: value },
+        page_style: pageStyle,
+        template_id: templateId,
+        id: id,
+        original_prompt: originalPrompt,
+      };
+
+      await onSave(config);
+    } catch (error) {
+      throw error;
+    }
   };
 
   // Enhanced auto-resize function that handles all textarea resizing
@@ -270,19 +474,25 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
 
   // Event handlers for different sections
   const handleBusinessChange = (field: string, value: string) => {
-    setPageContent((prev: any) => ({
-      ...prev,
-      business: { ...(prev?.business || {}), [field]: value }
-    }));
-    markAsUnsaved();
+    const fieldPath = `business.${field}`;
+    initializeFieldTracking(fieldPath, value);
+    handleFieldChange(fieldPath, value);
+  };
+
+  const handleBusinessBlur = (field: string, value: string) => {
+    const fieldPath = `business.${field}`;
+    handleFieldBlur(fieldPath, value);
   };
 
   const handleHeroChange = (field: string, value: string) => {
-    setPageContent((prev: any) => ({
-      ...prev,
-      hero: { ...(prev?.hero || {}), [field]: value }
-    }));
-    markAsUnsaved();
+    const fieldPath = `hero.${field}`;
+    initializeFieldTracking(fieldPath, value);
+    handleFieldChange(fieldPath, value);
+  };
+
+  const handleHeroBlur = (field: string, value: string) => {
+    const fieldPath = `hero.${field}`;
+    handleFieldBlur(fieldPath, value);
   };
 
   const handleHighlightToggle = (word: string) => {
@@ -297,6 +507,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
         hero: { ...(prev?.hero || {}), headlineHighlights: newHighlights }
       };
     });
+    markAsUnsaved();
   };
 
   const handlePageContentChange = (field: string, value: string) => {
@@ -802,114 +1013,11 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
       <div className={`flex-1 flex flex-col transition-all duration-300 ${
         sidePanelCollapsed ? 'ml-0' : 'ml-0'
       }`}>
-        {/* Preview Header */}
-        <div className="bg-white border-b border-gray-200 p-3 sm:p-4 sticky top-0 z-40">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-              <h1 className="text-lg sm:text-xl font-semibold text-gray-800">Landing Page Editor</h1>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setPreviewMode('desktop')}
-                  className={`px-3 py-1 text-sm rounded hidden sm:block ${
-                    previewMode === 'desktop'
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  Desktop
-                </button>
-                <button
-                  onClick={() => setPreviewMode('mobile')}
-                  className={`px-3 py-1 text-sm rounded ${
-                    previewMode === 'mobile'
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  Mobile
-                </button>
-              </div>
-              {/* Save Status Indicator */}
-              <div className="flex items-center space-x-2">
-                {saving ? (
-                  <div className="flex items-center space-x-1 text-blue-600">
-                    <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-sm">Saving...</span>
-                  </div>
-                ) : hasUnsavedChanges ? (
-                  <div className="flex items-center space-x-1 text-orange-600">
-                    <div className="w-2 h-2 bg-orange-600 rounded-full"></div>
-                    <span className="text-sm">Unsaved changes</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-1 text-green-600">
-                    <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                    <span className="text-sm">
-                      {lastSaved ? `Saved ${lastSaved.toLocaleTimeString()}` : 'Saved'}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <button
-                onClick={() => setShowSidePanel(!showSidePanel)}
-                className="lg:hidden px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm"
-              >
-                {showSidePanel ? 'Hide Editor' : 'Show Editor'}
-              </button>
-              
-              <button
-                onClick={() => {
-                  // Save current state first, then open preview
-                  handleSave().then(() => {
-                    if (id) {
-                      window.open(`/page/${initialConfig.slug}`, '_blank');
-                    }
-                  });
-                }}
-                disabled={saving}
-                className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 text-sm"
-              >
-                Preview
-              </button>
-              
-              <button
-                onClick={handleRegenerate}
-                disabled={regenerating}
-                className="px-3 sm:px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 text-sm"
-              >
-                {regenerating ? 'Regenerating...' : 'Regenerate'}
-              </button>
-              
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className={`px-3 sm:px-4 py-2 text-white rounded disabled:opacity-50 text-sm ${
-                  hasUnsavedChanges 
-                    ? 'bg-orange-500 hover:bg-orange-600' 
-                    : 'bg-blue-500 hover:bg-blue-600'
-                }`}
-              >
-                {saving ? 'Saving...' : hasUnsavedChanges ? 'Save*' : 'Save'}
-              </button>
-              
-              <button
-                onClick={handlePublish}
-                disabled={saving || published}
-                className="px-3 sm:px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 text-sm"
-              >
-                {published ? 'Published' : 'Publish'}
-              </button>
-            </div>
-          </div>
-        </div>
-
+        
         {/* Preview Content */}
         <div className="flex-1 overflow-auto p-2 sm:p-4 lg:pb-4 pb-20">
           <div className={`mx-auto transition-all duration-300 ${
-            previewMode === 'mobile' ? 'max-w-sm' : 'max-w-4xl'
+            previewMode === 'mobile' ? 'max-w-sm' : 'w-full max-w-none'
           }`}>
             {/* QR Code for Mobile Preview - At the top */}
             {previewMode === 'mobile' && id && initialConfig.slug && (
@@ -977,6 +1085,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
               <BusinessInfoSection
                 business={pageContent?.business || {}}
                 onBusinessChange={handleBusinessChange}
+                onBusinessBlur={handleBusinessBlur}
                 isExpanded={expandedSections.business}
                 onToggle={() => toggleSection('business')}
               />
@@ -985,6 +1094,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
               <HeroSection
                 hero={pageContent?.hero || {}}
                 onHeroChange={handleHeroChange}
+                onHeroBlur={handleHeroBlur}
                 onHighlightToggle={handleHighlightToggle}
                 isExpanded={expandedSections.hero}
                 onToggle={() => toggleSection('hero')}
@@ -1153,6 +1263,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                   <BusinessInfoSection
                     business={pageContent?.business || {}}
                     onBusinessChange={handleBusinessChange}
+                    onBusinessBlur={handleBusinessBlur}
                     isExpanded={expandedSections.business}
                     onToggle={() => toggleSection('business')}
                   />
@@ -1161,6 +1272,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                   <HeroSection
                     hero={pageContent?.hero || {}}
                     onHeroChange={handleHeroChange}
+                    onHeroBlur={handleHeroBlur}
                     onHighlightToggle={handleHighlightToggle}
                     isExpanded={expandedSections.hero}
                     onToggle={() => toggleSection('hero')}
