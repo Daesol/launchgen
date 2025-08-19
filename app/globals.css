@@ -94,4 +94,16 @@ input, textarea, select {
     color: #000000 !important;
     -webkit-text-fill-color: #000000 !important;
   }
+}
+
+/* Dashboard height and scroll prevention */
+.dashboard-layout {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Prevent body scrolling on dashboard pages */
+body.dashboard-page {
+  overflow: hidden;
+  height: 100vh;
 } 

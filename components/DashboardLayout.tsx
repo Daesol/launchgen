@@ -150,6 +150,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     };
   }, [currentPageId]);
 
+  // Add body class to prevent scrolling on dashboard pages
+  useEffect(() => {
+    document.body.classList.add('dashboard-page');
+    return () => {
+      document.body.classList.remove('dashboard-page');
+    };
+  }, []);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -279,7 +287,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // If it's an edit page, render a minimal layout with overlay sidebar
   if (isEditPage) {
     return (
-      <div className="flex min-h-screen bg-slate-50">
+      <div className="flex h-screen bg-slate-50 overflow-hidden dashboard-layout">
         {/* Sidebar Overlay - Only visible when hovering near left edge */}
         <aside 
           className={`fixed z-50 inset-y-0 left-0 w-64 bg-white shadow-2xl border-r border-slate-200 flex flex-col transition-all duration-300 ${
@@ -324,7 +332,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <Link
                     key={page.id}
                     href={`/dashboard/page/${page.id}`}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200 group"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors transition-all duration-200 group"
                     title={page.title || 'Untitled'}
                   >
                     <span className="text-xs group-hover:scale-110 transition-transform duration-200">📄</span>
@@ -345,7 +353,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </aside>
 
         {/* Main content area - Full width for edit pages */}
-        <div className="flex-1 flex flex-col min-h-screen">
+        <div className="flex-1 flex flex-col h-full">
           {/* Top navbar - Enhanced with page title and action buttons */}
           <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b border-slate-200 px-6 py-3">
             <div className="flex items-center justify-between">
@@ -460,7 +468,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </header>
 
           {/* Main content - Full width and height for edit pages */}
-          <main className="flex-1 p-0">
+          <main className="flex-1 p-0 overflow-hidden">
             {children}
           </main>
         </div>
@@ -473,7 +481,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   // Regular dashboard layout for non-edit pages
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex h-screen bg-slate-50 overflow-hidden dashboard-layout">
       {/* Sidebar */}
       <aside className={`fixed z-40 inset-y-0 left-0 w-64 bg-white shadow-xl border-r border-slate-200 flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-64"} lg:translate-x-0 lg:static lg:sticky lg:top-0 lg:h-screen`}>
         <div className="flex items-center gap-3 px-6 py-6 border-b border-slate-100">
@@ -541,7 +549,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col min-h-screen lg:ml-0">
+      <div className="flex-1 flex flex-col h-full lg:ml-0">
         {/* Top navbar */}
         <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b border-slate-200 flex items-center justify-between px-6 py-2">
           <div className="flex items-center gap-3">
@@ -601,7 +609,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </header>
 
         {/* Main content */}
-        <main className="flex-1 p-6 lg:p-1">
+        <main className="flex-1 p-6 lg:p-1 overflow-hidden">
           {children}
         </main>
       </div>
