@@ -85,9 +85,10 @@ interface LandingPageTemplateProps {
   pageId?: string;
   previewMode?: 'desktop' | 'mobile';
   visibleSections?: Record<string, boolean>;
+  onSectionSelect?: (sectionId: string) => void;
 }
 
-export default function LandingPageTemplate({ config, pageId, previewMode = 'desktop', visibleSections }: LandingPageTemplateProps) {
+export default function LandingPageTemplate({ config, pageId, previewMode = 'desktop', visibleSections, onSectionSelect }: LandingPageTemplateProps) {
   // Debug logging
   console.log('LandingPageTemplate received config:', config);
   console.log('LandingPageTemplate received visibleSections:', visibleSections);
@@ -201,7 +202,10 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
     switch (sectionName) {
       case 'problemSection':
         return isSectionVisible('problemSection') ? (
-          <section key="problemSection" id="problem-section" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}>
+          <section key="problemSection" id="problem-section" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}
+            onClick={() => onSectionSelect?.('problemSection')}
+            style={{ cursor: onSectionSelect ? 'pointer' : 'default' }}
+          >
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className={`grid gap-8 sm:gap-12 lg:gap-16 ${
                 isMobilePreview 
@@ -255,7 +259,10 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
         ) : null;
       case 'features':
         return isSectionVisible('features') ? (
-          <section key="features" id="features" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.muted}`}>
+          <section key="features" id="features" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.muted}`}
+            onClick={() => onSectionSelect?.('features')}
+            style={{ cursor: onSectionSelect ? 'pointer' : 'default' }}
+          >
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
                 <div className="space-y-3 sm:space-y-4">
@@ -511,7 +518,13 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
         ) : null;
       case 'cta':
         return isSectionVisible('cta') ? (
-          <section key="cta" id="cta-section" className="w-full py-8 sm:py-12 md:py-16 lg:py-24" style={{ backgroundColor: getAccentColor(theme.accentColor, 0.9) }}>
+          <section key="cta" id="cta-section" className="w-full py-8 sm:py-12 md:py-16 lg:py-24" 
+            style={{ 
+              backgroundColor: getAccentColor(theme.accentColor, 0.9),
+              cursor: onSectionSelect ? 'pointer' : 'default'
+            }}
+            onClick={() => onSectionSelect?.('cta')}
+          >
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col items-center justify-center space-y-6 sm:space-y-8 text-center">
                 {/* Urgency Banner */}
@@ -567,7 +580,12 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
       <header className={`px-4 sm:px-6 lg:px-8 flex items-center border-b ${themeClasses.border} ${themeClasses.background} ${
         isMobilePreview ? 'h-12' : 'h-14'
       }`}>
-        <Link className="flex items-center justify-center" href="#">
+        <div 
+          className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={() => onSectionSelect?.('business')}
+          style={{ cursor: onSectionSelect ? 'pointer' : 'default' }}
+          title={onSectionSelect ? 'Click to edit business info' : undefined}
+        >
           {business?.logo ? (
             <img 
               src={business.logo} 
@@ -591,7 +609,7 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
           }`}>
             {business?.name || 'LaunchGen'}
           </span>
-        </Link>
+        </div>
         <nav className="ml-auto hidden md:flex items-center gap-4 lg:gap-6">
           <Link className={`text-sm font-medium hover:underline underline-offset-4 ${themeClasses.textSecondary} hover:${themeClasses.text}`} href="#features">
             Features
@@ -700,56 +718,442 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
 
       <main className="flex-1">
       {/* Hero Section */}
-        <section className={`w-full ${isMobilePreview ? 'min-h-[90vh] flex items-center justify-center' : 'py-8 sm:py-12 md:py-16 lg:py-24 xl:py-32'}`}>
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col items-center space-y-6 sm:space-y-8 text-center">
-              <div className="space-y-4 sm:space-y-6">
-                <Badge 
-                  variant="secondary" 
-                  className={`mb-4 sm:mb-6 flex items-center gap-2 w-fit mx-auto px-4 py-2 ${theme.mode === 'black' ? 'text-white' : ''}`}
-                  style={{ 
-                    backgroundColor: getAccentColor(theme.accentColor, 0.1),
-                    color: theme.mode === 'black' ? '#fff' : theme.accentColor,
-                    borderColor: getAccentColor(theme.accentColor, 0.2)
-                  }}
-                >
-                  {hero.heroTagIcon && renderIcon(hero.heroTagIcon, "h-3 w-3")}
-                  {hero.heroTag || "AI-Powered Solution"}
-                </Badge>
-                <h1 className={`font-bold tracking-tighter leading-tight ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
-                  isMobilePreview 
-                    ? 'text-2xl' 
-                    : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl'
-                }`}>
-                  <HighlightedText
-                    text={hero.headline}
-                    highlights={hero.headlineHighlights || []}
-                    accentColor={theme.accentColor}
-                    className={themeClasses.text}
-                  />
-        </h1>
-                <p className={`mx-auto ${themeClasses.textSecondary} ${
-                  isMobilePreview 
-                    ? 'text-sm max-w-[300px]' 
-                    : 'text-base sm:text-lg md:text-xl max-w-[600px] sm:max-w-[700px] px-4 sm:px-0'
-                }`}>
-          {hero.subheadline}
-        </p>
+      <section id="hero" className={`relative min-h-[90vh] flex items-center justify-center ${themeClasses.background} ${isSectionVisible('hero') ? 'block' : 'hidden'}`}
+        onClick={() => onSectionSelect?.('hero')}
+        style={{ cursor: onSectionSelect ? 'pointer' : 'default' }}
+      >
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="space-y-6 sm:space-y-8">
+            <div className="space-y-4 sm:space-y-6">
+              {/* Hero Tag */}
+              <Badge 
+                variant="secondary" 
+                className={`mb-4 sm:mb-6 flex items-center gap-2 w-fit mx-auto px-4 py-2 ${theme.mode === 'black' ? 'text-white' : ''}`}
+                style={{ 
+                  backgroundColor: getAccentColor(theme.accentColor, 0.1),
+                  color: theme.mode === 'black' ? '#fff' : theme.accentColor,
+                  borderColor: getAccentColor(theme.accentColor, 0.2)
+                }}
+              >
+                {hero.heroTagIcon && renderIcon(hero.heroTagIcon, "h-3 w-3")}
+                {hero.heroTag || "AI-Powered Solution"}
+              </Badge>
+              
+              <h1 className={`font-bold tracking-tighter leading-tight ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                isMobilePreview 
+                  ? 'text-2xl' 
+                  : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl'
+              }`}>
+                <HighlightedText 
+                  text={hero.headline} 
+                  highlights={hero.headlineHighlights || []}
+                  accentColor={theme.accentColor}
+                  className={themeClasses.text}
+                />
+              </h1>
+              <p className={`mx-auto ${themeClasses.textSecondary} ${
+                isMobilePreview 
+                  ? 'text-sm max-w-[300px]' 
+                  : 'text-base sm:text-lg md:text-xl max-w-[600px] sm:max-w-[700px] px-4 sm:px-0'
+              }`}>
+                {hero.subheadline}
+              </p>
+            </div>
+            
+            {/* Lead Capture Form */}
+            <div className="w-full flex justify-center items-center">
+              <div className={`flex justify-center ${isMobilePreview ? 'w-full' : 'w-full sm:w-auto min-w-[320px] max-w-[400px]'}`}>
+                <LeadForm pageId={pageId || ''} theme={theme} ctaText={hero.cta} previewMode={previewMode} />
               </div>
-              <div className="w-full flex justify-center items-center">
-                <div className={`flex justify-center ${isMobilePreview ? 'w-full' : 'w-full sm:w-auto min-w-[320px] max-w-[400px]'}`}>
-                  <LeadForm pageId={pageId || ''} theme={theme} ctaText={hero.cta} previewMode={previewMode} />
-                </div>
-              </div>
+            </div>
           </div>
         </div>
       </section>
 
-        {/* Render sections in order */}
-        {(config.sectionOrder || ['problemSection', 'features', 'socialProof', 'guarantees', 'faq', 'cta']).map(sectionName => {
-          const renderedSection = renderSection(sectionName);
-          console.log(`Rendering section ${sectionName}:`, renderedSection ? 'SHOWN' : 'HIDDEN');
-          return renderedSection;
+      {/* Render sections in order */}
+        {config.sectionOrder?.map((sectionId) => {
+          switch (sectionId) {
+            case 'problemSection':
+              return (
+                <section key={sectionId} id="problem-section" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background} ${isSectionVisible('problemSection') ? 'block' : 'hidden'}`}
+                  onClick={() => onSectionSelect?.('problemSection')}
+                  style={{ cursor: onSectionSelect ? 'pointer' : 'default' }}
+                >
+                  <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className={`grid gap-8 sm:gap-12 lg:gap-16 ${
+                      isMobilePreview 
+                        ? 'grid-cols-1' 
+                        : 'grid-cols-1 lg:grid-cols-2'
+                    }`}>
+                      {/* Left Column - Headings */}
+                      <div className="space-y-4 sm:space-y-6">
+                        <h2 className={`font-bold tracking-tighter text-left ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                          isMobilePreview 
+                            ? 'text-xl' 
+                            : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
+                        }`}>{config.problemSection?.title || "The Problem"}</h2>
+                        <p className={`text-left ${themeClasses.textSecondary} ${
+                          isMobilePreview 
+                            ? 'text-sm' 
+                            : 'text-base sm:text-lg md:text-xl'
+                        }`}>
+                          {config.problemSection?.subtitle || "Are you struggling with these common challenges?"}
+                        </p>
+                      </div>
+                      
+                      {/* Right Column - Pain Points */}
+                      {config.problemSection?.painPoints && config.problemSection.painPoints.length > 0 && (
+                        <div className="space-y-3 sm:space-y-4">
+                          {config.problemSection.painPoints.filter(painPoint => painPoint && typeof painPoint === 'object').map((painPoint, i) => (
+                            <Card key={i} className={`${themeClasses.surface} ${themeClasses.border} transition-all duration-300 hover:shadow-lg hover:scale-[1.02] hover:border-opacity-80 p-4 sm:p-5`}>
+                              <div className="flex items-center gap-3">
+                                <div 
+                                  className="p-2 rounded-lg flex items-center justify-center flex-shrink-0"
+                                  style={{ 
+                                    backgroundColor: getAccentColor(theme.accentColor, 0.1),
+                                    color: theme.accentColor
+                                  }}
+                                >
+                                  {painPoint.icon ? renderIcon(painPoint.icon, "h-4 w-4") : renderIcon(getDefaultIcon(i), "h-4 w-4")}
+                                </div>
+                                <div className={`${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                                  isMobilePreview ? 'text-sm' : 'text-base sm:text-lg'
+                                }`}>
+                                  {painPoint.text}
+                                </div>
+                              </div>
+                            </Card>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </section>
+              );
+            case 'features':
+              return isSectionVisible('features') ? (
+                <section key="features" id="features" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.muted}`}
+                  onClick={() => onSectionSelect?.('features')}
+                  style={{ cursor: onSectionSelect ? 'pointer' : 'default' }}
+                >
+                  <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
+                      <div className="space-y-3 sm:space-y-4">
+                        <h2 className={`font-bold tracking-tighter ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                          isMobilePreview 
+                            ? 'text-xl' 
+                            : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
+                        }`}>{config.featuresTitle || "Solutions/Features"}</h2>
+                        <p className={`${themeClasses.textSecondary} ${
+                          isMobilePreview 
+                            ? 'text-xs max-w-[280px]' 
+                            : 'text-sm sm:text-base md:text-lg lg:text-xl max-w-[800px] sm:max-w-[900px] px-4 sm:px-0'
+                        }`}>
+                          {config.featuresSubtitle || "Everything you need to build, deploy, and scale your applications with confidence."}
+                        </p>
+                      </div>
+                    </div>
+                    <div className={`mx-auto grid items-center gap-4 sm:gap-6 lg:gap-8 py-8 sm:py-12 ${
+                      isMobilePreview 
+                        ? 'grid-cols-1 max-w-sm' 
+                        : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl'
+                    }`}>
+                                      {features.filter(feature => feature && typeof feature === 'object').map((feature, i) => (
+                      <Card key={i} className={`h-full ${themeClasses.surface} ${themeClasses.border} transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-opacity-80`}>
+                        <CardHeader className="pb-4">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div 
+                              className="p-2 rounded-lg flex items-center justify-center"
+                              style={{ 
+                                backgroundColor: getAccentColor(theme.accentColor, 0.1),
+                                color: theme.accentColor
+                              }}
+                            >
+                              {feature.icon ? renderIcon(feature.icon, "h-5 w-5") : renderIcon(getDefaultIcon(i), "h-5 w-5")}
+                            </div>
+                            <CardTitle className={`${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                              isMobilePreview ? 'text-base' : 'text-lg sm:text-xl'
+                            }`}>{feature.title}</CardTitle>
+                          </div>
+                          <CardDescription className={`${themeClasses.textSecondary} ${
+                            isMobilePreview ? 'text-xs' : 'text-sm sm:text-base'
+                          }`}>
+                            {feature.description}
+                          </CardDescription>
+                          {feature.benefit && (
+                            <div className={`text-sm font-semibold ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''}`} style={{ color: theme.accentColor }}>
+                              What this means for you: {feature.benefit}
+                            </div>
+                          )}
+                        </CardHeader>
+                        <CardContent>
+                          {/* Removed "Feature included" text as requested */}
+                        </CardContent>
+                      </Card>
+                    ))}
+                    </div>
+                  </div>
+                </section>
+              ) : null;
+            case 'socialProof':
+              return isSectionVisible('socialProof') ? (
+                <section key={sectionId} id="social-proof" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}
+                  onClick={() => onSectionSelect?.('socialProof')}
+                  style={{ cursor: onSectionSelect ? 'pointer' : 'default' }}
+                >
+                  <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
+                      <div className="space-y-3 sm:space-y-4">
+                        <h2 className={`font-bold tracking-tighter ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                          isMobilePreview 
+                            ? 'text-xl' 
+                            : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
+                        }`}>{config.socialProof?.title || "What Our Customers Say"}</h2>
+                        <p className={`${themeClasses.textSecondary} ${
+                          isMobilePreview 
+                            ? 'text-xs max-w-[280px]' 
+                            : 'text-sm sm:text-base md:text-lg lg:text-xl max-w-[800px] sm:max-w-[900px] px-4 sm:px-0'
+                        }`}>
+                          {config.socialProof?.subtitle || "Join thousands of satisfied customers"}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Stats */}
+                    {config.socialProof?.stats && config.socialProof.stats.length > 0 && (
+                      <div className={`mx-auto grid items-center gap-4 sm:gap-6 lg:gap-8 py-8 sm:py-12 ${
+                        isMobilePreview 
+                          ? 'grid-cols-1 max-w-sm' 
+                          : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl'
+                      }`}>
+                        {config.socialProof.stats.filter(stat => stat && typeof stat === 'object').map((stat, i) => (
+                          <Card key={i} className={`h-full ${themeClasses.surface} ${themeClasses.border} text-center transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-opacity-80`}>
+                            <CardHeader className="pb-4">
+                              <div className="space-y-2">
+                                <div className={`text-3xl sm:text-4xl font-bold ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''}`} style={{ color: theme.accentColor }}>
+                                  {stat.number}
+                                </div>
+                                <CardTitle className={`${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                                  isMobilePreview ? 'text-base' : 'text-lg sm:text-xl'
+                                }`}>{stat.label}</CardTitle>
+                                <CardDescription className={`${themeClasses.textSecondary} ${
+                                  isMobilePreview ? 'text-xs' : 'text-sm sm:text-base'
+                                }`}>
+                                  {stat.description}
+                                </CardDescription>
+                              </div>
+                            </CardHeader>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Testimonials */}
+                    {config.socialProof?.testimonials && Array.isArray(config.socialProof.testimonials) && config.socialProof.testimonials.length > 0 && (
+                      <div className={`mx-auto grid items-center gap-4 sm:gap-6 lg:gap-8 py-8 sm:py-12 ${
+                        isMobilePreview 
+                          ? 'grid-cols-1 max-w-sm' 
+                          : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl'
+                      }`}>
+                        {config.socialProof.testimonials.filter(testimonial => testimonial && typeof testimonial === 'object').map((testimonial, i) => (
+                          <Card key={i} className={`h-full ${themeClasses.surface} ${themeClasses.border} transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-opacity-80`}>
+                            <CardHeader className="pb-4">
+                              <div className="space-y-3">
+                                <div className="flex items-center gap-1">
+                                  {[...Array(getSafeRating(testimonial.rating))].map((_, starIndex) => (
+                                    <Star key={starIndex} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                  ))}
+                                </div>
+                                <CardDescription className={`${themeClasses.textSecondary} italic ${
+                                  isMobilePreview ? 'text-xs' : 'text-sm sm:text-base'
+                                }`}>
+                                  "{testimonial.quote}"
+                                </CardDescription>
+                                {testimonial.result && (
+                                  <div className={`text-sm font-semibold ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''}`} style={{ color: theme.accentColor }}>
+                                    Result: {testimonial.result}
+                                  </div>
+                                )}
+                              </div>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-1">
+                                <div className={`font-semibold ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''}`}>
+                                  {testimonial.name}
+                                </div>
+                                <div className={`text-sm ${themeClasses.textSecondary}`}>
+                                  {testimonial.role} at {testimonial.company}
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </section>
+              ) : null;
+            case 'guarantees':
+              return isSectionVisible('guarantees') ? (
+                <section key={sectionId} id="guarantees" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.background}`}
+                  onClick={() => onSectionSelect?.('guarantees')}
+                  style={{ cursor: onSectionSelect ? 'pointer' : 'default' }}
+                >
+                  <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
+                      <div className="space-y-3 sm:space-y-4">
+                        <h2 className={`font-bold tracking-tighter ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                          isMobilePreview 
+                            ? 'text-xl' 
+                            : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
+                        }`}>{config.guarantees?.title || "Our Guarantees"}</h2>
+                        <p className={`${themeClasses.textSecondary} ${
+                          isMobilePreview 
+                            ? 'text-xs max-w-[280px]' 
+                            : 'text-sm sm:text-base md:text-lg lg:text-xl max-w-[800px] sm:max-w-[900px] px-4 sm:px-0'
+                        }`}>
+                          {config.guarantees?.subtitle || "We're confident you'll love our solution"}
+                        </p>
+                      </div>
+                    </div>
+                    {config.guarantees?.guarantees && config.guarantees.guarantees.length > 0 && (
+                      <div className={`mx-auto grid items-center gap-4 sm:gap-6 lg:gap-8 py-8 sm:py-12 ${
+                        isMobilePreview 
+                          ? 'grid-cols-1 max-w-sm' 
+                          : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl'
+                      }`}>
+                        {config.guarantees.guarantees.filter(guarantee => guarantee && typeof guarantee === 'object').map((guarantee, i) => (
+                          <Card key={i} className={`h-full ${themeClasses.surface} ${themeClasses.border} transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-opacity-80`}>
+                            <CardHeader className="pb-4">
+                              <div className="flex items-center gap-3 mb-3">
+                                <div 
+                                  className="p-2 rounded-lg flex items-center justify-center"
+                                  style={{ 
+                                    backgroundColor: getAccentColor(theme.accentColor, 0.1),
+                                    color: theme.accentColor
+                                  }}
+                                >
+                                  {guarantee.icon ? renderIcon(guarantee.icon, "h-5 w-5") : renderIcon(getDefaultIcon(i), "h-5 w-5")}
+                                </div>
+                                <CardTitle className={`${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                                  isMobilePreview ? 'text-base' : 'text-lg sm:text-xl'
+                                }`}>{guarantee.title}</CardTitle>
+                              </div>
+                              <CardDescription className={`${themeClasses.textSecondary} ${
+                                isMobilePreview ? 'text-xs' : 'text-sm sm:text-base'
+                              }`}>
+                                {guarantee.description}
+                              </CardDescription>
+                            </CardHeader>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </section>
+              ) : null;
+            case 'faq':
+              return isSectionVisible('faq') ? (
+                <section key={sectionId} id="faq" className={`w-full py-8 sm:py-12 md:py-16 lg:py-24 ${themeClasses.muted}`}
+                  onClick={() => onSectionSelect?.('faq')}
+                  style={{ cursor: onSectionSelect ? 'pointer' : 'default' }}
+                >
+                  <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
+                      <div className="space-y-3 sm:space-y-4">
+                        <h2 className={`font-bold tracking-tighter ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                          isMobilePreview 
+                            ? 'text-xl' 
+                            : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
+                        }`}>{config.faq?.title || "Frequently Asked Questions"}</h2>
+                        <p className={`${themeClasses.textSecondary} ${
+                          isMobilePreview 
+                            ? 'text-xs max-w-[280px]' 
+                            : 'text-sm sm:text-base md:text-lg lg:text-xl max-w-[800px] sm:max-w-[900px] px-4 sm:px-0'
+                        }`}>
+                          {config.faq?.subtitle || "Everything you need to know"}
+                        </p>
+                      </div>
+                    </div>
+                    {config.faq?.questions && config.faq.questions.length > 0 && (
+                      <div className={`mx-auto max-w-4xl py-8 sm:py-12 space-y-4 sm:space-y-6`}>
+                        {config.faq.questions.filter(faq => faq && typeof faq === 'object').map((faq, i) => (
+                          <Card key={i} className={`${themeClasses.surface} ${themeClasses.border} transition-all duration-300 hover:shadow-lg hover:border-opacity-80`}>
+                            <CardHeader>
+                              <CardTitle className={`${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                                isMobilePreview ? 'text-base' : 'text-lg sm:text-xl'
+                              }`}>{faq.question}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <CardDescription className={`${themeClasses.textSecondary} ${
+                                isMobilePreview ? 'text-xs' : 'text-sm sm:text-base'
+                              }`}>
+                                {faq.answer}
+                              </CardDescription>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </section>
+              ) : null;
+            case 'cta':
+              return isSectionVisible('cta') ? (
+                <section key="cta" id="cta-section" className="w-full py-8 sm:py-12 md:py-16 lg:py-24" 
+                  style={{ 
+                    backgroundColor: getAccentColor(theme.accentColor, 0.9),
+                    cursor: onSectionSelect ? 'pointer' : 'default'
+                  }}
+                  onClick={() => onSectionSelect?.('cta')}
+                >
+                  <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col items-center justify-center space-y-6 sm:space-y-8 text-center">
+                      {/* Urgency Banner */}
+                      {config.urgency?.enabled && (
+                        <div className={`w-full max-w-2xl mx-auto p-4 rounded-lg ${themeClasses.surface} ${themeClasses.border} animate-pulse`}>
+                          <div className={`text-sm font-semibold ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''}`} style={{ color: theme.accentColor }}>
+                            ⏰ {config.urgency.message || "Limited Time Offer"}
+                            {config.urgency.deadline && (
+                              <span className="ml-2">- {config.urgency.deadline}</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="space-y-3 sm:space-y-4">
+                        <h2 className={`font-bold tracking-tighter ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                          isMobilePreview 
+                            ? 'text-xl' 
+                            : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
+                        }`}>
+                          {config.ctaTitle || "Ready to Get Started?"}
+                        </h2>
+                        <p className={`mx-auto ${themeClasses.textSecondary} ${
+                          isMobilePreview 
+                            ? 'text-xs max-w-[280px]' 
+                            : 'text-sm sm:text-base md:text-lg lg:text-xl max-w-[500px] sm:max-w-[600px] px-4 sm:px-0'
+                        }`}>
+                          {config.ctaSubtitle || "Join thousands of users who are already building amazing things with our platform."}
+                        </p>
+                      </div>
+                      <div className={`w-full space-y-3 sm:space-y-4 ${
+                        isMobilePreview ? 'max-w-xs' : 'max-w-sm sm:max-w-md'
+                      }`}>
+                        <div className={`${themeClasses.background} rounded-lg p-4 sm:p-6`}>
+                          <LeadForm pageId={pageId || ''} theme={theme} previewMode={previewMode} />
+                        </div>
+                        <p className={`${themeClasses.textSecondary} ${
+                          isMobilePreview ? 'text-xs' : 'text-xs sm:text-sm'
+                        }`}>Start your free trial. No credit card required.</p>
+                      </div>
+                    </div>
+                  </div>
+              </section>
+              ) : null;
+            default:
+              return null;
+          }
         })}
       </main>
 

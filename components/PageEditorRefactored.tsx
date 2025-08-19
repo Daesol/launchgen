@@ -518,11 +518,11 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
     markAsUnsaved();
   };
 
-  const handleFeatureChange = (idx: number, value: any) => {
+  const handleFeatureChange = (idx: number, field: string, value: string) => {
     setPageContent((prev: any) => ({
       ...prev,
       features: (prev?.features || []).map((feature: any, i: number) => 
-        i === idx ? value : feature
+        i === idx ? { ...feature, [field]: value } : feature
       )
     }));
   };
@@ -1007,169 +1007,899 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
     };
   }, [hasUnsavedChanges, pageContent, pageStyle, templateId, id, originalPrompt, onSave]);
 
+  // State for edit panel views
+  const [editPanelView, setEditPanelView] = useState<'main' | 'theme' | 'business' | 'layout' | 'section'>('main');
+  const [selectedSection, setSelectedSection] = useState<string | null>(null);
+
+  // Function to handle section selection from preview
+  const handleSectionSelect = (sectionId: string) => {
+    setSelectedSection(sectionId);
+    setEditPanelView('section');
+    // Scroll to the selected section in the preview
+    const sectionElement = document.getElementById(`section-${sectionId}`);
+    if (sectionElement) {
+      sectionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  // Function to go back to main edit panel
+  const handleBackToMain = () => {
+    setEditPanelView('main');
+    setSelectedSection(null);
+  };
+
+  // Function to render the appropriate edit panel content
+  const renderEditPanelContent = () => {
+    switch (editPanelView) {
+      case 'theme':
+        return (
+          <div className="p-4 space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <button
+                onClick={handleBackToMain}
+                className="p-1 text-slate-500 hover:text-slate-700 transition-colors"
+                title="Back to main panel"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <h3 className="text-sm font-semibold text-slate-800">Theme Settings</h3>
+            </div>
+            <ThemeSection
+              theme={pageStyle?.theme || { mode: 'white', accentColor: '#6366f1' }}
+              onThemeChange={handleThemeChange}
+              isExpanded={true}
+              onToggle={() => {}}
+            />
+          </div>
+        );
+
+      case 'business':
+        return (
+          <div className="p-4 space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <button
+                onClick={handleBackToMain}
+                className="p-1 text-slate-500 hover:text-slate-700 transition-colors"
+                title="Back to main panel"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <h3 className="text-sm font-semibold text-slate-800">Business Info</h3>
+            </div>
+            <BusinessInfoSection
+              business={pageContent?.business || {}}
+              onBusinessChange={handleBusinessChange}
+              onBusinessBlur={handleBusinessBlur}
+              isExpanded={true}
+              onToggle={() => {}}
+            />
+          </div>
+        );
+
+      case 'layout':
+        return (
+          <div className="p-4 space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <button
+                onClick={handleBackToMain}
+                className="p-1 text-slate-500 hover:text-slate-700 transition-colors"
+                title="Back to main panel"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <h3 className="text-sm font-semibold text-slate-800">Page Layout</h3>
+            </div>
+            <div className="space-y-3">
+              <h4 className="text-xs font-medium text-slate-600 uppercase tracking-wider">Section Order & Visibility</h4>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={sectionOrder}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {sectionOrder.map((sectionId) => (
+                    <DraggableSection key={sectionId} id={sectionId}>
+                      <div className="flex items-center justify-between p-2 text-xs text-slate-700 bg-slate-50 rounded border">
+                        <span className="flex-1">
+                          {sectionId === 'problemSection' ? 'Problem Section' : 
+                           sectionId === 'features' ? 'Features' :
+                           sectionId === 'socialProof' ? 'Social Proof' :
+                           sectionId === 'guarantees' ? 'Guarantees' :
+                           sectionId === 'faq' ? 'FAQ' :
+                           sectionId === 'cta' ? 'CTA' : sectionId}
+                        </span>
+                        <button
+                          onClick={() => toggleSectionVisibility(sectionId)}
+                          className={`ml-2 px-2 py-1 text-xs rounded transition-colors ${
+                            visibleSections[sectionId] 
+                              ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                              : 'bg-red-100 text-red-700 hover:bg-red-200'
+                          }`}
+                          title={visibleSections[sectionId] ? 'Hide section' : 'Show section'}
+                        >
+                          {visibleSections[sectionId] ? 'Visible' : 'Hidden'}
+                        </button>
+                      </div>
+                    </DraggableSection>
+                  ))}
+                </SortableContext>
+              </DndContext>
+            </div>
+          </div>
+        );
+
+      case 'section':
+        if (!selectedSection) return null;
+        
+        const renderSectionEditor = () => {
+          switch (selectedSection) {
+            case 'business':
+              return (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-slate-800 mb-3">Business Information</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Business Name
+                      </label>
+                      <input
+                        type="text"
+                        value={pageContent?.business?.name || ''}
+                        onChange={(e) => handleBusinessChange("name", e.target.value)}
+                        onBlur={(e) => handleBusinessBlur("name", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                        placeholder="Enter your business name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Logo URL
+                      </label>
+                      <input
+                        type="text"
+                        value={pageContent?.business?.logo || ''}
+                        onChange={(e) => handleBusinessChange("logo", e.target.value)}
+                        onBlur={(e) => handleBusinessBlur("logo", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                        placeholder="Enter logo URL or leave empty for default"
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            case 'hero':
+              return (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-slate-800 mb-3">Hero Section</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Headline
+                      </label>
+                      <input
+                        type="text"
+                        value={pageContent?.hero?.headline || ''}
+                        onChange={(e) => handleHeroChange("headline", e.target.value)}
+                        onBlur={(e) => handleHeroBlur("headline", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                        placeholder="Enter your main headline"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Subheadline
+                      </label>
+                      <textarea
+                        value={pageContent?.hero?.subheadline || ''}
+                        onChange={(e) => handleHeroChange("subheadline", e.target.value)}
+                        onBlur={(e) => handleHeroBlur("subheadline", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                        rows={3}
+                        placeholder="Enter your subheadline"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        CTA Button Text
+                      </label>
+                      <input
+                        type="text"
+                        value={pageContent?.hero?.cta || ''}
+                        onChange={(e) => handleHeroChange("cta", e.target.value)}
+                        onBlur={(e) => handleHeroBlur("cta", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                        placeholder="Enter CTA button text"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Hero Tag
+                      </label>
+                      <input
+                        type="text"
+                        value={pageContent?.hero?.heroTag || ''}
+                        onChange={(e) => handleHeroChange("heroTag", e.target.value)}
+                        onBlur={(e) => handleHeroBlur("heroTag", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                        placeholder="e.g., AI-Powered Solution"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Hero Tag Icon
+                      </label>
+                      <select
+                        value={pageContent?.hero?.heroTagIcon || ''}
+                        onChange={(e) => handleHeroChange("heroTagIcon", e.target.value)}
+                        onBlur={(e) => handleHeroBlur("heroTagIcon", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                      >
+                        <option value="">Select an icon</option>
+                        <option value="rocket">🚀</option>
+                        <option value="lightning">⚡</option>
+                        <option value="lightbulb">💡</option>
+                        <option value="target">🎯</option>
+                        <option value="fire">🔥</option>
+                        <option value="star">⭐</option>
+                        <option value="diamond">💎</option>
+                        <option value="helicopter">🚁</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              );
+            case 'problemSection':
+              return (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-slate-800 mb-3">Problem Section</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Section Title
+                      </label>
+                      <input
+                        type="text"
+                        value={pageContent?.problemSection?.title || ''}
+                        onChange={(e) => handleProblemSectionChange("title", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                        placeholder="e.g., The Problem, Pain Points"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Section Subtitle
+                      </label>
+                      <textarea
+                        value={pageContent?.problemSection?.subtitle || ''}
+                        onChange={(e) => handleProblemSectionChange("subtitle", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                        rows={3}
+                        placeholder="Describe the problem your product solves"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Pain Points
+                      </label>
+                      <div className="space-y-2">
+                        {(pageContent?.problemSection?.painPoints || []).map((painPoint: any, idx: number) => (
+                          <div key={idx} className="space-y-2 p-3 border border-slate-200 rounded-md">
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                value={painPoint?.text || ''}
+                                onChange={(e) => handlePainPointsChange(idx, { ...painPoint, text: e.target.value })}
+                                className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                                placeholder="Enter pain point"
+                              />
+                              <select
+                                value={painPoint?.icon || ''}
+                                onChange={(e) => handlePainPointsChange(idx, { ...painPoint, icon: e.target.value })}
+                                className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                              >
+                                <option value="">Icon</option>
+                                <option value="alert">🚨</option>
+                                <option value="warning">⚠️</option>
+                                <option value="cross">❌</option>
+                                <option value="broken-heart">💔</option>
+                                <option value="anxious">😰</option>
+                                <option value="frustrated">😤</option>
+                                <option value="tired">😫</option>
+                                <option value="angry">😡</option>
+                              </select>
+                            </div>
+                            <button
+                              onClick={() => handleRemovePainPoint(idx)}
+                              className="w-full px-3 py-2 text-red-600 hover:text-red-800 text-sm border border-red-200 rounded-md hover:bg-red-50 flex items-center justify-center gap-2"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                        <button
+                          onClick={handleAddPainPoint}
+                          className="w-full px-3 py-2 border border-slate-300 border-dashed rounded-md text-slate-600 hover:text-slate-800 hover:border-slate-400 text-sm"
+                        >
+                          + Add Pain Point
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            case 'features':
+              return (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-slate-800 mb-3">Features Section</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Section Title
+                      </label>
+                      <input
+                        type="text"
+                        value={pageContent?.features?.title || ''}
+                        onChange={(e) => handlePageContentChange("featuresTitle", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                        placeholder="e.g., Features, Why Choose Us"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Section Subtitle
+                      </label>
+                      <textarea
+                        value={pageContent?.features?.subtitle || ''}
+                        onChange={(e) => handlePageContentChange("featuresSubtitle", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                        rows={3}
+                        placeholder="Describe your features section"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Features
+                      </label>
+                      <div className="space-y-2">
+                        {(pageContent?.features || []).map((feature: any, idx: number) => (
+                          <div key={idx} className="space-y-2 p-3 border border-slate-200 rounded-md">
+                            <input
+                              type="text"
+                              value={feature?.title || ''}
+                              onChange={(e) => handleFeatureChange(idx, "title", e.target.value)}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                              placeholder="Feature title"
+                            />
+                            <textarea
+                              value={feature?.description || ''}
+                              onChange={(e) => handleFeatureChange(idx, "description", e.target.value)}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                              rows={2}
+                              placeholder="Feature description"
+                            />
+                            <div className="flex gap-2">
+                              <select
+                                value={feature?.icon || ''}
+                                onChange={(e) => handleFeatureChange(idx, "icon", e.target.value)}
+                                className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                              >
+                                <option value="">Select icon</option>
+                                <option value="rocket">🚀</option>
+                                <option value="lightning">⚡</option>
+                                <option value="lightbulb">💡</option>
+                                <option value="target">🎯</option>
+                                <option value="fire">🔥</option>
+                                <option value="star">⭐</option>
+                                <option value="diamond">💎</option>
+                                <option value="helicopter">🚁</option>
+                                <option value="tools">🔧</option>
+                                <option value="mobile">📱</option>
+                                <option value="computer">💻</option>
+                                <option value="web">🌐</option>
+                              </select>
+                              <button
+                                onClick={() => handleRemoveFeature(idx)}
+                                className="px-3 py-2 text-red-600 hover:text-red-800 text-sm border border-red-200 rounded-md hover:bg-red-50"
+                                title="Remove feature"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                        <button
+                          onClick={handleAddFeature}
+                          className="w-full px-3 py-2 border border-slate-300 border-dashed rounded-md text-slate-600 hover:text-slate-800 hover:border-slate-400 text-sm"
+                        >
+                          + Add Feature
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            case 'socialProof':
+              return (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-slate-800 mb-3">Social Proof Section</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Section Title
+                      </label>
+                      <input
+                        type="text"
+                        value={pageContent?.socialProof?.title || ''}
+                        onChange={(e) => handleSocialProofChange("title", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                        placeholder="e.g., What Our Customers Say, Social Proof"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Section Subtitle
+                      </label>
+                      <textarea
+                        value={pageContent?.socialProof?.subtitle || ''}
+                        onChange={(e) => handleSocialProofChange("subtitle", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                        rows={3}
+                        placeholder="Describe your social proof section"
+                      />
+                    </div>
+                    
+                    {/* Testimonials */}
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Testimonials
+                      </label>
+                      <div className="space-y-2">
+                        {(pageContent?.socialProof?.testimonials || []).map((testimonial: any, idx: number) => (
+                          <div key={idx} className="space-y-2 p-3 border border-slate-200 rounded-md">
+                            <input
+                              type="text"
+                              value={testimonial?.name || ''}
+                              onChange={(e) => handleTestimonialsChange(idx, { ...testimonial, name: e.target.value })}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                              placeholder="Customer name"
+                            />
+                            <input
+                              type="text"
+                              value={testimonial?.role || ''}
+                              onChange={(e) => handleTestimonialsChange(idx, { ...testimonial, role: e.target.value })}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                              placeholder="Job title/role"
+                            />
+                            <input
+                              type="text"
+                              value={testimonial?.company || ''}
+                              onChange={(e) => handleTestimonialsChange(idx, { ...testimonial, company: e.target.value })}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                              placeholder="Company name"
+                            />
+                            <textarea
+                              value={testimonial?.quote || ''}
+                              onChange={(e) => handleTestimonialsChange(idx, { ...testimonial, quote: e.target.value })}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                              rows={2}
+                              placeholder="Customer testimonial"
+                            />
+                            <button
+                              onClick={() => handleRemoveTestimonial(idx)}
+                              className="w-full px-3 py-2 text-red-600 hover:text-red-800 text-sm border border-red-200 rounded-md hover:bg-red-50 flex items-center justify-center gap-2"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                        <button
+                          onClick={handleAddTestimonial}
+                          className="w-full px-3 py-2 border border-slate-300 border-dashed rounded-md text-slate-600 hover:text-slate-800 hover:border-slate-400 text-sm"
+                        >
+                          + Add Testimonial
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Stats */}
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Statistics
+                      </label>
+                      <div className="space-y-2">
+                        {(pageContent?.socialProof?.stats || []).map((stat: any, idx: number) => (
+                          <div key={idx} className="space-y-2 p-3 border border-slate-200 rounded-md">
+                            <input
+                              type="text"
+                              value={stat?.number || ''}
+                              onChange={(e) => handleStatsChange(idx, { ...stat, number: e.target.value })}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                              placeholder="e.g., 10,000+"
+                            />
+                            <input
+                              type="text"
+                              value={stat?.label || ''}
+                              onChange={(e) => handleStatsChange(idx, { ...stat, label: e.target.value })}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                              placeholder="e.g., Happy Customers"
+                            />
+                            <textarea
+                              value={stat?.description || ''}
+                              onChange={(e) => handleStatsChange(idx, { ...stat, description: e.target.value })}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                              rows={2}
+                              placeholder="Brief description"
+                            />
+                            <button
+                              onClick={() => handleRemoveStat(idx)}
+                              className="w-full px-3 py-2 text-red-600 hover:text-red-800 text-sm border border-red-200 rounded-md hover:bg-red-50 flex items-center justify-center gap-2"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                        <button
+                          onClick={handleAddStat}
+                          className="w-full px-3 py-2 border border-slate-300 border-dashed rounded-md text-slate-600 hover:text-slate-800 hover:border-slate-400 text-sm"
+                        >
+                          + Add Statistic
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            case 'guarantees':
+              return (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-slate-800 mb-3">Guarantees Section</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Section Title
+                      </label>
+                      <input
+                        type="text"
+                        value={pageContent?.guarantees?.title || ''}
+                        onChange={(e) => handleGuaranteesChange("title", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                        placeholder="e.g., Our Guarantee, Risk-Free Promise"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Section Subtitle
+                      </label>
+                      <textarea
+                        value={pageContent?.guarantees?.subtitle || ''}
+                        onChange={(e) => handleGuaranteesChange("subtitle", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                        rows={3}
+                        placeholder="Describe your guarantees"
+                      />
+                    </div>
+                    
+                    {/* Guarantee Items */}
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Guarantees
+                      </label>
+                      <div className="space-y-2">
+                        {(pageContent?.guarantees?.guarantees || []).map((guarantee: any, idx: number) => (
+                          <div key={idx} className="space-y-2 p-3 border border-slate-200 rounded-md">
+                            <input
+                              type="text"
+                              value={guarantee?.title || ''}
+                              onChange={(e) => handleGuaranteesArrayChange(idx, { ...guarantee, title: e.target.value })}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                              placeholder="Guarantee title"
+                            />
+                            <textarea
+                              value={guarantee?.description || ''}
+                              onChange={(e) => handleGuaranteesArrayChange(idx, { ...guarantee, description: e.target.value })}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                              rows={2}
+                              placeholder="Guarantee description"
+                            />
+                            <div className="flex gap-2">
+                              <select
+                                value={guarantee?.icon || ''}
+                                onChange={(e) => handleGuaranteesArrayChange(idx, { ...guarantee, icon: e.target.value })}
+                                className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                              >
+                                <option value="">Select icon</option>
+                                <option value="checkmark">✅</option>
+                                <option value="shield">🛡️</option>
+                                <option value="diamond">💎</option>
+                                <option value="star">⭐</option>
+                                <option value="lock">🔒</option>
+                                <option value="target">🎯</option>
+                                <option value="rocket">🚀</option>
+                                <option value="strong">💪</option>
+                              </select>
+                              <button
+                                onClick={() => handleRemoveGuarantee(idx)}
+                                className="px-3 py-2 text-red-600 hover:text-red-800 text-sm border border-red-200 rounded-md hover:bg-red-50"
+                                title="Remove guarantee"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                        <button
+                          onClick={handleAddGuarantee}
+                          className="w-full px-3 py-2 border border-slate-300 border-dashed rounded-md text-slate-600 hover:text-slate-800 hover:border-slate-400 text-sm"
+                        >
+                          + Add Guarantee
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            case 'faq':
+              return (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-slate-800 mb-3">FAQ Section</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Section Title
+                      </label>
+                      <input
+                        type="text"
+                        value={pageContent?.faq?.title || ''}
+                        onChange={(e) => handleFAQChange("title", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                        placeholder="e.g., Frequently Asked Questions"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Section Subtitle
+                      </label>
+                      <textarea
+                        value={pageContent?.faq?.subtitle || ''}
+                        onChange={(e) => handleFAQChange("subtitle", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                        rows={3}
+                        placeholder="Describe your FAQ section"
+                      />
+                    </div>
+                    
+                    {/* FAQ Questions */}
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Questions & Answers
+                      </label>
+                      <div className="space-y-2">
+                        {(pageContent?.faq?.questions || []).map((question: any, idx: number) => (
+                          <div key={idx} className="space-y-2 p-3 border border-slate-200 rounded-md">
+                            <input
+                              type="text"
+                              value={question?.question || ''}
+                              onChange={(e) => handleQuestionsChange(idx, { ...question, question: e.target.value })}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                              placeholder="Enter question"
+                            />
+                            <textarea
+                              value={question?.answer || ''}
+                              onChange={(e) => handleQuestionsChange(idx, { ...question, answer: e.target.value })}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                              rows={3}
+                              placeholder="Enter answer"
+                            />
+                            <button
+                              onClick={() => handleRemoveQuestion(idx)}
+                              className="w-full px-3 py-2 text-red-600 hover:text-red-800 text-sm border border-red-200 rounded-md hover:bg-red-50 flex items-center justify-center gap-2"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                        <button
+                          onClick={handleAddQuestion}
+                          className="w-full px-3 py-2 border border-slate-300 border-dashed rounded-md text-slate-600 hover:text-slate-800 hover:border-slate-400 text-sm"
+                        >
+                          + Add Question & Answer
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            case 'cta':
+              return (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-slate-800 mb-3">CTA Section</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        CTA Title
+                      </label>
+                      <input
+                        type="text"
+                        value={pageContent?.cta?.title || ''}
+                        onChange={(e) => handlePageContentChange("ctaTitle", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                        placeholder="e.g., Get Started Today, Ready to Begin"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        CTA Subtitle
+                      </label>
+                      <textarea
+                        value={pageContent?.cta?.subtitle || ''}
+                        onChange={(e) => handlePageContentChange("ctaSubtitle", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                        rows={3}
+                        placeholder="Describe your call to action"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        CTA Button Text
+                      </label>
+                      <input
+                        type="text"
+                        value={pageContent?.cta?.buttonText || ''}
+                        onChange={(e) => handlePageContentChange("ctaButtonText", e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                        placeholder="e.g., Get Started, Start Now"
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            case 'urgency':
+              return (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-slate-800 mb-3">Urgency Section</h4>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="urgency-enabled"
+                        checked={pageContent?.urgency?.enabled || false}
+                        onChange={(e) => handleUrgencyChange("enabled", e.target.checked)}
+                        className="w-4 h-4 text-slate-600 border-slate-300 rounded focus:ring-slate-500"
+                      />
+                      <label htmlFor="urgency-enabled" className="text-sm font-medium text-slate-700">
+                        Enable urgency message
+                      </label>
+                    </div>
+                    {pageContent?.urgency?.enabled && (
+                      <>
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">
+                            Urgency Message
+                          </label>
+                          <input
+                            type="text"
+                            value={pageContent?.urgency?.message || ''}
+                            onChange={(e) => handleUrgencyChange("message", e.target.value)}
+                            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                            placeholder="e.g., Limited Time Offer, Only 24 Hours Left"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">
+                            Deadline
+                          </label>
+                          <input
+                            type="text"
+                            value={pageContent?.urgency?.deadline || ''}
+                            onChange={(e) => handleUrgencyChange("deadline", e.target.value)}
+                            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                            placeholder="e.g., Ends Tonight, Until Midnight"
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            default:
+              return <div className="text-xs text-slate-500">Section editor not found</div>;
+          }
+        };
+
+        return (
+          <div className="p-4 space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <button
+                onClick={handleBackToMain}
+                className="p-1 text-slate-500 hover:text-slate-700 transition-colors"
+                title="Back to main panel"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <h3 className="text-sm font-semibold text-slate-800 capitalize">
+                {selectedSection === 'problemSection' ? 'Problem Section' : 
+                 selectedSection === 'socialProof' ? 'Social Proof' :
+                 selectedSection === 'cta' ? 'CTA' : selectedSection} Editor
+              </h3>
+            </div>
+            {renderSectionEditor()}
+          </div>
+        );
+
+      default:
+        return (
+          <div className="p-4 space-y-4">
+            <h3 className="text-sm font-semibold text-slate-800 mb-4">Edit Page</h3>
+            
+            {/* Main Edit Panel Buttons */}
+            <div className="space-y-3">
+              <button
+                onClick={() => setEditPanelView('theme')}
+                className="w-full flex items-center justify-center px-3 py-2 text-xs font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded border transition-colors"
+              >
+                Theme Settings
+              </button>
+              
+              <button
+                onClick={() => setEditPanelView('business')}
+                className="w-full flex items-center justify-center px-3 py-2 text-xs font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded border transition-colors"
+              >
+                Business Info
+              </button>
+              
+              <button
+                onClick={() => setEditPanelView('layout')}
+                className="w-full flex items-center justify-center px-3 py-2 text-xs font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded border transition-colors"
+              >
+                Page Layout
+              </button>
+            </div>
+            
+            <div className="border-t border-slate-200 pt-4">
+              <p className="text-xs text-slate-500 text-center">
+                Click on any section in the preview to edit its content
+              </p>
+            </div>
+          </div>
+        );
+    }
+  };
+
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-gray-100">
       {/* Edit Panel - Desktop Sidebar - Now on the left */}
       <div className={`hidden lg:flex ${
         sidePanelCollapsed ? 'w-0 overflow-hidden' : 'w-96'
       } bg-white border-r border-gray-200 flex-col transition-all duration-300`}>
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800">Edit Page</h2>
-        </div>
-        
-        <div className="flex-1 overflow-y-auto p-4">
-          {/* Theme Settings - Moved to top */}
-          <ThemeSection
-            theme={pageStyle?.theme || { mode: 'white', accentColor: '#6366f1' }}
-            onThemeChange={handleThemeChange}
-            isExpanded={expandedSections.theme}
-            onToggle={() => toggleSection('theme')}
-          />
-
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={sectionOrder}
-              strategy={verticalListSortingStrategy}
-            >
-              {/* Business Info Section */}
-              <BusinessInfoSection
-                business={pageContent?.business || {}}
-                onBusinessChange={handleBusinessChange}
-                onBusinessBlur={handleBusinessBlur}
-                isExpanded={expandedSections.business}
-                onToggle={() => toggleSection('business')}
-              />
-
-              {/* Hero Section */}
-              <HeroSection
-                hero={pageContent?.hero || {}}
-                onHeroChange={handleHeroChange}
-                onHeroBlur={handleHeroBlur}
-                onHighlightToggle={handleHighlightToggle}
-                isExpanded={expandedSections.hero}
-                onToggle={() => toggleSection('hero')}
-              />
-
-              {/* Draggable Sections */}
-              {sectionOrder.map((sectionId) => {
-                switch (sectionId) {
-                  case 'problemSection':
-                    return (
-                      <DraggableSection key={sectionId} id={sectionId}>
-                        <ProblemSection
-                          problemSection={pageContent?.problemSection || {}}
-                          onProblemSectionChange={handleProblemSectionChange}
-                          onPainPointsChange={handlePainPointsChange}
-                          onAddPainPoint={handleAddPainPoint}
-                          onRemovePainPoint={handleRemovePainPoint}
-                          isExpanded={expandedSections.problemSection}
-                          onToggle={() => toggleSection('problemSection')}
-                          isVisible={visibleSections.problemSection}
-                          onToggleVisibility={() => toggleSectionVisibility('problemSection')}
-                        />
-                      </DraggableSection>
-                    );
-                  case 'features':
-                    return (
-                      <DraggableSection key={sectionId} id={sectionId}>
-                        <FeaturesSection
-                          features={pageContent?.features || []}
-                          featuresTitle={pageContent?.featuresTitle || ''}
-                          featuresSubtitle={pageContent?.featuresSubtitle || ''}
-                          onFeatureChange={handleFeatureChange}
-                          onAddFeature={handleAddFeature}
-                          onRemoveFeature={handleRemoveFeature}
-                          onPageContentChange={handlePageContentChange}
-                          isExpanded={expandedSections.features}
-                          onToggle={() => toggleSection('features')}
-                          isVisible={visibleSections.features}
-                          onToggleVisibility={() => toggleSectionVisibility('features')}
-                        />
-                      </DraggableSection>
-                    );
-                  case 'socialProof':
-                    return (
-                      <DraggableSection key={sectionId} id={sectionId}>
-                        <SocialProofSection
-                          socialProof={pageContent?.socialProof || {}}
-                          onSocialProofChange={handleSocialProofChange}
-                          onTestimonialsChange={handleTestimonialsChange}
-                          onStatsChange={handleStatsChange}
-                          onAddTestimonial={handleAddTestimonial}
-                          onRemoveTestimonial={handleRemoveTestimonial}
-                          onAddStat={handleAddStat}
-                          onRemoveStat={handleRemoveStat}
-                          isExpanded={expandedSections.socialProof}
-                          onToggle={() => toggleSection('socialProof')}
-                          isVisible={visibleSections.socialProof}
-                          onToggleVisibility={() => toggleSectionVisibility('socialProof')}
-                        />
-                      </DraggableSection>
-                    );
-                  case 'guarantees':
-                    return (
-                      <DraggableSection key={sectionId} id={sectionId}>
-                        <GuaranteesSection
-                          guarantees={pageContent?.guarantees || {}}
-                          onGuaranteesChange={handleGuaranteesChange}
-                          onGuaranteesArrayChange={handleGuaranteesArrayChange}
-                          onAddGuarantee={handleAddGuarantee}
-                          onRemoveGuarantee={handleRemoveGuarantee}
-                          isExpanded={expandedSections.guarantees}
-                          onToggle={() => toggleSection('guarantees')}
-                          isVisible={visibleSections.guarantees}
-                          onToggleVisibility={() => toggleSectionVisibility('guarantees')}
-                        />
-                      </DraggableSection>
-                    );
-                  case 'faq':
-                    return (
-                      <DraggableSection key={sectionId} id={sectionId}>
-                        <FAQSection
-                          faq={pageContent?.faq || {}}
-                          onFAQChange={handleFAQChange}
-                          onQuestionsChange={handleQuestionsChange}
-                          onAddQuestion={handleAddQuestion}
-                          onRemoveQuestion={handleRemoveQuestion}
-                          isExpanded={expandedSections.faq}
-                          onToggle={() => toggleSection('faq')}
-                          isVisible={visibleSections.faq}
-                          onToggleVisibility={() => toggleSectionVisibility('faq')}
-                        />
-                      </DraggableSection>
-                    );
-                  case 'cta':
-                    return (
-                      <DraggableSection key={sectionId} id={sectionId}>
-                        <CTASection
-                          ctaTitle={pageContent?.ctaTitle || ''}
-                          ctaSubtitle={pageContent?.ctaSubtitle || ''}
-                          onPageContentChange={handlePageContentChange}
-                          isExpanded={expandedSections.cta}
-                          onToggle={() => toggleSection('cta')}
-                          isVisible={visibleSections.cta}
-                          onToggleVisibility={() => toggleSectionVisibility('cta')}
-                        />
-                      </DraggableSection>
-                    );
-                  default:
-                    return null;
-                }
-              })}
-            </SortableContext>
-          </DndContext>
-
-          {/* Urgency Section - Always at bottom */}
-          <UrgencySection
-            urgency={pageContent?.urgency || {}}
-            onUrgencyChange={handleUrgencyChange}
-            isExpanded={expandedSections.urgency}
-            onToggle={() => toggleSection('urgency')}
-          />
+        <div className="flex-1 overflow-y-auto">
+          {renderEditPanelContent()}
         </div>
       </div>
 
@@ -1213,6 +1943,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                 pageId={id}
                 previewMode={previewMode}
                 visibleSections={visibleSections}
+                onSectionSelect={handleSectionSelect}
               />
             </div>
           </div>
@@ -1295,19 +2026,96 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                       case 'features':
                         return (
                           <DraggableSection key={sectionId} id={sectionId}>
-                            <FeaturesSection
-                              features={pageContent?.features || []}
-                              featuresTitle={pageContent?.featuresTitle || ''}
-                              featuresSubtitle={pageContent?.featuresSubtitle || ''}
-                              onFeatureChange={handleFeatureChange}
-                              onAddFeature={handleAddFeature}
-                              onRemoveFeature={handleRemoveFeature}
-                              onPageContentChange={handlePageContentChange}
-                              isExpanded={expandedSections.features}
-                              onToggle={() => toggleSection('features')}
-                              isVisible={visibleSections.features}
-                              onToggleVisibility={() => toggleSectionVisibility('features')}
-                            />
+                            <div className="space-y-4">
+                              <h4 className="text-sm font-medium text-slate-800 mb-3">Features Section</h4>
+                              <div className="space-y-4">
+                                <div>
+                                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Section Title
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={pageContent?.features?.title || ''}
+                                    onChange={(e) => handlePageContentChange("featuresTitle", e.target.value)}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                                    placeholder="e.g., Features, Why Choose Us"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Section Subtitle
+                                  </label>
+                                  <textarea
+                                    value={pageContent?.features?.subtitle || ''}
+                                    onChange={(e) => handlePageContentChange("featuresSubtitle", e.target.value)}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                                    rows={3}
+                                    placeholder="Describe your features section"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Features
+                                  </label>
+                                  <div className="space-y-2">
+                                    {(pageContent?.features || []).map((feature: any, idx: number) => (
+                                      <div key={idx} className="space-y-2 p-3 border border-slate-200 rounded-md">
+                                        <input
+                                          type="text"
+                                          value={feature?.title || ''}
+                                          onChange={(e) => handleFeatureChange(idx, "title", e.target.value)}
+                                          className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                                          placeholder="Feature title"
+                                        />
+                                        <textarea
+                                          value={feature?.description || ''}
+                                          onChange={(e) => handleFeatureChange(idx, "description", e.target.value)}
+                                          className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+                                          rows={2}
+                                          placeholder="Feature description"
+                                        />
+                                        <div className="flex gap-2">
+                                          <select
+                                            value={feature?.icon || ''}
+                                            onChange={(e) => handleFeatureChange(idx, "icon", e.target.value)}
+                                            className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                                          >
+                                            <option value="">Select icon</option>
+                                            <option value="rocket">🚀</option>
+                                            <option value="lightning">⚡</option>
+                                            <option value="lightbulb">💡</option>
+                                            <option value="target">🎯</option>
+                                            <option value="fire">🔥</option>
+                                            <option value="star">⭐</option>
+                                            <option value="diamond">💎</option>
+                                            <option value="helicopter">🚁</option>
+                                            <option value="tools">🔧</option>
+                                            <option value="mobile">📱</option>
+                                            <option value="computer">💻</option>
+                                            <option value="web">🌐</option>
+                                          </select>
+                                          <button
+                                            onClick={() => handleRemoveFeature(idx)}
+                                            className="px-3 py-2 text-red-600 hover:text-red-800 text-sm border border-red-200 rounded-md hover:bg-red-50"
+                                            title="Remove feature"
+                                          >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                          </button>
+                                        </div>
+                                      </div>
+                                    ))}
+                                    <button
+                                      onClick={handleAddFeature}
+                                      className="w-full px-3 py-2 border border-slate-300 border-dashed rounded-md text-slate-600 hover:text-slate-800 hover:border-slate-400 text-sm"
+                                    >
+                                      + Add Feature
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </DraggableSection>
                         );
                       
@@ -1369,8 +2177,8 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                         return (
                           <DraggableSection key={sectionId} id={sectionId}>
                             <CTASection
-                              ctaTitle={pageContent?.ctaTitle || ''}
-                              ctaSubtitle={pageContent?.ctaSubtitle || ''}
+                              ctaTitle={pageContent?.cta?.title || ''}
+                              ctaSubtitle={pageContent?.cta?.subtitle || ''}
                               onPageContentChange={handlePageContentChange}
                               isExpanded={expandedSections.cta}
                               onToggle={() => toggleSection('cta')}
