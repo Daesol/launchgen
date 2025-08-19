@@ -288,96 +288,98 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (isEditPage) {
     return (
       <div className="flex h-screen bg-slate-50 overflow-hidden dashboard-layout">
-        {/* Sidebar Overlay - Only visible when hovering near left edge */}
-        <aside 
-          className={`fixed z-50 inset-y-0 left-0 w-64 bg-white shadow-2xl border-r border-slate-200 flex flex-col transition-all duration-300 ${
-            showSidebarOverlay ? "translate-x-0 opacity-100" : "-translate-x-64 opacity-0 pointer-events-none"
-          }`}
-          onMouseEnter={() => setShowSidebarOverlay(true)}
-          onMouseLeave={() => setShowSidebarOverlay(false)}
-        >
-          <div className="flex items-center gap-3 px-6 py-6 border-b border-slate-100">
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-bold text-sm">🚀</span>
+        {/* Sidebar - Hidden on edit pages, shown as overlay */}
+        {isEditPage && (
+          <aside
+            className={`fixed left-0 top-0 z-50 w-64 bg-white shadow-2xl border-r border-slate-200 transition-all duration-300 ${
+              showSidebarOverlay ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full pointer-events-none'
+            }`}
+            style={{ top: '64px', height: 'calc(100vh - 64px)' }}
+          >
+            <div className="flex flex-col h-full">
+              {/* Navigation */}
+              <nav className="px-4 py-4 space-y-3">
+                {/* Dashboard */}
+                <button
+                  onClick={() => router.push('/dashboard')}
+                  className="w-full flex items-center justify-center px-3 py-2 text-sm font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors"
+                >
+                  Dashboard
+                </button>
+                
+                {/* Create New Page */}
+                <button
+                  onClick={() => router.push('/dashboard/generate')}
+                  className="w-full flex items-center justify-center px-3 py-2 text-sm font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors"
+                >
+                  New Page
+                </button>
+                
+                {/* Divider */}
+                <div className="border-t border-slate-200 my-4"></div>
+                
+                {/* Your Pages - Scrollable */}
+                <div className="flex-1 min-h-0">
+                  <h3 className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Your Pages</h3>
+                  <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
+                    {pages.map((page) => (
+                      <button
+                        key={page.id}
+                        onClick={() => router.push(`/dashboard/page/${page.id}`)}
+                        className={`w-full flex items-center px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors text-left ${
+                          currentPageId === page.id ? 'bg-slate-100 text-slate-800' : ''
+                        }`}
+                      >
+                        <span className="truncate">{page.title || 'Untitled'}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </nav>
             </div>
-            <span className="text-xl font-bold text-slate-800">LaunchGen</span>
-          </div>
-          
-          {/* Navigation Links */}
-          <nav className="px-4 py-6 space-y-1">
-            {sidebarLinks.map(link => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200 group"
-              >
-                <span className="text-lg group-hover:scale-110 transition-transform duration-200 flex-shrink-0">{link.icon}</span>
-                <span>{link.label}</span>
-              </Link>
-            ))}
-          </nav>
-
-          {/* Generated Pages Section */}
-          <div className="px-4 py-4 border-t border-slate-100">
-            <div className="text-xs font-medium text-slate-500 px-4 mb-3">
-              Your Pages
-            </div>
-            <div className="space-y-1 max-h-48 overflow-y-auto">
-              {loading ? (
-                <div className="px-4 py-2 text-xs text-slate-400">Loading...</div>
-              ) : pages.length === 0 ? (
-                <div className="px-4 py-2 text-xs text-slate-400">No pages yet</div>
-              ) : (
-                pages.map(page => (
-                  <Link
-                    key={page.id}
-                    href={`/dashboard/page/${page.id}`}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors transition-all duration-200 group"
-                    title={page.title || 'Untitled'}
-                  >
-                    <span className="text-xs group-hover:scale-110 transition-transform duration-200">📄</span>
-                    <span className="truncate">{page.title || 'Untitled'}</span>
-                  </Link>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div className="flex-1"></div>
-
-          <div className="px-4 py-4 border-t border-slate-100">
-            <div className="text-xs text-slate-500 px-4">
-              AI-powered landing pages
-            </div>
-          </div>
-        </aside>
+          </aside>
+        )}
 
         {/* Main content area - Full width for edit pages */}
         <div className="flex-1 flex flex-col h-full">
           {/* Top navbar - Enhanced with page title and action buttons */}
           <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b border-slate-200 px-6 py-3">
             <div className="flex items-center justify-between">
-              {/* Left side - Editable page title */}
-              <div className="flex-1 min-w-0 title-input-container">
-                {editingTitle ? (
-                  <input
-                    type="text"
-                    value={pageTitle}
-                    onChange={(e) => setPageTitle(e.target.value)}
-                    onBlur={handleTitleSave}
-                    onKeyDown={handleTitleKeyDown}
-                    className="w-full text-lg font-semibold text-slate-800 bg-transparent border-b-2 border-slate-300 focus:border-slate-600 focus:outline-none px-1 py-1"
-                    autoFocus
-                  />
-                ) : (
-                  <button
-                    onClick={handleTitleEdit}
-                    className="text-lg font-semibold text-slate-800 hover:text-slate-600 hover:bg-slate-50 px-2 py-1 rounded transition-colors text-left w-full truncate"
-                    title="Click to edit title"
-                  >
-                    {pageTitle || 'Untitled'}
-                  </button>
-                )}
+              {/* Left side - LaunchGen logo and editable page title */}
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                {/* LaunchGen Logo */}
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="w-6 h-6 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold text-xs">🚀</span>
+                  </div>
+                  <span className="text-lg font-bold text-slate-800">LaunchGen</span>
+                </div>
+                
+                {/* Separator */}
+                <span className="text-slate-400 text-lg font-medium">/</span>
+                
+                {/* Editable page title */}
+                <div className="flex-1 min-w-0 title-input-container">
+                  {editingTitle ? (
+                    <input
+                      type="text"
+                      value={pageTitle}
+                      onChange={(e) => setPageTitle(e.target.value)}
+                      onBlur={handleTitleSave}
+                      onKeyDown={handleTitleKeyDown}
+                      className="w-full text-base font-medium text-slate-800 bg-transparent border-b-2 border-slate-300 focus:border-slate-600 focus:outline-none px-1 py-1"
+                      autoFocus
+                    />
+                  ) : (
+                    <button
+                      onClick={handleTitleEdit}
+                      className="text-base font-medium text-slate-800 hover:text-slate-600 hover:bg-slate-50 px-2 py-1 rounded transition-colors text-left w-full truncate"
+                      title="Click to edit title"
+                    >
+                      {pageTitle || 'Untitled'}
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Center - Action buttons */}

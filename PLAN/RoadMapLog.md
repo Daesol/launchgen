@@ -1,5 +1,58 @@
 # Road Map Log
 
+## 2024-12-19 - Sidebar Overlay Optimization - Streamlined Design and Improved Layout
+
+### What was done:
+- **Removed LaunchGen branding** - Eliminated logo and text from the sidebar overlay for cleaner, focused navigation
+- **Reduced overlay height** - Sidebar now starts below the top toolbar (top: 72px) instead of covering it completely
+- **Simplified button design** - Removed emojis from "Dashboard" and "Create Page" buttons, keeping only clean text
+- **Updated button text** - Changed "Create Page" to "New Page" for better clarity and brevity
+- **Enhanced button styling** - Added light background (`bg-slate-50`) with hover effects (`hover:bg-slate-100`)
+- **Improved typography** - Reduced font size to `text-sm` and padding to `px-3 py-2` for more compact, modern appearance
+- **Better visual hierarchy** - Cleaner separation between navigation sections with proper spacing and borders
+- **Fixed positioning issues** - Eliminated gap between sidebar and top toolbar for seamless visual connection
+- **Added scrollability** - Made "Your Pages" list scrollable with `max-h-64 overflow-y-auto` for better UX
+- **Optimized height calculation** - Used `calc(100vh - 64px)` to match exact header height and prevent viewport overflow
+- **Precise positioning** - Fine-tuned top position to 64px for perfect alignment with header bottom edge
+- **Enhanced visual separation** - Added right border (`border-r border-slate-200`) to clearly distinguish sidebar from edit panel
+- **Optimized width** - Reduced sidebar width from `w-72` (288px) to `w-64` (256px) for better space efficiency
+- **Improved button alignment** - Centered "Dashboard" and "New Page" text within buttons using `justify-center` for better visual balance
+
+### Technical details:
+- **Height calculation**: Used `style={{ top: '64px', height: 'calc(100vh - 64px)' }}` to position exactly below toolbar
+- **Button styling**: Applied `bg-slate-50 hover:bg-slate-100` for subtle backgrounds with hover states
+- **Typography optimization**: Changed from larger text to `text-sm font-medium` for better space efficiency
+- **Padding reduction**: Reduced from larger padding to `px-3 py-2` for compact button design
+- **Layout structure**: Maintained proper spacing with `space-y-3` and clear section dividers
+- **Scrollable content**: Added `max-h-64 overflow-y-auto pr-2` to "Your Pages" section for better content management
+- **Positioning precision**: Adjusted top position from 80px to 72px to match exact header height (px-6 py-3 = 72px total)
+
+### Files affected:
+- `components/DashboardLayout.tsx` - Streamlined sidebar overlay design, removed branding, optimized button styling and layout, fixed positioning and scrollability issues
+
+---
+
+## 2024-12-19 - Top Toolbar Enhancement - Added LaunchGen Logo and Improved Page Title Styling
+
+### What was done:
+- **Added LaunchGen logo** - Added the LaunchGen logo (🚀 icon + text) to the left end of the top toolbar for better brand presence
+- **Added visual separator** - Added a gray "/" separator between the LaunchGen logo and page title for clear visual hierarchy
+- **Improved page title styling** - Reduced page title font size from `text-lg` to `text-base` and weight from `font-semibold` to `font-medium` for better balance
+- **Enhanced visual hierarchy** - Created a clear left-to-right flow: Logo → Separator → Page Title → Action Buttons → Profile
+- **Better brand consistency** - Logo now appears in the top toolbar, matching the sidebar branding
+
+### Technical details:
+- **Logo implementation**: Added LaunchGen logo with rocket emoji and text using consistent styling from sidebar
+- **Separator styling**: Used `text-slate-400` for subtle gray color and `text-lg font-medium` for proper sizing
+- **Typography adjustment**: Changed page title from `text-lg font-semibold` to `text-base font-medium`
+- **Layout structure**: Wrapped logo, separator, and title in a flex container with proper spacing
+- **Responsive design**: Logo and separator are `flex-shrink-0` to prevent compression, title remains flexible
+
+### Files affected:
+- `components/DashboardLayout.tsx` - Added LaunchGen logo, separator, and updated page title styling in top toolbar
+
+---
+
 ## 2024-12-19 - Edit Panel Layout Optimization - Moved to Left Side
 
 ### What was done:
