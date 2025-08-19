@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import LandingPageTemplate from "./LandingPageTemplate";
 import LandingPageTemplateImage from "./LandingPageTemplateImage";
+import LandingPageTemplateModern from "./LandingPageTemplateModern";
 import TemplateSelector from "./TemplateSelector";
 import DraggableSection from "./DraggableSection";
 import MobilePreviewQR from "./MobilePreviewQR";
@@ -145,6 +146,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
   const [autoSaveTimer, setAutoSaveTimer] = useState<NodeJS.Timeout | null>(null);
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [publishedUrl, setPublishedUrl] = useState<string>('');
+  const [activeEditSection, setActiveEditSection] = useState<string>('theme');
   
   // Set preview mode based on screen size
   useEffect(() => {
@@ -236,6 +238,11 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
       ...prev,
       [sectionName]: !prev[sectionName]
     }));
+  };
+
+  // Handle section click to show specific edit panel
+  const handleSectionClick = (sectionName: string) => {
+    setActiveEditSection(sectionName);
   };
 
   // Handle drag end for section reordering
@@ -807,11 +814,160 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
   }, [hasUnsavedChanges, pageContent, pageStyle, templateId, id, originalPrompt, onSave]);
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen bg-gray-100">
+    <div className="flex flex-row h-screen bg-gray-100">
+      {/* Edit Panel - Left Sidebar */}
+      <div className="w-96 bg-white border-r border-gray-200 flex flex-col text-black">
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-800">Edit Page</h2>
+            <button
+              onClick={() => setActiveEditSection('theme')}
+              className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+            >
+              Default
+            </button>
+          </div>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto p-4">
+          {/* Show only the active section */}
+          {activeEditSection === 'theme' && (
+            <ThemeSection
+              theme={pageStyle?.theme || { mode: 'white', accentColor: '#6366f1' }}
+              onThemeChange={handleThemeChange}
+              isExpanded={true}
+              onToggle={() => {}}
+            />
+          )}
+          
+          {activeEditSection === 'template' && (
+            <TemplateSelector
+              currentTemplate={currentTemplate}
+              onTemplateChange={handleTemplateChange}
+              isExpanded={true}
+              onToggle={() => {}}
+            />
+          )}
+          
+          {activeEditSection === 'business' && (
+            <BusinessInfoSection
+              business={pageContent?.business || {}}
+              onBusinessChange={handleBusinessChange}
+              isExpanded={true}
+              onToggle={() => {}}
+            />
+          )}
+          
+          {activeEditSection === 'hero' && (
+            <HeroSection
+              hero={pageContent?.hero || {}}
+              onHeroChange={handleHeroChange}
+              onHighlightToggle={handleHighlightToggle}
+              isExpanded={true}
+              onToggle={() => {}}
+            />
+          )}
+          
+          {activeEditSection === 'features' && (
+            <FeaturesSection
+              features={pageContent?.features || []}
+              featuresTitle={pageContent?.featuresTitle || ''}
+              featuresSubtitle={pageContent?.featuresSubtitle || ''}
+              onFeatureChange={handleFeatureChange}
+              onAddFeature={handleAddFeature}
+              onRemoveFeature={handleRemoveFeature}
+              onPageContentChange={handlePageContentChange}
+              isExpanded={true}
+              onToggle={() => {}}
+              isVisible={visibleSections.features}
+              onToggleVisibility={() => toggleSectionVisibility('features')}
+            />
+          )}
+          
+          {activeEditSection === 'problemSection' && (
+            <ProblemSection
+              problemSection={pageContent?.problemSection || {}}
+              onProblemSectionChange={handleProblemSectionChange}
+              onPainPointsChange={handlePainPointsChange}
+              onAddPainPoint={handleAddPainPoint}
+              onRemovePainPoint={handleRemovePainPoint}
+              isExpanded={true}
+              onToggle={() => {}}
+              isVisible={visibleSections.problemSection}
+              onToggleVisibility={() => toggleSectionVisibility('problemSection')}
+            />
+          )}
+          
+          {activeEditSection === 'socialProof' && (
+            <SocialProofSection
+              socialProof={pageContent?.socialProof || {}}
+              onSocialProofChange={handleSocialProofChange}
+              onTestimonialsChange={handleTestimonialsChange}
+              onStatsChange={handleStatsChange}
+              onAddTestimonial={handleAddTestimonial}
+              onRemoveTestimonial={handleRemoveTestimonial}
+              onAddStat={handleAddStat}
+              onRemoveStat={handleRemoveStat}
+              isExpanded={true}
+              onToggle={() => {}}
+              isVisible={visibleSections.socialProof}
+              onToggleVisibility={() => toggleSectionVisibility('socialProof')}
+            />
+          )}
+          
+          {activeEditSection === 'guarantees' && (
+            <GuaranteesSection
+              guarantees={pageContent?.guarantees || {}}
+              onGuaranteesChange={handleGuaranteesChange}
+              onGuaranteesArrayChange={handleGuaranteesArrayChange}
+              onAddGuarantee={handleAddGuarantee}
+              onRemoveGuarantee={handleRemoveGuarantee}
+              isExpanded={true}
+              onToggle={() => {}}
+              isVisible={visibleSections.guarantees}
+              onToggleVisibility={() => toggleSectionVisibility('guarantees')}
+            />
+          )}
+          
+          {activeEditSection === 'faq' && (
+            <FAQSection
+              faq={pageContent?.faq || {}}
+              onFAQChange={handleFAQChange}
+              onQuestionsChange={handleQuestionsChange}
+              onAddQuestion={handleAddQuestion}
+              onRemoveQuestion={handleRemoveQuestion}
+              isExpanded={true}
+              onToggle={() => {}}
+              isVisible={visibleSections.faq}
+              onToggleVisibility={() => toggleSectionVisibility('faq')}
+            />
+          )}
+          
+          {activeEditSection === 'cta' && (
+            <CTASection
+              ctaTitle={pageContent?.ctaTitle || ''}
+              ctaSubtitle={pageContent?.ctaSubtitle || ''}
+              onPageContentChange={handlePageContentChange}
+              isExpanded={true}
+              onToggle={() => {}}
+              isVisible={visibleSections.cta}
+              onToggleVisibility={() => toggleSectionVisibility('cta')}
+            />
+          )}
+          
+          {activeEditSection === 'urgency' && (
+            <UrgencySection
+              urgency={pageContent?.urgency || {}}
+              onUrgencyChange={handleUrgencyChange}
+              isExpanded={true}
+              onToggle={() => {}}
+            />
+          )}
+        </div>
+      </div>
+
       {/* Preview Panel */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${
-        sidePanelCollapsed ? 'ml-0' : 'ml-0'
-      }`}>
+      <div className="flex-1 flex flex-col">
         {/* Preview Header */}
         <div className="bg-white border-b border-gray-200 p-3 sm:p-4 sticky top-0 z-40">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
@@ -952,6 +1108,18 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                   pageId={id}
                   previewMode={previewMode}
                   visibleSections={visibleSections}
+                  onSectionClick={handleSectionClick}
+                />
+              ) : currentTemplate === 'modern' ? (
+                <LandingPageTemplateModern
+                  config={{
+                    ...pageContent,
+                    ...(pageStyle || {}),
+                  }}
+                  pageId={id}
+                  previewMode={previewMode}
+                  visibleSections={visibleSections}
+                  onSectionClick={handleSectionClick}
                 />
               ) : (
                 <LandingPageTemplate
@@ -962,6 +1130,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
                   pageId={id}
                   previewMode={previewMode}
                   visibleSections={visibleSections}
+                  onSectionClick={handleSectionClick}
                 />
               )}
             </div>
@@ -969,182 +1138,7 @@ export default function PageEditorRefactored({ initialConfig, onSave, saveStatus
         </div>
       </div>
 
-      {/* Edit Panel - Desktop Sidebar */}
-      <div className={`hidden lg:flex ${
-        sidePanelCollapsed ? 'w-0 overflow-hidden' : 'w-96'
-      } bg-white border-l border-gray-200 flex-col transition-all duration-300`}>
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800">Edit Page</h2>
-        </div>
-        
-        <div className="flex-1 overflow-y-auto p-4">
-          {/* Theme Settings - Moved to top */}
-          <ThemeSection
-            theme={pageStyle?.theme || { mode: 'white', accentColor: '#6366f1' }}
-            onThemeChange={handleThemeChange}
-            isExpanded={expandedSections.theme}
-            onToggle={() => toggleSection('theme')}
-          />
 
-          {/* Template Selection */}
-          <TemplateSelector
-            currentTemplate={currentTemplate}
-            onTemplateChange={handleTemplateChange}
-            isExpanded={expandedSections.template}
-            onToggle={() => toggleSection('template')}
-          />
-
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={sectionOrder}
-              strategy={verticalListSortingStrategy}
-            >
-              {/* Business Info Section */}
-              <BusinessInfoSection
-                business={pageContent?.business || {}}
-                onBusinessChange={handleBusinessChange}
-                isExpanded={expandedSections.business}
-                onToggle={() => toggleSection('business')}
-              />
-
-              {/* Hero Section */}
-              <HeroSection
-                hero={pageContent?.hero || {}}
-                onHeroChange={handleHeroChange}
-                onHighlightToggle={handleHighlightToggle}
-                isExpanded={expandedSections.hero}
-                onToggle={() => toggleSection('hero')}
-                businessName={pageContent?.business?.name}
-              />
-
-              {/* Draggable Sections */}
-              {sectionOrder.map((sectionId) => {
-                switch (sectionId) {
-                  case 'problemSection':
-                    return (
-                      <DraggableSection key={sectionId} id={sectionId}>
-                        <ProblemSection
-                          problemSection={pageContent?.problemSection || {}}
-                          onProblemSectionChange={handleProblemSectionChange}
-                          onPainPointsChange={handlePainPointsChange}
-                          onAddPainPoint={handleAddPainPoint}
-                          onRemovePainPoint={handleRemovePainPoint}
-                          isExpanded={expandedSections.problemSection}
-                          onToggle={() => toggleSection('problemSection')}
-                          isVisible={visibleSections.problemSection}
-                          onToggleVisibility={() => toggleSectionVisibility('problemSection')}
-                        />
-                      </DraggableSection>
-                    );
-                  
-                  case 'features':
-                    return (
-                      <DraggableSection key={sectionId} id={sectionId}>
-                        <FeaturesSection
-                          features={pageContent?.features || []}
-                          featuresTitle={pageContent?.featuresTitle || ''}
-                          featuresSubtitle={pageContent?.featuresSubtitle || ''}
-                          onFeatureChange={handleFeatureChange}
-                          onAddFeature={handleAddFeature}
-                          onRemoveFeature={handleRemoveFeature}
-                          onPageContentChange={handlePageContentChange}
-                          isExpanded={expandedSections.features}
-                          onToggle={() => toggleSection('features')}
-                          isVisible={visibleSections.features}
-                          onToggleVisibility={() => toggleSectionVisibility('features')}
-                        />
-                      </DraggableSection>
-                    );
-                  
-                  case 'socialProof':
-                    return (
-                      <DraggableSection key={sectionId} id={sectionId}>
-                        <SocialProofSection
-                          socialProof={pageContent?.socialProof || {}}
-                          onSocialProofChange={handleSocialProofChange}
-                          onTestimonialsChange={handleTestimonialsChange}
-                          onStatsChange={handleStatsChange}
-                          onAddTestimonial={handleAddTestimonial}
-                          onAddStat={handleAddStat}
-                          onRemoveTestimonial={handleRemoveTestimonial}
-                          onRemoveStat={handleRemoveStat}
-                          isExpanded={expandedSections.socialProof}
-                          onToggle={() => toggleSection('socialProof')}
-                          isVisible={visibleSections.socialProof}
-                          onToggleVisibility={() => toggleSectionVisibility('socialProof')}
-                        />
-                      </DraggableSection>
-                    );
-                  
-                  case 'guarantees':
-                    return (
-                      <DraggableSection key={sectionId} id={sectionId}>
-                        <GuaranteesSection
-                          guarantees={pageContent?.guarantees || {}}
-                          onGuaranteesChange={handleGuaranteesChange}
-                          onGuaranteesArrayChange={handleGuaranteesArrayChange}
-                          onAddGuarantee={handleAddGuarantee}
-                          onRemoveGuarantee={handleRemoveGuarantee}
-                          isExpanded={expandedSections.guarantees}
-                          onToggle={() => toggleSection('guarantees')}
-                          isVisible={visibleSections.guarantees}
-                          onToggleVisibility={() => toggleSectionVisibility('guarantees')}
-                        />
-                      </DraggableSection>
-                    );
-                  
-                  case 'faq':
-                    return (
-                      <DraggableSection key={sectionId} id={sectionId}>
-                        <FAQSection
-                          faq={pageContent?.faq || {}}
-                          onFAQChange={handleFAQChange}
-                          onQuestionsChange={handleQuestionsChange}
-                          onAddQuestion={handleAddQuestion}
-                          onRemoveQuestion={handleRemoveQuestion}
-                          isExpanded={expandedSections.faq}
-                          onToggle={() => toggleSection('faq')}
-                          isVisible={visibleSections.faq}
-                          onToggleVisibility={() => toggleSectionVisibility('faq')}
-                        />
-                      </DraggableSection>
-                    );
-                  
-                  case 'cta':
-                    return (
-                      <DraggableSection key={sectionId} id={sectionId}>
-                        <CTASection
-                          ctaTitle={pageContent?.ctaTitle || ''}
-                          ctaSubtitle={pageContent?.ctaSubtitle || ''}
-                          onPageContentChange={handlePageContentChange}
-                          isExpanded={expandedSections.cta}
-                          onToggle={() => toggleSection('cta')}
-                          isVisible={visibleSections.cta}
-                          onToggleVisibility={() => toggleSectionVisibility('cta')}
-                        />
-                      </DraggableSection>
-                    );
-                  
-                  default:
-                    return null;
-                }
-              })}
-            </SortableContext>
-          </DndContext>
-
-          {/* Non-draggable sections */}
-          <UrgencySection
-            urgency={pageContent?.urgency || {}}
-            onUrgencyChange={handleUrgencyChange}
-            isExpanded={expandedSections.urgency}
-            onToggle={() => toggleSection('urgency')}
-          />
-        </div>
-      </div>
 
       {/* Edit Panel - Mobile Overlay */}
       {showSidePanel && (

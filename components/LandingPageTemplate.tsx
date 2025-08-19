@@ -87,9 +87,10 @@ interface LandingPageTemplateProps {
   pageId?: string;
   previewMode?: 'desktop' | 'mobile';
   visibleSections?: Record<string, boolean>;
+  onSectionClick?: (sectionName: string) => void;
 }
 
-export default function LandingPageTemplate({ config, pageId, previewMode = 'desktop', visibleSections }: LandingPageTemplateProps) {
+export default function LandingPageTemplate({ config, pageId, previewMode = 'desktop', visibleSections, onSectionClick }: LandingPageTemplateProps) {
   // Debug logging
   console.log('LandingPageTemplate received config:', config);
   console.log('LandingPageTemplate received visibleSections:', visibleSections);
@@ -565,10 +566,11 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
 
   return (
     <div className={`flex flex-col min-h-screen ${themeClasses.background}`}>
-      {/* Header */}
-      <header className={`px-4 sm:px-6 lg:px-8 flex items-center border-b ${themeClasses.border} ${themeClasses.background} ${
-        isMobilePreview ? 'h-12' : 'h-14'
-      }`}>
+      {/* Header - Only show when not in dashboard preview */}
+      {!pageId && (
+        <header className={`px-4 sm:px-6 lg:px-8 flex items-center border-b ${themeClasses.border} ${themeClasses.background} ${
+          isMobilePreview ? 'h-12' : 'h-14'
+        }`}>
         <Link className="flex items-center justify-center" href="#">
           {business?.logo ? (
             <img 
@@ -629,8 +631,8 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
         </Button>
       </header>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
+      {/* Mobile Menu - Only show when not in dashboard preview */}
+      {!pageId && isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50">
           <div className="absolute top-0 left-0 right-0 bg-white shadow-lg">
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
@@ -703,7 +705,7 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
       <main className="flex-1">
       {/* Hero Section */}
         <section 
-          className={`w-full relative ${isMobilePreview ? 'min-h-[90vh] flex items-center justify-center' : 'py-8 sm:py-12 md:py-16 lg:py-24 xl:py-32'}`}
+          className={`w-full relative cursor-pointer hover:bg-gray-50 transition-colors ${isMobilePreview ? 'min-h-[90vh] flex items-center justify-center' : 'py-8 sm:py-12 md:py-16 lg:py-24 xl:py-32'}`}
           style={{
             backgroundImage: hero.backgroundImageEnabled && hero.backgroundImage 
               ? `linear-gradient(rgba(255, 255, 255, ${1 - (hero.backgroundImageOpacity || 30) / 100}), rgba(255, 255, 255, ${1 - (hero.backgroundImageOpacity || 30) / 100})), url(${hero.backgroundImage})`
@@ -712,6 +714,7 @@ export default function LandingPageTemplate({ config, pageId, previewMode = 'des
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
           }}
+          onClick={() => onSectionClick?.('hero')}
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="flex flex-col items-center space-y-6 sm:space-y-8 text-center">

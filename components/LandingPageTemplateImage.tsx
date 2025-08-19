@@ -101,9 +101,10 @@ interface LandingPageTemplateImageProps {
   pageId?: string;
   previewMode?: 'desktop' | 'mobile';
   visibleSections?: Record<string, boolean>;
+  onSectionClick?: (sectionName: string) => void;
 }
 
-export default function LandingPageTemplateImage({ config, pageId, previewMode = 'desktop', visibleSections }: LandingPageTemplateImageProps) {
+export default function LandingPageTemplateImage({ config, pageId, previewMode = 'desktop', visibleSections, onSectionClick }: LandingPageTemplateImageProps) {
   // Mobile menu state
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   

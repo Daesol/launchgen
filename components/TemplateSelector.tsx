@@ -49,6 +49,23 @@ const templates: Template[] = [
       "Enhanced visual hierarchy",
       "Public image URL support"
     ]
+  },
+  {
+    id: "modern",
+    name: "Modern Template",
+    description: "Scalable, modern design with component-based architecture",
+    icon: <Layout className="h-6 w-6" />,
+    preview: "Modern UI with glassmorphism effects, gradient backgrounds, and interactive elements",
+    features: [
+      "Component-based architecture",
+      "Modern typography with Instrument Serif",
+      "Interactive FAQ accordions",
+      "Gradient backgrounds and overlays",
+      "Glassmorphism effects",
+      "Advanced hover animations",
+      "Responsive design system",
+      "Accessibility compliant"
+    ]
   }
 ];
 

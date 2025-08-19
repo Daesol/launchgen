@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs"
-import Navigation from './components/Navigation'
+
 import { HeroSection } from './components/HeroSection'
 import FeaturesSection from './components/FeaturesSection'
 import HowItWorksSection from './components/HowItWorksSection'
@@ -59,7 +59,6 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
-      <Navigation />
       <HeroSection onGenerateLandingPage={handleGenerateLandingPage} />
       <FeaturesSection />
       <HowItWorksSection />

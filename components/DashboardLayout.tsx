@@ -23,6 +23,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // Check if we're on an edit page
   const isEditPage = pathname?.includes('/dashboard/page/');
 
+  // Handle mouse hover for sidebar
+  const handleMouseEnter = () => {
+    setSidebarOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    setSidebarOpen(false);
+  };
+
   // Fetch user's pages
   const fetchPages = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -88,8 +97,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (isEditPage) {
     return (
       <div className="flex min-h-screen bg-slate-50">
-        {/* Sidebar - Hidden on mobile for edit pages */}
-        <aside className={`fixed z-40 inset-y-0 left-0 w-64 bg-white shadow-xl border-r border-slate-200 flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-64"} lg:translate-x-0 lg:static lg:sticky lg:top-0 lg:h-screen`}>
+        {/* Hover trigger area */}
+        <div 
+          className="fixed z-30 inset-y-0 left-0 w-4 bg-transparent"
+          onMouseEnter={handleMouseEnter}
+        />
+        
+        {/* Sidebar - Hidden by default, shown on hover */}
+        <aside 
+          className={`fixed z-40 inset-y-0 left-0 w-64 bg-white shadow-xl border-r border-slate-200 flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-64"}`}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
           <div className="flex items-center gap-3 px-6 py-6 border-b border-slate-100">
             <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <span className="text-white font-bold text-sm">🚀</span>
@@ -154,27 +173,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           />
         )}
 
-        {/* Main content area - Full width on mobile for edit pages */}
-        <div className="flex-1 flex flex-col min-h-screen lg:ml-0">
-          {/* Top navbar - Minimal on mobile for edit pages */}
-          <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b border-slate-200 flex items-center justify-between px-3 sm:px-6 py-2">
-            <div className="flex items-center gap-3">
-              <button 
-                className="lg:hidden p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
-                onClick={() => setSidebarOpen(v => !v)}
-              >
-                <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              <div className="hidden lg:flex items-center gap-2">
-                <span className="text-base font-semibold text-slate-800">Dashboard</span>
+        {/* Main content area - Full width for edit pages */}
+        <div className="flex-1 flex flex-col min-h-screen">
+                  {/* Top navbar - Minimal on mobile for edit pages */}
+        <header className="sticky top-0 z-20 bg-slate-950/80 backdrop-blur-sm border-b border-slate-800 flex items-center justify-between px-3 sm:px-6 py-2">
+          <div className="flex items-center gap-3">
+            <button 
+              className="lg:hidden p-1.5 rounded-lg hover:bg-slate-700 transition-colors"
+              onClick={() => setSidebarOpen(v => !v)}
+            >
+              <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-sm">🚀</span>
               </div>
+              <span className="text-xl font-bold text-white">LaunchGen</span>
             </div>
+          </div>
             
             <div className="relative z-[70]">
               <button
-                className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
+                className="flex items-center gap-2 px-3 py-1.5 bg-slate-700 border border-slate-600 rounded-lg font-medium text-slate-300 hover:bg-slate-600 hover:border-slate-500 transition-all duration-200 shadow-sm"
                 onClick={(e) => {
                   e.stopPropagation();
                   setProfileOpen(v => !v);
@@ -184,7 +206,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <span className="text-white font-semibold text-xs">U</span>
                 </div>
                 <span className="hidden sm:inline text-sm">Profile</span>
-                <svg className="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
@@ -229,8 +251,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // Regular dashboard layout for non-edit pages
   return (
     <div className="flex min-h-screen bg-slate-50">
+      {/* Hover trigger area */}
+      <div 
+        className="fixed z-30 inset-y-0 left-0 w-4 bg-transparent"
+        onMouseEnter={handleMouseEnter}
+      />
+      
       {/* Sidebar */}
-      <aside className={`fixed z-40 inset-y-0 left-0 w-64 bg-white shadow-xl border-r border-slate-200 flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-64"} lg:translate-x-0 lg:static lg:sticky lg:top-0 lg:h-screen`}>
+      <aside 
+        className={`fixed z-40 inset-y-0 left-0 w-64 bg-white shadow-xl border-r border-slate-200 flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-64"}`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
         <div className="flex items-center gap-3 px-6 py-6 border-b border-slate-100">
           <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
             <span className="text-white font-bold text-sm">🚀</span>
@@ -296,26 +328,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col min-h-screen lg:ml-0">
+      <div className="flex-1 flex flex-col min-h-screen">
         {/* Top navbar */}
-        <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b border-slate-200 flex items-center justify-between px-6 py-2">
+        <header className="sticky top-0 z-20 bg-slate-950/80 backdrop-blur-sm border-b border-slate-800 flex items-center justify-between px-6 py-2">
           <div className="flex items-center gap-3">
             <button 
-              className="lg:hidden p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+              className="lg:hidden p-1.5 rounded-lg hover:bg-slate-700 transition-colors"
               onClick={() => setSidebarOpen(v => !v)}
             >
-              <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <div className="hidden lg:flex items-center gap-2">
-              <span className="text-base font-semibold text-slate-800">Dashboard</span>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-sm">🚀</span>
+              </div>
+              <span className="text-xl font-bold text-white">LaunchGen</span>
             </div>
           </div>
           
           <div className="relative z-[70]">
             <button
-              className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
+              className="flex items-center gap-2 px-3 py-1.5 bg-slate-700 border border-slate-600 rounded-lg font-medium text-slate-300 hover:bg-slate-600 hover:border-slate-500 transition-all duration-200 shadow-sm"
               onClick={(e) => {
                 e.stopPropagation();
                 setProfileOpen(v => !v);
@@ -325,7 +360,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <span className="text-white font-semibold text-xs">U</span>
               </div>
               <span className="hidden sm:inline text-sm">Profile</span>
-              <svg className="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
