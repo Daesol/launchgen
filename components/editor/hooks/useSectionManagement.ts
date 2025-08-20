@@ -1,0 +1,113 @@
+import { useState, useCallback } from 'react';
+import { 
+  UseSectionManagementReturn, 
+  SectionState, 
+  EditPanelState,
+  SectionToggleHandler,
+  SectionVisibilityHandler,
+  SectionSelectHandler 
+} from '../types/editor.types';
+
+export function useSectionManagement(): UseSectionManagementReturn {
+  // Section expansion state - default: all sections expanded for better visibility
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    business: true,
+    hero: true,
+    features: true,
+    cta: true,
+    problemSection: true,
+    socialProof: true,
+    guarantees: true,
+    faq: true,
+    urgency: true,
+    theme: true,
+  });
+
+  // Section visibility state - default: all sections visible
+  const [visibleSections, setVisibleSections] = useState<Record<string, boolean>>({
+    features: true,
+    cta: true,
+    problemSection: true,
+    socialProof: true,
+    guarantees: true,
+    faq: true,
+  });
+
+  // Section order state for drag-and-drop
+  const [sectionOrder, setSectionOrder] = useState<string[]>([
+    'problemSection',
+    'features',
+    'socialProof', 
+    'guarantees',
+    'faq',
+    'cta'
+  ]);
+
+  // Edit panel view state
+  const [editPanelView, setEditPanelView] = useState<EditPanelState['editPanelView']>('main');
+  const [selectedSection, setSelectedSection] = useState<string | null>(null);
+
+  // Toggle section expansion
+  const toggleSection = useCallback<SectionToggleHandler>((sectionName: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionName]: !prev[sectionName]
+    }));
+  }, []);
+
+  // Toggle section visibility
+  const toggleSectionVisibility = useCallback<SectionVisibilityHandler>((sectionName: string) => {
+    setVisibleSections(prev => ({
+      ...prev,
+      [sectionName]: !prev[sectionName]
+    }));
+  }, []);
+
+  // Handle section selection from preview
+  const handleSectionSelect = useCallback<SectionSelectHandler>((sectionId: string) => {
+    setSelectedSection(sectionId);
+    setEditPanelView('section');
+    
+    // Scroll to the selected section in the preview
+    const sectionElement = document.getElementById(`section-${sectionId}`);
+    if (sectionElement) {
+      sectionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, []);
+
+  // Function to go back to main edit panel
+  const handleBackToMain = useCallback(() => {
+    setEditPanelView('main');
+    setSelectedSection(null);
+  }, []);
+
+  // Update section order (for drag and drop)
+  const updateSectionOrder = useCallback((newOrder: string[]) => {
+    setSectionOrder(newOrder);
+  }, []);
+
+  // Get section state
+  const getSectionState = useCallback((): SectionState => ({
+    expandedSections,
+    visibleSections,
+    sectionOrder,
+  }), [expandedSections, visibleSections, sectionOrder]);
+
+  // Get edit panel state
+  const getEditPanelState = useCallback((): EditPanelState => ({
+    editPanelView,
+    selectedSection,
+  }), [editPanelView, selectedSection]);
+
+  return {
+    sectionState: getSectionState(),
+    editPanelState: getEditPanelState(),
+    toggleSection,
+    toggleSectionVisibility,
+    handleSectionSelect,
+    handleBackToMain,
+    setEditPanelView,
+    setSelectedSection,
+    updateSectionOrder,
+  };
+}
