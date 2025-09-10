@@ -129,7 +129,6 @@ export interface FieldChange {
 
 export interface IconOption {
   value: string;
-  emoji: string;
   label?: string;
 }
 

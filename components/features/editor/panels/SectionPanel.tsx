@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBusinessHandlers, createHeroHandlers, createProblemHandlers, createFeaturesHandlers, createSocialProofHandlers, createGuaranteesHandlers, createFAQHandlers, createCTAHandlers, createUrgencyHandlers } from '../utils/fieldHandlers';
+import IconSelector, { HeroIconSelector, FeatureIconSelector, PainPointIconSelector, GuaranteeIconSelector } from '../common/IconSelector';
 
 interface SectionPanelProps {
   sectionId: string;
@@ -38,16 +39,16 @@ export default function SectionPanel({ sectionId, pageContent, onPageContentChan
         return <ProblemSectionEditor problemSection={pageContent?.problemSection || {}} onPageContentChange={onPageContentChange} />;
       
       case 'features':
-        return <FeaturesSectionEditor features={pageContent?.features || {}} onPageContentChange={onPageContentChange} />;
+        return <FeaturesSectionEditor features={pageContent?.features || {}} onPageContentChange={onPageContentChange} pageContent={pageContent} />;
       
       case 'socialProof':
-        return <SocialProofSectionEditor socialProof={pageContent?.socialProof || {}} onPageContentChange={onPageContentChange} />;
+        return <SocialProofSectionEditor socialProof={pageContent?.socialProof || {}} onPageContentChange={onPageContentChange} pageContent={pageContent} />;
       
       case 'guarantees':
         return <GuaranteesSectionEditor guarantees={pageContent?.guarantees || {}} onPageContentChange={onPageContentChange} />;
       
       case 'faq':
-        return <FAQSectionEditor faq={pageContent?.faq || {}} onPageContentChange={onPageContentChange} />;
+        return <FAQSectionEditor faq={pageContent?.faq || {}} onPageContentChange={onPageContentChange} pageContent={pageContent} />;
       
       case 'cta':
         return <CTASectionEditor cta={pageContent?.cta || {}} onPageContentChange={onPageContentChange} />;
@@ -164,21 +165,11 @@ function HeroSectionEditor({ hero, onPageContentChange }: { hero: any; onPageCon
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">Hero Tag Icon</label>
-          <select
+          <HeroIconSelector
             value={hero?.heroTagIcon || ''}
-            onChange={(e) => handlers.handleHeroChange("heroTagIcon", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-          >
-            <option value="">Select an icon</option>
-            <option value="rocket">🚀</option>
-            <option value="lightning">⚡</option>
-            <option value="lightbulb">💡</option>
-            <option value="target">🎯</option>
-            <option value="fire">🔥</option>
-            <option value="star">⭐</option>
-            <option value="diamond">💎</option>
-            <option value="helicopter">🚁</option>
-          </select>
+            onChange={(value) => handlers.handleHeroChange("heroTagIcon", value)}
+            className="w-full"
+          />
         </div>
         
         {/* Highlight Words Section */}
@@ -267,29 +258,19 @@ function ProblemSectionEditor({ problemSection, onPageContentChange }: { problem
           <label className="block text-sm font-medium text-slate-700 mb-2">Pain Points</label>
           <div className="space-y-3">
             {problemSection?.painPoints?.map((painPoint: any, idx: number) => (
-              <div key={idx} className="flex items-center gap-2">
+              <div key={idx} className="space-y-3 p-3 border border-slate-200 rounded-md bg-slate-50">
                 <input
                   type="text"
                   value={painPoint?.text || ''}
                   onChange={(e) => handlers.handlePainPointChange(idx, "text", e.target.value)}
-                  className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
                   placeholder="Enter pain point"
                 />
-                <select
+                <PainPointIconSelector
                   value={painPoint?.icon || ''}
-                  onChange={(e) => handlers.handlePainPointChange(idx, "icon", e.target.value)}
-                  className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-                >
-                  <option value="">Select icon</option>
-                  <option value="warning">⚠️</option>
-                  <option value="cross">❌</option>
-                  <option value="exclamation">❗</option>
-                  <option value="question">❓</option>
-                  <option value="clock">⏰</option>
-                  <option value="money">💰</option>
-                  <option value="time">⏱️</option>
-                  <option value="stress">😰</option>
-                </select>
+                  onChange={(value) => handlers.handlePainPointChange(idx, "icon", value)}
+                  className="w-full"
+                />
                 <button
                   onClick={() => handlers.handleRemovePainPoint(idx)}
                   className="p-2 text-red-500 hover:text-red-700 transition-colors"
@@ -314,8 +295,8 @@ function ProblemSectionEditor({ problemSection, onPageContentChange }: { problem
   );
 }
 
-function FeaturesSectionEditor({ features, onPageContentChange }: { features: any; onPageContentChange: (field: string, value: any) => void }) {
-  const handlers = createFeaturesHandlers({ features } as any, onPageContentChange);
+function FeaturesSectionEditor({ features, onPageContentChange, pageContent }: { features: any; onPageContentChange: (field: string, value: any) => void; pageContent: any }) {
+  const handlers = createFeaturesHandlers(pageContent, onPageContentChange);
   
   return (
     <div className="space-y-4">
@@ -326,8 +307,8 @@ function FeaturesSectionEditor({ features, onPageContentChange }: { features: an
           <label className="block text-sm font-medium text-slate-700 mb-2">Features Title</label>
           <input
             type="text"
-            value={features?.title || ''}
-            onChange={(e) => handlers.handleFeaturesChange("title", e.target.value)}
+            value={pageContent?.featuresTitle || ''}
+            onChange={(e) => onPageContentChange("featuresTitle", e.target.value)}
             className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
             placeholder="Enter features title"
           />
@@ -337,8 +318,8 @@ function FeaturesSectionEditor({ features, onPageContentChange }: { features: an
           <label className="block text-sm font-medium text-slate-700 mb-2">Features Subtitle</label>
           <input
             type="text"
-            value={features?.subtitle || ''}
-            onChange={(e) => handlers.handleFeaturesChange("subtitle", e.target.value)}
+            value={pageContent?.featuresSubtitle || ''}
+            onChange={(e) => onPageContentChange("featuresSubtitle", e.target.value)}
             className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
             placeholder="Enter features subtitle"
           />
@@ -347,47 +328,58 @@ function FeaturesSectionEditor({ features, onPageContentChange }: { features: an
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">Features</label>
           <div className="space-y-3">
-            {features?.features?.map((feature: any, idx: number) => (
-              <div key={idx} className="flex items-center gap-2">
-                <select
-                  value={feature?.icon || ''}
-                  onChange={(e) => handlers.handleFeatureChange(idx, "icon", e.target.value)}
-                  className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-                >
-                  <option value="">Select icon</option>
-                  <option value="rocket">🚀</option>
-                  <option value="lightning">⚡</option>
-                  <option value="lightbulb">💡</option>
-                  <option value="target">🎯</option>
-                  <option value="fire">🔥</option>
-                  <option value="star">⭐</option>
-                  <option value="diamond">💎</option>
-                  <option value="shield">🛡️</option>
-                  <option value="check">✅</option>
-                </select>
-                <input
-                  type="text"
-                  value={feature?.title || ''}
-                  onChange={(e) => handlers.handleFeatureChange(idx, "title", e.target.value)}
-                  className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-                  placeholder="Feature title"
-                />
-                <input
-                  type="text"
-                  value={feature?.description || ''}
-                  onChange={(e) => handlers.handleFeatureChange(idx, "description", e.target.value)}
-                  className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-                  placeholder="Feature description"
-                />
-                <button
-                  onClick={() => handlers.handleRemoveFeature(idx)}
-                  className="p-2 text-red-500 hover:text-red-700 transition-colors"
-                  title="Remove feature"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
+            {pageContent?.features?.map((feature: any, idx: number) => (
+              <div key={idx} className="space-y-3 p-3 border border-slate-200 rounded-md bg-slate-50">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-slate-600">Feature {idx + 1}</label>
+                  <button
+                    onClick={() => handlers.handleRemoveFeature(idx)}
+                    className="p-1 text-red-500 hover:text-red-700 transition-colors"
+                    title="Remove feature"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Icon</label>
+                  <FeatureIconSelector
+                    value={feature?.icon || ''}
+                    onChange={(value) => handlers.handleFeatureChange(idx, "icon", value)}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Title</label>
+                  <input
+                    type="text"
+                    value={feature?.title || ''}
+                    onChange={(e) => handlers.handleFeatureChange(idx, "title", e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    placeholder="Feature title"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Description</label>
+                  <input
+                    type="text"
+                    value={feature?.description || ''}
+                    onChange={(e) => handlers.handleFeatureChange(idx, "description", e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    placeholder="Feature description"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Benefit</label>
+                  <input
+                    type="text"
+                    value={feature?.benefit || ''}
+                    onChange={(e) => handlers.handleFeatureChange(idx, "benefit", e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    placeholder="What this means for you..."
+                  />
+                </div>
               </div>
             ))}
             <button
@@ -403,8 +395,8 @@ function FeaturesSectionEditor({ features, onPageContentChange }: { features: an
   );
 }
 
-function SocialProofSectionEditor({ socialProof, onPageContentChange }: { socialProof: any; onPageContentChange: (field: string, value: any) => void }) {
-  const handlers = createSocialProofHandlers({ socialProof } as any, onPageContentChange);
+function SocialProofSectionEditor({ socialProof, onPageContentChange, pageContent }: { socialProof: any; onPageContentChange: (field: string, value: any) => void; pageContent: any }) {
+  const handlers = createSocialProofHandlers(pageContent, onPageContentChange);
   
   return (
     <div className="space-y-4">
@@ -437,30 +429,49 @@ function SocialProofSectionEditor({ socialProof, onPageContentChange }: { social
           <label className="block text-sm font-medium text-slate-700 mb-2">Stats</label>
           <div className="space-y-3">
             {socialProof?.stats?.map((stat: any, idx: number) => (
-              <div key={idx} className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={stat?.label || ''}
-                  onChange={(e) => handlers.handleStatChange(idx, "label", e.target.value)}
-                  className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-                  placeholder="Stat label"
-                />
-                <input
-                  type="text"
-                  value={stat?.value || ''}
-                  onChange={(e) => handlers.handleStatChange(idx, "value", e.target.value)}
-                  className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-                  placeholder="Stat value"
-                />
-                <button
-                  onClick={() => handlers.handleRemoveStat(idx)}
-                  className="p-2 text-red-500 hover:text-red-700 transition-colors"
-                  title="Remove stat"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
+              <div key={idx} className="space-y-3 p-3 border border-slate-200 rounded-md bg-slate-50">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-slate-600">Stat {idx + 1}</label>
+                  <button
+                    onClick={() => handlers.handleRemoveStat(idx)}
+                    className="p-1 text-red-500 hover:text-red-700 transition-colors"
+                    title="Remove stat"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Number</label>
+                  <input
+                    type="text"
+                    value={stat?.number || ''}
+                    onChange={(e) => handlers.handleStatChange(idx, "number", e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    placeholder="e.g., 10,000+"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Label</label>
+                  <input
+                    type="text"
+                    value={stat?.label || ''}
+                    onChange={(e) => handlers.handleStatChange(idx, "label", e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    placeholder="e.g., Happy Customers"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Description</label>
+                  <input
+                    type="text"
+                    value={stat?.description || ''}
+                    onChange={(e) => handlers.handleStatChange(idx, "description", e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    placeholder="e.g., Trusted by businesses worldwide"
+                  />
+                </div>
               </div>
             ))}
             <button
@@ -476,25 +487,12 @@ function SocialProofSectionEditor({ socialProof, onPageContentChange }: { social
           <label className="block text-sm font-medium text-slate-700 mb-2">Testimonials</label>
           <div className="space-y-3">
             {socialProof?.testimonials?.map((testimonial: any, idx: number) => (
-              <div key={idx} className="space-y-2 p-3 border border-slate-200 rounded-md">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={testimonial?.name || ''}
-                    onChange={(e) => handlers.handleTestimonialChange(idx, "name", e.target.value)}
-                    className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-                    placeholder="Customer name"
-                  />
-                  <input
-                    type="text"
-                    value={testimonial?.title || ''}
-                    onChange={(e) => handlers.handleTestimonialChange(idx, "title", e.target.value)}
-                    className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-                    placeholder="Customer title"
-                  />
+              <div key={idx} className="space-y-3 p-3 border border-slate-200 rounded-md bg-slate-50">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-slate-600">Testimonial {idx + 1}</label>
                   <button
                     onClick={() => handlers.handleRemoveTestimonial(idx)}
-                    className="p-2 text-red-500 hover:text-red-700 transition-colors"
+                    className="p-1 text-red-500 hover:text-red-700 transition-colors"
                     title="Remove testimonial"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -502,13 +500,72 @@ function SocialProofSectionEditor({ socialProof, onPageContentChange }: { social
                     </svg>
                   </button>
                 </div>
-                <textarea
-                  value={testimonial?.text || ''}
-                  onChange={(e) => handlers.handleTestimonialChange(idx, "text", e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-                  placeholder="Customer testimonial"
-                  rows={3}
-                />
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Name</label>
+                  <input
+                    type="text"
+                    value={testimonial?.name || ''}
+                    onChange={(e) => handlers.handleTestimonialChange(idx, "name", e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    placeholder="Customer name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Role</label>
+                  <input
+                    type="text"
+                    value={testimonial?.role || ''}
+                    onChange={(e) => handlers.handleTestimonialChange(idx, "role", e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    placeholder="e.g., CEO, Marketing Director"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Company</label>
+                  <input
+                    type="text"
+                    value={testimonial?.company || ''}
+                    onChange={(e) => handlers.handleTestimonialChange(idx, "company", e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    placeholder="Company name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Quote</label>
+                  <textarea
+                    value={testimonial?.quote || ''}
+                    onChange={(e) => handlers.handleTestimonialChange(idx, "quote", e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    placeholder="Customer testimonial quote"
+                    rows={3}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Result (Optional)</label>
+                  <input
+                    type="text"
+                    value={testimonial?.result || ''}
+                    onChange={(e) => handlers.handleTestimonialChange(idx, "result", e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    placeholder="e.g., 300% increase in sales"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Rating</label>
+                  <IconSelector
+                    value={testimonial?.rating?.toString() || '5'}
+                    onChange={(value) => handlers.handleTestimonialChange(idx, "rating", parseInt(value))}
+                    className="w-full"
+                    options={[
+                      { value: '1', label: '1 Star' },
+                      { value: '2', label: '2 Stars' },
+                      { value: '3', label: '3 Stars' },
+                      { value: '4', label: '4 Stars' },
+                      { value: '5', label: '5 Stars' }
+                    ]}
+                    placeholder="Select rating"
+                  />
+                </div>
               </div>
             ))}
             <button
@@ -558,34 +615,24 @@ function GuaranteesSectionEditor({ guarantees, onPageContentChange }: { guarante
           <label className="block text-sm font-medium text-slate-700 mb-2">Guarantees</label>
           <div className="space-y-3">
             {guarantees?.guarantees?.map((guarantee: any, idx: number) => (
-              <div key={idx} className="flex items-center gap-2">
-                <select
+              <div key={idx} className="space-y-3 p-3 border border-slate-200 rounded-md bg-slate-50">
+                <GuaranteeIconSelector
                   value={guarantee?.icon || ''}
-                  onChange={(e) => handlers.handleGuaranteeChange(idx, "icon", e.target.value)}
-                  className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-                >
-                  <option value="">Select icon</option>
-                  <option value="shield">🛡️</option>
-                  <option value="check">✅</option>
-                  <option value="star">⭐</option>
-                  <option value="heart">❤️</option>
-                  <option value="lock">🔒</option>
-                  <option value="thumbsup">👍</option>
-                  <option value="award">🏆</option>
-                  <option value="certificate">📜</option>
-                </select>
+                  onChange={(value) => handlers.handleGuaranteeChange(idx, "icon", value)}
+                  className="w-full"
+                />
                 <input
                   type="text"
                   value={guarantee?.title || ''}
                   onChange={(e) => handlers.handleGuaranteeChange(idx, "title", e.target.value)}
-                  className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
                   placeholder="Guarantee title"
                 />
                 <input
                   type="text"
                   value={guarantee?.description || ''}
                   onChange={(e) => handlers.handleGuaranteeChange(idx, "description", e.target.value)}
-                  className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
                   placeholder="Guarantee description"
                 />
                 <button
@@ -612,8 +659,8 @@ function GuaranteesSectionEditor({ guarantees, onPageContentChange }: { guarante
   );
 }
 
-function FAQSectionEditor({ faq, onPageContentChange }: { faq: any; onPageContentChange: (field: string, value: any) => void }) {
-  const handlers = createFAQHandlers({ faq } as any, onPageContentChange);
+function FAQSectionEditor({ faq, onPageContentChange, pageContent }: { faq: any; onPageContentChange: (field: string, value: any) => void; pageContent: any }) {
+  const handlers = createFAQHandlers(pageContent, onPageContentChange);
   
   return (
     <div className="space-y-4">
@@ -652,7 +699,7 @@ function FAQSectionEditor({ faq, onPageContentChange }: { faq: any; onPageConten
                     type="text"
                     value={qa?.question || ''}
                     onChange={(e) => handlers.handleQAChange(idx, "question", e.target.value)}
-                    className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
                     placeholder="Question"
                   />
                   <button

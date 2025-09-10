@@ -3,9 +3,14 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
-import { createPortal } from "react-dom";
 import Chatbot from "@/components/widgets/Chatbot";
 import ThemeToggle from "@/components/widgets/ThemeToggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const sidebarLinks = [
   { href: "/dashboard", label: "Dashboard", icon: "🏠" },
@@ -14,7 +19,6 @@ const sidebarLinks = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
   const [pages, setPages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSidebarOverlay, setShowSidebarOverlay] = useState(false);
@@ -162,10 +166,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (profileOpen) {
-        setProfileOpen(false);
-      }
-      // Also handle title editing click outside
+      // Handle title editing click outside
       if (editingTitle) {
         const target = event.target as Element;
         if (!target.closest('.title-input-container')) {
@@ -174,11 +175,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       }
     };
 
-    if (profileOpen || editingTitle) {
+    if (editingTitle) {
       document.addEventListener('click', handleClickOutside);
       return () => document.removeEventListener('click', handleClickOutside);
     }
-  }, [profileOpen, editingTitle]);
+  }, [editingTitle]);
 
   // Handle mouse movement for sidebar overlay on edit pages
   useEffect(() => {
@@ -437,41 +438,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </div>
               
               {/* Right side - Profile icon */}
-              <div className="relative z-[70]">
-                <button
-                  className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setProfileOpen(v => !v);
-                  }}
-                  title="Profile"
-                >
-                  <span className="text-white font-semibold text-sm">U</span>
-                </button>
-                
-                {profileOpen && typeof window !== 'undefined' && createPortal(
-                  <div 
-                    className="fixed w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-[9999]"
-                    style={{
-                      top: '80px',
-                      right: '24px',
-                      zIndex: 9999
-                    }}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-sm"
+                    title="Profile"
                   >
-                    <button
-                      className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors text-left"
-                      onClick={() => {
-                        setProfileOpen(false);
-                        handleSignOut();
-                      }}
-                    >
-                      <span className="text-sm">🚪</span>
-                      Sign Out
-                    </button>
-                  </div>,
-                  document.body
-                )}
-              </div>
+                    <span className="text-white font-semibold text-sm">U</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem
+                    className="text-red-600 hover:bg-red-50 cursor-pointer"
+                    onClick={handleSignOut}
+                  >
+                    <span className="text-sm mr-3">🚪</span>
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </header>
 
@@ -578,46 +563,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <ThemeToggle />
           </div>
           
-          <div className="relative z-[70]">
-            <button
-              className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                setProfileOpen(v => !v);
-              }}
-            >
-              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center">
-                <span className="text-white font-semibold text-xs">U</span>
-              </div>
-              <span className="hidden sm:inline text-sm">Profile</span>
-              <svg className="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            
-            {profileOpen && typeof window !== 'undefined' && createPortal(
-              <div 
-                className="fixed w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-[9999]"
-                style={{
-                  top: '80px',
-                  right: '24px',
-                  zIndex: 9999
-                }}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center">
+                  <span className="text-white font-semibold text-xs">U</span>
+                </div>
+                <span className="hidden sm:inline text-sm">Profile</span>
+                <svg className="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem
+                className="text-red-600 hover:bg-red-50 cursor-pointer"
+                onClick={handleSignOut}
               >
-                <button
-                  className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors text-left"
-                  onClick={() => {
-                    setProfileOpen(false);
-                    handleSignOut();
-                  }}
-                >
-                  <span className="text-sm">🚪</span>
-                  Sign Out
-                </button>
-              </div>,
-              document.body
-            )}
-          </div>
+                <span className="text-sm mr-3">🚪</span>
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </header>
 
         {/* Main content */}

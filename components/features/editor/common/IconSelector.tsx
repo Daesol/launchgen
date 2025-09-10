@@ -1,8 +1,17 @@
-import React from 'react';
+"use client";
+import React from "react";
+import { renderIcon } from "@/lib/iconUtils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { ChevronDown } from "lucide-react";
 
 export interface IconOption {
   value: string;
-  emoji: string;
   label?: string;
 }
 
@@ -16,30 +25,30 @@ interface IconSelectorProps {
 
 // Default icon options - can be customized per section
 const defaultIconOptions: IconOption[] = [
-  { value: 'rocket', emoji: '🚀', label: 'Rocket' },
-  { value: 'lightning', emoji: '⚡', label: 'Lightning' },
-  { value: 'lightbulb', emoji: '💡', label: 'Lightbulb' },
-  { value: 'target', emoji: '🎯', label: 'Target' },
-  { value: 'fire', emoji: '🔥', label: 'Fire' },
-  { value: 'star', emoji: '⭐', label: 'Star' },
-  { value: 'diamond', emoji: '💎', label: 'Diamond' },
-  { value: 'helicopter', emoji: '🚁', label: 'Helicopter' },
-  { value: 'tools', emoji: '🔧', label: 'Tools' },
-  { value: 'mobile', emoji: '📱', label: 'Mobile' },
-  { value: 'computer', emoji: '💻', label: 'Computer' },
-  { value: 'web', emoji: '🌐', label: 'Web' },
-  { value: 'checkmark', emoji: '✅', label: 'Checkmark' },
-  { value: 'shield', emoji: '🛡️', label: 'Shield' },
-  { value: 'lock', emoji: '🔒', label: 'Lock' },
-  { value: 'strong', emoji: '💪', label: 'Strong' },
-  { value: 'alert', emoji: '🚨', label: 'Alert' },
-  { value: 'warning', emoji: '⚠️', label: 'Warning' },
-  { value: 'cross', emoji: '❌', label: 'Cross' },
-  { value: 'broken-heart', emoji: '💔', label: 'Broken Heart' },
-  { value: 'anxious', emoji: '😰', label: 'Anxious' },
-  { value: 'frustrated', emoji: '😤', label: 'Frustrated' },
-  { value: 'tired', emoji: '😫', label: 'Tired' },
-  { value: 'angry', emoji: '😡', label: 'Angry' },
+  { value: 'rocket', label: 'Rocket' },
+  { value: 'lightning', label: 'Lightning' },
+  { value: 'lightbulb', label: 'Lightbulb' },
+  { value: 'target', label: 'Target' },
+  { value: 'fire', label: 'Fire' },
+  { value: 'star', label: 'Star' },
+  { value: 'diamond', label: 'Diamond' },
+  { value: 'helicopter', label: 'Helicopter' },
+  { value: 'tools', label: 'Tools' },
+  { value: 'mobile', label: 'Mobile' },
+  { value: 'computer', label: 'Computer' },
+  { value: 'web', label: 'Web' },
+  { value: 'check', label: 'Checkmark' },
+  { value: 'shield', label: 'Shield' },
+  { value: 'lock', label: 'Lock' },
+  { value: 'strong', label: 'Strong' },
+  { value: 'alert', label: 'Alert' },
+  { value: 'warning', label: 'Warning' },
+  { value: 'x', label: 'Cross' },
+  { value: 'broken-heart', label: 'Broken Heart' },
+  { value: 'anxious', label: 'Anxious' },
+  { value: 'frustrated', label: 'Frustrated' },
+  { value: 'tired', label: 'Tired' },
+  { value: 'angry', label: 'Angry' },
 ];
 
 export default function IconSelector({
@@ -49,33 +58,55 @@ export default function IconSelector({
   className = '',
   options = defaultIconOptions,
 }: IconSelectorProps) {
+  const selectedOption = options.find(option => option.value === value);
+  
   return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={`px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm ${className}`}
-    >
-      <option value="">{placeholder}</option>
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.emoji} {option.label || option.value}
-        </option>
-      ))}
-    </select>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          className={`justify-between ${className}`}
+        >
+          <div className="flex items-center gap-2">
+            {selectedOption ? (
+              <>
+                {renderIcon(selectedOption.value, "h-4 w-4")}
+                <span>{selectedOption.label || selectedOption.value}</span>
+              </>
+            ) : (
+              <span className="text-muted-foreground">{placeholder}</span>
+            )}
+          </div>
+          <ChevronDown className="h-4 w-4 opacity-50" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-56">
+        {options.map((option) => (
+          <DropdownMenuItem
+            key={option.value}
+            onClick={() => onChange(option.value)}
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            {renderIcon(option.value, "h-4 w-4")}
+            <span>{option.label || option.value}</span>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
 // Specialized icon selectors for different sections
 export function HeroIconSelector({ value, onChange, className }: { value: string; onChange: (value: string) => void; className?: string }) {
   const heroIcons: IconOption[] = [
-    { value: 'rocket', emoji: '🚀', label: 'Rocket' },
-    { value: 'lightning', emoji: '⚡', label: 'Lightning' },
-    { value: 'lightbulb', emoji: '💡', label: 'Lightbulb' },
-    { value: 'target', emoji: '🎯', label: 'Target' },
-    { value: 'fire', emoji: '🔥', label: 'Fire' },
-    { value: 'star', emoji: '⭐', label: 'Star' },
-    { value: 'diamond', emoji: '💎', label: 'Diamond' },
-    { value: 'helicopter', emoji: '🚁', label: 'Helicopter' },
+    { value: 'rocket', label: 'Rocket' },
+    { value: 'lightning', label: 'Lightning' },
+    { value: 'lightbulb', label: 'Lightbulb' },
+    { value: 'target', label: 'Target' },
+    { value: 'fire', label: 'Fire' },
+    { value: 'star', label: 'Star' },
+    { value: 'diamond', label: 'Diamond' },
+    { value: 'helicopter', label: 'Helicopter' },
   ];
   
   return (
@@ -91,18 +122,18 @@ export function HeroIconSelector({ value, onChange, className }: { value: string
 
 export function FeatureIconSelector({ value, onChange, className }: { value: string; onChange: (value: string) => void; className?: string }) {
   const featureIcons: IconOption[] = [
-    { value: 'rocket', emoji: '🚀', label: 'Rocket' },
-    { value: 'lightning', emoji: '⚡', label: 'Lightning' },
-    { value: 'lightbulb', emoji: '💡', label: 'Lightbulb' },
-    { value: 'target', emoji: '🎯', label: 'Target' },
-    { value: 'fire', emoji: '🔥', label: 'Fire' },
-    { value: 'star', emoji: '⭐', label: 'Star' },
-    { value: 'diamond', emoji: '💎', label: 'Diamond' },
-    { value: 'helicopter', emoji: '🚁', label: 'Helicopter' },
-    { value: 'tools', emoji: '🔧', label: 'Tools' },
-    { value: 'mobile', emoji: '📱', label: 'Mobile' },
-    { value: 'computer', emoji: '💻', label: 'Computer' },
-    { value: 'web', emoji: '🌐', label: 'Web' },
+    { value: 'rocket', label: 'Rocket' },
+    { value: 'lightning', label: 'Lightning' },
+    { value: 'lightbulb', label: 'Lightbulb' },
+    { value: 'target', label: 'Target' },
+    { value: 'fire', label: 'Fire' },
+    { value: 'star', label: 'Star' },
+    { value: 'diamond', label: 'Diamond' },
+    { value: 'helicopter', label: 'Helicopter' },
+    { value: 'tools', label: 'Tools' },
+    { value: 'mobile', label: 'Mobile' },
+    { value: 'computer', label: 'Computer' },
+    { value: 'web', label: 'Web' },
   ];
   
   return (
@@ -118,14 +149,14 @@ export function FeatureIconSelector({ value, onChange, className }: { value: str
 
 export function GuaranteeIconSelector({ value, onChange, className }: { value: string; onChange: (value: string) => void; className?: string }) {
   const guaranteeIcons: IconOption[] = [
-    { value: 'checkmark', emoji: '✅', label: 'Checkmark' },
-    { value: 'shield', emoji: '🛡️', label: 'Shield' },
-    { value: 'diamond', emoji: '💎', label: 'Diamond' },
-    { value: 'star', emoji: '⭐', label: 'Star' },
-    { value: 'lock', emoji: '🔒', label: 'Lock' },
-    { value: 'target', emoji: '🎯', label: 'Target' },
-    { value: 'rocket', emoji: '🚀', label: 'Rocket' },
-    { value: 'strong', emoji: '💪', label: 'Strong' },
+    { value: 'check', label: 'Checkmark' },
+    { value: 'shield', label: 'Shield' },
+    { value: 'diamond', label: 'Diamond' },
+    { value: 'star', label: 'Star' },
+    { value: 'lock', label: 'Lock' },
+    { value: 'target', label: 'Target' },
+    { value: 'rocket', label: 'Rocket' },
+    { value: 'strong', label: 'Strong' },
   ];
   
   return (
@@ -141,14 +172,14 @@ export function GuaranteeIconSelector({ value, onChange, className }: { value: s
 
 export function PainPointIconSelector({ value, onChange, className }: { value: string; onChange: (value: string) => void; className?: string }) {
   const painPointIcons: IconOption[] = [
-    { value: 'alert', emoji: '🚨', label: 'Alert' },
-    { value: 'warning', emoji: '⚠️', label: 'Warning' },
-    { value: 'cross', emoji: '❌', label: 'Cross' },
-    { value: 'broken-heart', emoji: '💔', label: 'Broken Heart' },
-    { value: 'anxious', emoji: '😰', label: 'Anxious' },
-    { value: 'frustrated', emoji: '😤', label: 'Frustrated' },
-    { value: 'tired', emoji: '😫', label: 'Tired' },
-    { value: 'angry', emoji: '😡', label: 'Angry' },
+    { value: 'alert', label: 'Alert' },
+    { value: 'warning', label: 'Warning' },
+    { value: 'x', label: 'Cross' },
+    { value: 'broken-heart', label: 'Broken Heart' },
+    { value: 'anxious', label: 'Anxious' },
+    { value: 'frustrated', label: 'Frustrated' },
+    { value: 'tired', label: 'Tired' },
+    { value: 'angry', label: 'Angry' },
   ];
   
   return (

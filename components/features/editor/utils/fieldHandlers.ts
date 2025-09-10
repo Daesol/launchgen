@@ -49,19 +49,19 @@ export const createProblemHandlers = (
     onPageContentChange(`problemSection.${field}`, value);
   },
   handlePainPointChange: (idx: number, field: string, value: any) => {
-    const currentPainPoints = pageContent?.painPoints || [];
+    const currentPainPoints = pageContent?.problemSection?.painPoints || [];
     const newPainPoints = currentPainPoints.map((point: any, i: number) => 
       i === idx ? { ...point, [field]: value } : point
     );
     onPageContentChange('problemSection.painPoints', newPainPoints);
   },
   handleAddPainPoint: () => {
-    const currentPainPoints = pageContent?.painPoints || [];
+    const currentPainPoints = pageContent?.problemSection?.painPoints || [];
     const newPainPoints = [...currentPainPoints, { icon: 'clock', text: '' }];
     onPageContentChange('problemSection.painPoints', newPainPoints);
   },
   handleRemovePainPoint: (idx: number) => {
-    const currentPainPoints = pageContent?.painPoints || [];
+    const currentPainPoints = pageContent?.problemSection?.painPoints || [];
     const newPainPoints = currentPainPoints.filter((_: any, i: number) => i !== idx);
     onPageContentChange('problemSection.painPoints', newPainPoints);
   },
@@ -108,38 +108,38 @@ export const createSocialProofHandlers = (
     onPageContentChange(`socialProof.${field}`, value);
   },
   handleTestimonialChange: (idx: number, field: string, value: any) => {
-    const currentTestimonials = pageContent?.testimonials || [];
+    const currentTestimonials = pageContent?.socialProof?.testimonials || [];
     const newTestimonials = currentTestimonials.map((testimonial: any, i: number) => 
       i === idx ? { ...testimonial, [field]: value } : testimonial
     );
     onPageContentChange('socialProof.testimonials', newTestimonials);
   },
   handleStatChange: (idx: number, field: string, value: any) => {
-    const currentStats = pageContent?.stats || [];
+    const currentStats = pageContent?.socialProof?.stats || [];
     const newStats = currentStats.map((stat: any, i: number) => 
       i === idx ? { ...stat, [field]: value } : stat
     );
     onPageContentChange('socialProof.stats', newStats);
   },
   handleAddTestimonial: () => {
-    const currentTestimonials = pageContent?.testimonials || [];
+    const currentTestimonials = pageContent?.socialProof?.testimonials || [];
     const newTestimonials = [...currentTestimonials, {
-      name: '', title: '', text: ''
+      name: '', role: '', company: '', quote: '', result: '', rating: 5
     }];
     onPageContentChange('socialProof.testimonials', newTestimonials);
   },
   handleAddStat: () => {
-    const currentStats = pageContent?.stats || [];
-    const newStats = [...currentStats, { label: '', value: '' }];
+    const currentStats = pageContent?.socialProof?.stats || [];
+    const newStats = [...currentStats, { number: '', label: '', description: '' }];
     onPageContentChange('socialProof.stats', newStats);
   },
   handleRemoveTestimonial: (idx: number) => {
-    const currentTestimonials = pageContent?.testimonials || [];
+    const currentTestimonials = pageContent?.socialProof?.testimonials || [];
     const newTestimonials = currentTestimonials.filter((_: any, i: number) => i !== idx);
     onPageContentChange('socialProof.testimonials', newTestimonials);
   },
   handleRemoveStat: (idx: number) => {
-    const currentStats = pageContent?.stats || [];
+    const currentStats = pageContent?.socialProof?.stats || [];
     const newStats = currentStats.filter((_: any, i: number) => i !== idx);
     onPageContentChange('socialProof.stats', newStats);
   },
@@ -154,19 +154,19 @@ export const createGuaranteesHandlers = (
     onPageContentChange(`guarantees.${field}`, value);
   },
   handleGuaranteeChange: (idx: number, field: string, value: any) => {
-    const currentGuarantees = pageContent?.guarantees || [];
+    const currentGuarantees = pageContent?.guarantees?.guarantees || [];
     const newGuarantees = currentGuarantees.map((guarantee: any, i: number) => 
       i === idx ? { ...guarantee, [field]: value } : guarantee
     );
     onPageContentChange('guarantees.guarantees', newGuarantees);
   },
   handleAddGuarantee: () => {
-    const currentGuarantees = pageContent?.guarantees || [];
+    const currentGuarantees = pageContent?.guarantees?.guarantees || [];
     const newGuarantees = [...currentGuarantees, { title: '', description: '', icon: 'shield' }];
     onPageContentChange('guarantees.guarantees', newGuarantees);
   },
   handleRemoveGuarantee: (idx: number) => {
-    const currentGuarantees = pageContent?.guarantees || [];
+    const currentGuarantees = pageContent?.guarantees?.guarantees || [];
     const newGuarantees = currentGuarantees.filter((_: any, i: number) => i !== idx);
     onPageContentChange('guarantees.guarantees', newGuarantees);
   },
@@ -181,19 +181,19 @@ export const createFAQHandlers = (
     onPageContentChange(`faq.${field}`, value);
   },
   handleQAChange: (idx: number, field: string, value: any) => {
-    const currentQuestions = pageContent?.questions || [];
+    const currentQuestions = pageContent?.faq?.questions || [];
     const newQuestions = currentQuestions.map((question: any, i: number) => 
       i === idx ? { ...question, [field]: value } : question
     );
     onPageContentChange('faq.questions', newQuestions);
   },
   handleAddQA: () => {
-    const currentQuestions = pageContent?.questions || [];
+    const currentQuestions = pageContent?.faq?.questions || [];
     const newQuestions = [...currentQuestions, { question: '', answer: '' }];
     onPageContentChange('faq.questions', newQuestions);
   },
   handleRemoveQA: (idx: number) => {
-    const currentQuestions = pageContent?.questions || [];
+    const currentQuestions = pageContent?.faq?.questions || [];
     const newQuestions = currentQuestions.filter((_: any, i: number) => i !== idx);
     onPageContentChange('faq.questions', newQuestions);
   },
