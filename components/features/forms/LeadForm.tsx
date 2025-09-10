@@ -19,7 +19,7 @@ export default function LeadForm({ pageId, theme, ctaText = "Submit", previewMod
 
   const accent = theme?.accentColor || "#6366f1";
   const isDark = theme?.mode === "black";
-  const inputBg = isDark ? "bg-slate-800/80 text-white placeholder:text-slate-400" : "bg-white text-black placeholder:text-slate-400";
+  const inputBg = isDark ? "bg-slate-800/80 text-white placeholder:text-white/70" : "bg-white text-black placeholder:text-slate-400";
   const borderClass = isDark ? "border-slate-700" : "border-slate-300";
 
   const validateEmail = (email: string) => {
