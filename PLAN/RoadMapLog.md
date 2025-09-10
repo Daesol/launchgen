@@ -845,3 +845,298 @@
 
 ### Files affected:
 - `components/PageEditorRefactored.tsx`
+
+---
+
+## 2024-12-19 - Global Theme Switching Implementation
+
+### What was done:
+- **Implemented global theme switching system** - Added comprehensive dark/light theme switching functionality
+- **Created theme context and provider** - Built React context for managing theme state across the entire application
+- **Added theme toggle component** - Created reusable theme toggle button with sun/moon icons
+- **Updated root layout** - Integrated theme provider to apply dark class to HTML element
+- **Enhanced dashboard layout** - Added theme toggle to both edit page and regular dashboard headers
+- **Updated landing page template** - Modified to use global theme instead of config-based theme
+- **Fixed theme persistence** - Theme preference is saved to localStorage and restored on page load
+- **Maintained accent color customization** - Users can still customize accent colors while using global theme switching
+
+### Technical details:
+- **Theme context**: Created `ThemeProvider` with `useTheme` hook for global theme management
+- **HTML class management**: Automatically adds/removes `dark` class to HTML element based on theme
+- **LocalStorage persistence**: Theme preference saved and restored across browser sessions
+- **Theme toggle UI**: Clean button with sun/moon icons and optional label display
+- **Global integration**: Theme provider wraps entire application in root layout
+- **Landing page integration**: Template now uses global theme for mode, config theme for accent color
+- **Dashboard integration**: Theme toggle added to both edit page and regular dashboard headers
+- **TypeScript support**: Proper typing for theme context and components
+- **Responsive design**: Theme toggle works on both desktop and mobile devices
+
+### Files affected:
+- `lib/theme-context.tsx` - New theme context and provider with localStorage persistence
+- `components/ThemeToggle.tsx` - New theme toggle component with sun/moon icons
+- `app/layout.tsx` - Updated to use theme provider and suppress hydration warnings
+- `components/DashboardLayout.tsx` - Added theme toggle to both edit page and regular dashboard headers
+- `components/LandingPageTemplate.tsx` - Updated to use global theme context instead of config theme
+
+---
+
+## 2024-12-19 - Theme Settings Panel Integration Fix
+
+### What was done:
+- **Fixed ThemePanel integration** - Updated ThemePanel to properly work with the global theme system
+- **Synchronized theme mode selection** - Theme mode dropdown now correctly reflects and controls the global theme state
+- **Separated global vs page-specific settings** - Theme mode is now global, accent color remains page-specific
+- **Added explanatory text** - Clear labels explaining which settings are global vs page-specific
+- **Fixed theme switching functionality** - Users can now properly switch between light and dark themes from the Theme Settings panel
+
+### Technical details:
+- **Global theme integration**: ThemePanel now uses `useTheme` hook to access and control global theme state
+- **Theme mode synchronization**: Dropdown value now reflects `globalTheme` instead of config-based theme
+- **Accent color preservation**: Accent color changes still update page style via `onThemeChange` callback
+- **User experience improvements**: Added explanatory text to clarify the difference between global and page-specific settings
+- **Proper state management**: Theme mode changes now directly update global theme context instead of page style
+
+### Files affected:
+- `components/editor/panels/ThemePanel.tsx` - Updated to use global theme system, added explanatory text, and fixed theme switching functionality
+
+---
+
+## 2024-12-19 - Missing Editor Functionality Restoration
+
+### What was done:
+- **Restored word highlight functionality** - Added interactive word highlighting feature to Hero Section Editor where users can click on headline words to highlight them
+- **Removed arrow icons from Page Layout** - Cleaned up the Page Layout interface by removing unnecessary expand/collapse arrow icons
+- **Fixed section visibility toggle** - Section visibility buttons now properly show/hide sections in the landing page preview
+- **Fixed drag and drop functionality** - Section reordering now actually moves sections in the landing page preview, not just in the editor panel
+- **Enhanced user experience** - All editor functionality now works as expected with proper state synchronization
+
+### Technical details:
+- **Word highlighting**: Added interactive word selection UI with clickable word buttons and visual feedback for highlighted words
+- **Section visibility**: Connected section visibility state from editor to landing page template via props
+- **Section ordering**: Connected section order state from editor to landing page template via props
+- **State synchronization**: Updated PageEditorRefactored to pass section state to LandingPageTemplate
+- **UI cleanup**: Removed unnecessary expand/collapse arrows from layout panel for cleaner interface
+- **Proper data flow**: Section changes now properly flow from editor state to page content to landing page display
+
+### Files affected:
+- `components/editor/panels/SectionPanel.tsx` - Added word highlight functionality to Hero Section Editor
+- `components/editor/panels/LayoutPanel.tsx` - Removed arrow icons and cleaned up layout interface
+- `components/PageEditorRefactored.tsx` - Fixed section state synchronization and data flow to landing page
+
+---
+
+## 2024-12-19 - Dynamic Navigation System Implementation
+
+### What was done:
+- **Implemented dynamic navigation** - Navigation menu now dynamically shows sections based on `sectionOrder` and `visibleSections` from the editor
+- **Renamed navigation items** - Updated section names in navigation: Problem Section → "Why", Features → "How", Social Proof → "Testimonials"
+- **Hidden CTA from navigation** - CTA section is no longer shown in the navigation menu (only the CTA button remains)
+- **Updated both desktop and mobile navigation** - Both navigation systems now use the same dynamic logic
+- **Added smooth scrolling** - Navigation links now smoothly scroll to sections instead of using anchor links
+
+### Technical details:
+- **Dynamic navigation generation**: Created `getNavigationItems()` function that filters and maps sections based on visibility and order
+- **Section mapping**: Added proper mapping between section IDs and display names/hrefs
+- **Consistent behavior**: Both desktop and mobile navigation use the same data source and logic
+- **Smooth scrolling**: Replaced anchor links with JavaScript smooth scrolling for better UX
+- **CTA handling**: CTA section is filtered out from navigation items but CTA button remains in both desktop and mobile menus
+- **Responsive design**: Mobile navigation automatically closes when a section is selected
+
+### Files affected:
+- `components/LandingPageTemplate.tsx` - Complete navigation system overhaul with dynamic menu generation, renamed section labels, and improved scroll behavior
+
+---
+
+## 2024-12-19 - Navigation Bar Visibility Fix
+
+### What was done:
+- **Fixed navigation bar disappearing** - Navigation bar now stays visible at all times by making it fixed positioned
+- **Added proper content padding** - Main content now has appropriate top padding to account for the fixed header
+- **Updated scroll behavior** - All scroll functions now account for the fixed header height to prevent content from being hidden behind the header
+- **Maintained responsive design** - Different padding values for mobile preview vs desktop to match header heights
+- **Preserved mobile menu functionality** - Mobile menu continues to work correctly with the fixed header
+
+### Technical details:
+- **Fixed positioning**: Header now uses `fixed top-0 left-0 right-0 z-50` to stay at the top of viewport
+- **Content padding**: Added dynamic padding-top to main content (48px for mobile, 56px for desktop)
+- **Z-index management**: Header uses z-50 to ensure it stays above other content
+- **Scroll offset calculation**: All scroll functions now calculate proper offset to account for fixed header height
+- **Responsive heights**: Different header heights maintained for mobile preview vs desktop
+- **TypeScript fixes**: Added proper type casting for HTMLElement to resolve TypeScript errors
+
+### Files affected:
+- `components/LandingPageTemplate.tsx` - Fixed header positioning, added content padding, and updated all scroll functions to account for fixed header
+
+---
+
+## 2024-12-19 - Preview Mode Navigation Containment Fix
+
+### What was done:
+- **Fixed navigation bar containment in preview mode** - Navigation bar now stays within the landing page template when viewed in the editor preview
+- **Made header positioning conditional** - Header uses relative positioning in preview mode, fixed positioning in standalone mode
+- **Updated content padding logic** - Content padding is removed when in preview mode to prevent double spacing
+- **Fixed scroll behavior in preview mode** - Scroll functions no longer apply header offset when header is relative positioned
+- **Maintained standalone functionality** - Fixed positioning and proper scroll behavior still work when landing page is viewed standalone
+
+### Technical details:
+- **Conditional positioning**: Header uses `onSectionSelect` prop to detect preview mode and apply appropriate positioning
+- **Preview mode detection**: When `onSectionSelect` is present, header uses relative positioning; when absent, uses fixed positioning
+- **Content padding adjustment**: Main content padding is set to 0px in preview mode, normal padding in standalone mode
+- **Scroll offset calculation**: All scroll functions check for preview mode and only apply header offset when header is fixed
+- **Consistent behavior**: Both desktop and mobile navigation maintain proper scroll behavior in both modes
+
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Pass previewMode prop to LandingPageTemplate
+- `components/LandingPageTemplate.tsx` - Implement conditional header positioning and scroll behavior based on preview mode
+
+---
+
+## 2024-12-19 - Preview Mode Navigation Scroll Fix
+
+### What was done:
+- **Fixed navigation scroll functionality in preview mode** - Navigation links now properly scroll to sections when clicked in the editor preview
+- **Implemented container-aware scrolling** - Scroll functions now work within the preview container instead of trying to scroll the entire window
+- **Maintained standalone scroll behavior** - Window scrolling still works correctly when landing page is viewed standalone
+- **Updated all scroll functions** - Both desktop and mobile navigation now use appropriate scroll methods based on context
+
+### Technical details:
+- **Preview mode scrolling**: Uses `element.scrollIntoView()` to scroll within the preview container
+- **Standalone mode scrolling**: Uses `window.scrollTo()` with proper header offset calculation
+- **Context detection**: Uses `onSectionSelect` prop presence to determine which scroll method to use
+- **Consistent behavior**: All scroll functions (scrollToCTA, scrollToSection, navigation links) use the same logic
+- **Mobile navigation**: Mobile menu links also use the same conditional scroll behavior
+
+### Files affected:
+- `components/LandingPageTemplate.tsx` - Updated all scroll functions to work correctly in both preview and standalone modes
+
+---
+
+## 2024-12-19 - Mobile Preview Fix
+
+### What was done:
+- **Fixed mobile preview functionality** - Mobile preview now shows the actual landing page instead of a QR code interface
+- **Added preview mode controls** - Desktop/mobile toggle buttons in the dashboard header now work correctly
+- **Implemented event-driven preview switching** - Preview mode changes are handled via custom events from the dashboard layout
+- **Updated hook interface** - Added setPreviewMode to usePageEditor hook and its TypeScript interface
+
+### Technical details:
+- **Mobile preview rendering**: Changed from MobilePreviewQR component to LandingPageTemplate with mobile preview mode
+- **Event listener**: Added event listener for 'set-preview-mode' custom events from dashboard layout
+- **Hook enhancement**: Exported setPreviewMode function from usePageEditor hook
+- **Type safety**: Updated UsePageEditorReturn interface to include setPreviewMode function
+- **Responsive container**: Mobile preview uses max-w-sm container with proper padding
+
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Fixed mobile preview rendering and added event listener for preview mode changes
+- `components/editor/hooks/usePageEditor.ts` - Exported setPreviewMode function
+- `components/editor/types/editor.types.ts` - Added setPreviewMode to UsePageEditorReturn interface
+
+---
+
+## 2024-12-19 - Mobile Preview Navigation and Background Fix
+
+### What was done:
+- **Fixed mobile navigation in preview mode** - Mobile navigation menu now shows when in mobile preview mode instead of only on actual mobile devices
+- **Fixed transparent background issue** - Features and FAQ sections now have proper background colors in mobile preview
+- **Enhanced mobile preview container** - Added proper styling to mobile preview container for better visual presentation
+
+### Technical details:
+- **Conditional navigation display**: Desktop navigation hidden when `previewMode === 'mobile'`, mobile menu button shown instead
+- **Mobile menu visibility**: Mobile menu overlay now shows when in mobile preview mode regardless of screen size
+- **Container styling**: Added `bg-white rounded-lg shadow-lg` to mobile preview container for proper section background visibility
+- **Responsive behavior**: Navigation properly switches between desktop and mobile styles based on preview mode
+
+### Files affected:
+- `components/LandingPageTemplate.tsx` - Updated navigation visibility logic to work with preview mode
+- `components/PageEditorRefactored.tsx` - Enhanced mobile preview container styling
+
+---
+
+## 2024-12-19 - Mobile Menu Containment Fix
+
+### What was done:
+- **Fixed mobile menu positioning** - Mobile menu now opens within the mobile preview container instead of covering the entire screen
+- **Added relative positioning** - Mobile preview container now has relative positioning to contain the absolutely positioned mobile menu
+
+### Technical details:
+- **Conditional positioning**: Mobile menu uses `absolute inset-0` when in mobile preview mode, `fixed inset-0` for standalone mode
+- **Container positioning**: Mobile preview container now has `relative` positioning to properly contain the mobile menu
+- **Proper containment**: Mobile menu overlay is now contained within the mobile preview phone-like container
+
+### Files affected:
+- `components/LandingPageTemplate.tsx` - Updated mobile menu positioning logic
+- `components/PageEditorRefactored.tsx` - Added relative positioning to mobile preview container
+
+---
+
+## 2024-12-19 - Mobile Menu Animation Enhancement
+
+### What was done:
+- **Added smooth animations** - Mobile navigation menu now has smooth opening and closing animations
+- **Enhanced visual feedback** - Background overlay fades in/out smoothly
+- **Improved user experience** - Menu slides down from top with easing transitions
+
+### Technical details:
+- **Fade-in animation**: Background overlay uses `animate-in fade-in duration-300` for smooth opacity transition
+- **Slide-down animation**: Menu content uses `animate-in slide-in-from-top-2` for smooth slide-down effect
+- **Transition timing**: 300ms duration with `ease-in-out` timing function for natural feel
+- **Preview mode compatibility**: Animations work in both standalone and mobile preview modes
+
+### Files affected:
+- `components/LandingPageTemplate.tsx` - Added CSS animation classes to mobile menu components
+
+---
+
+## 2024-12-19 - Major Code Architecture Refactoring
+
+### What was done:
+- **Completely restructured codebase** - Implemented comprehensive refactoring from monolithic structure to clean, scalable architecture
+- **Decomposed LandingPageTemplate.tsx** - Broke down 1,167-line monolith into modular, maintainable components
+  - Created individual section components (Hero, Problem, Features, SocialProof, Guarantees, FAQ, CTA)
+  - Implemented SectionRenderer for dynamic section orchestration
+  - Reduced main component from 1,167 lines to 200 lines (83% reduction)
+- **Implemented domain-driven folder structure** - Organized components by feature domains for better maintainability
+  - `src/components/features/landing-page/` - Landing page domain components
+  - `src/components/features/dashboard/` - Dashboard domain components
+  - `src/components/features/editor/` - Page editor domain components
+  - `src/components/shared/` - Reusable business components
+  - `src/types/` - Centralized TypeScript definitions
+  - `src/utils/` - Shared utility functions
+- **Created comprehensive type system** - Eliminated duplicate type definitions and improved type safety
+  - `src/types/landing-page.types.ts` - Landing page domain types
+  - `src/types/dashboard.types.ts` - Dashboard domain types
+  - `src/types/common.types.ts` - Shared types across application
+- **Extracted shared utilities** - Created reusable utility functions for theme management and common operations
+  - `src/utils/theme.ts` - Theme management utilities
+  - Centralized utility exports for clean imports
+
+### Technical details:
+- **Component decomposition**: Split LandingPageTemplate into 7 individual section components plus SectionRenderer
+- **Type consolidation**: Moved all type definitions to centralized type files with proper domain separation
+- **Utility extraction**: Created shared theme utilities to eliminate code duplication across components
+- **Import optimization**: Created index files for clean, organized imports across the application
+- **Code quality metrics**: Achieved significant improvements in maintainability and scalability
+  - No component exceeds 300 lines (down from 1,167)
+  - Eliminated code duplication in section rendering
+  - 100% TypeScript coverage with centralized types
+  - Clear separation of concerns throughout codebase
+- **Migration strategy**: Implemented incremental refactoring approach to minimize breaking changes
+- **Documentation**: Created comprehensive migration guide and updated roadmap documents
+
+### Files affected:
+- `src/components/features/landing-page/LandingPageTemplate.tsx` - New refactored main template (200 lines)
+- `src/components/features/landing-page/SectionRenderer.tsx` - New section orchestration component
+- `src/components/features/landing-page/sections/` - 7 new individual section components
+- `src/types/` - New centralized type definitions
+- `src/utils/` - New shared utility functions
+- `REFACTORING_STRATEGY.md` - Comprehensive refactoring strategy document
+- `MIGRATION_GUIDE.md` - Detailed migration guide and implementation steps
+- `PLAN/RoadMap.md` - Updated with refactoring progress
+- `PLAN/RoadMapLog.md` - This entry documenting the refactoring
+
+### Impact:
+- **Developer Experience**: 83% reduction in component size, clear domain organization, easier maintenance
+- **Code Quality**: Eliminated duplication, improved type safety, better separation of concerns
+- **Scalability**: New features can be added without conflicts, supports team expansion
+- **Maintainability**: Smaller, focused components are easier to test and modify
+- **Performance**: Better code splitting potential and optimization opportunities

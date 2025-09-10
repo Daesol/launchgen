@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
-const PageEditor = dynamic(() => import("@/components/PageEditor"), { ssr: false });
+const PageEditor = dynamic(() => import("@/components/pages/dashboard/PageEditor"), { ssr: false });
 
 export default function GenerateClient() {
   const [prompt, setPrompt] = useState("");

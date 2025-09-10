@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import PageEditorRefactored from '@/components/PageEditorRefactored';
+import PageEditor from '@/components/pages/dashboard/PageEditor';
 
 interface PageEditorWrapperProps {
   initialConfig: any;
@@ -54,7 +54,7 @@ export default function PageEditorWrapper({ initialConfig }: PageEditorWrapperPr
   };
 
   return (
-    <PageEditorRefactored 
+    <PageEditor 
       initialConfig={initialConfig} 
       onSave={handleSave}
       saveStatus={saveStatus}
