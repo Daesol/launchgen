@@ -23,13 +23,8 @@ export default function LeadForm({ pageId, theme, ctaText = "Submit", previewMod
   const inputBg = isDark ? "bg-slate-800/80 text-white" : "bg-white text-black";
   const borderClass = isDark ? "border-slate-700" : "border-slate-300";
 
-  // Debug theme changes and set placeholder color
+  // Set placeholder color based on theme
   useEffect(() => {
-    console.log('LeadForm theme changed:', theme);
-    console.log('isDark:', isDark);
-    console.log('inputBg classes:', inputBg);
-    console.log('placeholder color:', isDark ? '#cbd5e1' : '#000000');
-    
     // Directly set placeholder color via DOM manipulation
     if (inputRef.current) {
       const placeholderColor = isDark ? '#cbd5e1' : '#000000';

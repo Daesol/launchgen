@@ -12,8 +12,6 @@ export default function LandingPageTemplate({
   visibleSections, 
   onSectionSelect 
 }: LandingPageTemplateProps) {
-  // Debug logging - only theme for theme migration issue
-  console.log('LandingPageTemplate - Theme received:', config?.theme);
   
   if (!config || !config.hero || !config.features) {
     return (
@@ -28,12 +26,6 @@ export default function LandingPageTemplate({
   const theme = config.theme || legacyTheme;
   const themeClasses = getThemeClasses(theme);
 
-  // Debug theme changes
-  useEffect(() => {
-    console.log('Theme changed:', theme);
-    console.log('Theme classes computed:', themeClasses);
-    console.log('Theme mode check:', theme.mode, theme.mode === 'black');
-  }, [theme, themeClasses]);
 
   useEffect(() => {
     if (pageId) {

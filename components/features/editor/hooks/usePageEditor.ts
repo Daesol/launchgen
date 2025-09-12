@@ -139,14 +139,6 @@ export function usePageEditor(
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Debug logging for initial content
-  useEffect(() => {
-    console.log('Initial content loaded:', initialContent);
-    console.log('Page content state:', pageContent);
-    console.log('Merged content:', mergedContent);
-    console.log('Initial config:', initialConfig);
-    console.log('Original prompt:', originalPrompt);
-  }, [initialContent, pageContent, mergedContent, initialConfig, originalPrompt]);
 
   // Auto-save functionality
   const scheduleAutoSave = useCallback(() => {
