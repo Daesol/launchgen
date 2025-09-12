@@ -1,32 +1,29 @@
+'use client'
+
+import { ArrowRight, CheckCircle } from 'lucide-react'
+
 interface FinalCTASectionProps {
-  onGenerateLandingPage: () => void;
+  onGenerateLandingPage: () => void
 }
 
 export default function FinalCTASection({ onGenerateLandingPage }: FinalCTASectionProps) {
   return (
-    <section className="py-16 bg-blue-600">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl font-bold text-white mb-4">
-          Ready to Create Your Landing Page?
-        </h2>
-        <p className="text-xl text-blue-100 mb-8">
-          Join thousands of businesses already using LaunchGen to grow their online presence
+    <section className="py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto text-center">
+        <h2 className="text-3xl font-bold text-white mb-4">Ready to Launch Your Idea?</h2>
+        <p className="text-slate-400 mb-8">
+          Start creating your landing page today and turn your idea into leads.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="max-w-md mx-auto">
           <button
             onClick={onGenerateLandingPage}
-            className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+            className="w-full px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
           >
-            Get Started Free
-          </button>
-          <button className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
-            Learn More
+            Generate A Landing Page
+            <ArrowRight className="w-5 h-5" />
           </button>
         </div>
-        <p className="text-blue-100 text-sm mt-4">
-          No credit card required • 5-minute setup • Cancel anytime
-        </p>
       </div>
     </section>
-  );
+  )
 }
