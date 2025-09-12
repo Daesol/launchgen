@@ -17,7 +17,7 @@ export const themeDefaults = {
     mutedForeground: "#64748b",
   },
   black: {
-    background: "#0f172a",
+    background: "#000000",
     surface: "#1e293b",
     text: "#f8fafc",
     textSecondary: "#cbd5e1",
@@ -41,7 +41,7 @@ export function generateThemeCSS(theme: ThemeConfig): string {
     --muted: ${baseColors.muted};
     --muted-foreground: ${baseColors.mutedForeground};
     --accent: ${accentColor};
-    --accent-foreground: ${theme.mode === 'white' ? '#ffffff' : '#0f172a'};
+    --accent-foreground: ${theme.mode === 'white' ? '#ffffff' : '#000000'};
     --accent-10: ${accentColor}1a;
     --accent-20: ${accentColor}33;
     --accent-30: ${accentColor}4d;
@@ -59,7 +59,7 @@ export function applyTheme(element: HTMLElement, theme: ThemeConfig) {
 // Get theme-aware class names
 export function getThemeClasses(theme: ThemeConfig) {
   return {
-    background: theme.mode === 'white' ? 'bg-white' : 'bg-slate-950',
+    background: theme.mode === 'white' ? 'bg-white' : 'bg-black',
     surface: theme.mode === 'white' ? 'bg-slate-50' : 'bg-slate-900',
     text: theme.mode === 'white' ? 'text-slate-900' : 'text-slate-50',
     textSecondary: theme.mode === 'white' ? 'text-slate-600' : 'text-slate-400',

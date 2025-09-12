@@ -5,7 +5,7 @@ export const getThemeClasses = (theme: Theme) => {
   const isDark = theme.mode === 'black';
   
   return {
-    background: isDark ? 'bg-slate-950' : 'bg-white',
+    background: isDark ? 'bg-black' : 'bg-white',
     surface: isDark ? 'bg-slate-900' : 'bg-slate-50',
     muted: isDark ? 'bg-slate-800' : 'bg-slate-100',
     text: isDark ? 'text-slate-50' : 'text-slate-900',

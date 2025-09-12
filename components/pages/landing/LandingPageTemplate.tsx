@@ -71,7 +71,7 @@ export default function LandingPageTemplate({
   return (
     <div className={`flex flex-col min-h-screen ${themeClasses.background}`} style={{
       // Force styles as backup if Tailwind classes don't work
-      backgroundColor: theme.mode === 'black' ? '#0f172a' : '#ffffff',
+      backgroundColor: theme.mode === 'black' ? '#000000' : '#ffffff',
       color: theme.mode === 'black' ? '#f8fafc' : '#0f172a'
     }}>
       {/* Header */}

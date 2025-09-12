@@ -2,13 +2,12 @@
 import React from "react";
 import { getThemeClasses, getAccentColor } from "@/utils/theme";
 import LeadForm from "@/components/features/forms/LeadForm";
-import { Urgency, Theme } from "@/types/landing-page.types";
+import { Theme } from "@/types/landing-page.types";
 import { PreviewMode } from "@/types/common.types";
 
 interface CTASectionProps {
   ctaTitle?: string;
   ctaSubtitle?: string;
-  urgency?: Urgency;
   theme: Theme;
   pageId?: string;
   previewMode?: PreviewMode;
@@ -18,7 +17,6 @@ interface CTASectionProps {
 export default function CTASection({ 
   ctaTitle, 
   ctaSubtitle, 
-  urgency, 
   theme, 
   pageId,
   previewMode = 'desktop',
@@ -39,18 +37,6 @@ export default function CTASection({
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-center space-y-6 sm:space-y-8 text-center">
-          {/* Urgency Banner */}
-          {urgency?.enabled && (
-            <div className={`w-full max-w-2xl mx-auto p-4 rounded-lg ${themeClasses.surface} ${themeClasses.border} animate-pulse`}>
-              <div className={`text-sm font-semibold ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''}`} 
-                   style={{ color: theme.accentColor }}>
-                ⏰ {urgency.message || "Limited Time Offer"}
-                {urgency.deadline && (
-                  <span className="ml-2">- {urgency.deadline}</span>
-                )}
-              </div>
-            </div>
-          )}
           
           <div className="space-y-3 sm:space-y-4">
             <h2 className={`font-bold tracking-tighter ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${

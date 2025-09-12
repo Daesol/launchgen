@@ -1107,6 +1107,96 @@
 
 ---
 
+## 2024-12-19 - IconSelector Duplicate Key Fix and Unified Icon Selection
+
+### What was done:
+- **Fixed duplicate key error** - Resolved React warning about duplicate keys in PainPointIconSelector
+- **Created unified icon selector** - Implemented UnifiedIconSelector that all sections can use
+- **Simplified icon management** - All specialized selectors now use the same comprehensive icon set
+- **Eliminated duplicate entries** - Removed duplicate 'angry' entries that were causing React key conflicts
+- **Enhanced icon variety** - Added more icons to the unified selector for better user choice
+
+### Technical details:
+- **Duplicate key fix**: Changed duplicate 'angry' entries to unique values ('angry' and 'sad')
+- **Unified approach**: Created UnifiedIconSelector with comprehensive icon set (40+ icons)
+- **Backward compatibility**: All existing specialized selectors now use UnifiedIconSelector internally
+- **Icon organization**: Organized icons into logical groups (Core, Technology, Problem/Alert, Additional)
+- **React key uniqueness**: All icon values are now unique, eliminating React warnings
+
+### Files affected:
+- `components/features/editor/common/IconSelector.tsx` - Created UnifiedIconSelector and fixed duplicate key issues
+- `lib/iconUtils.ts` - Added missing icon mappings (AlertCircle, Sad)
+
+---
+
+## 2024-12-19 - IconSelector Icon Library Fix
+
+### What was done:
+- **Fixed icon naming in IconSelector** - Updated all icon values to use correct Lucide React icon names
+- **Identified icon library** - Confirmed project uses Lucide React v0.292.0 as the icon library
+- **Updated icon mappings** - Added missing icon imports and mappings in iconUtils.ts
+- **Fixed placeholder icons** - Replaced incorrect icon names with proper Lucide React equivalents
+- **Enhanced icon consistency** - All specialized icon selectors now use correct icon names
+
+### Technical details:
+- **Icon library**: Project uses Lucide React (v0.292.0) for all icons
+- **Fixed icon names**: Updated incorrect names like 'lightning' → 'zap', 'fire' → 'flame', 'mobile' → 'smartphone'
+- **Added missing imports**: Added Lightbulb, Helicopter, Wrench, Smartphone, Monitor, HeartCrack, Frown, Angry, Moon, AlertTriangle
+- **Updated icon mappings**: Added proper mappings for all new icons in iconMap
+- **Specialized selectors**: Fixed HeroIconSelector, FeatureIconSelector, GuaranteeIconSelector, and PainPointIconSelector
+
+### Files affected:
+- `components/features/editor/common/IconSelector.tsx` - Updated all icon values to use correct Lucide React names
+- `lib/iconUtils.ts` - Added missing icon imports and mappings for proper icon rendering
+
+---
+
+## 2024-12-19 - Black Theme Background Color Update
+
+### What was done:
+- **Updated black theme background color** - Changed from `#0f172a` to pure black `#000000` for maximum contrast and modern appearance
+- **Updated all theme utilities** - Modified theme classes and CSS generation to use pure black background
+- **Enhanced visual consistency** - Applied the pure black background across all landing page components and theme systems
+- **Maintained accessibility** - Preserved proper contrast ratios with the pure black background
+
+### Technical details:
+- **Background color change**: Updated from `#0f172a` (slate-950) to `#000000` (pure black)
+- **Theme utilities update**: Modified `getThemeClasses` function in `utils/theme.ts` to use `bg-black`
+- **CSS generation update**: Updated `themeDefaults` in `lib/themeUtils.ts` to use pure black background
+- **Inline styles update**: Updated LandingPageTemplate inline styles to use pure black background
+- **Accent foreground update**: Updated accent foreground color to match pure black background for proper contrast
+
+### Files affected:
+- `components/pages/landing/LandingPageTemplate.tsx` - Updated inline background color style
+- `utils/theme.ts` - Updated getThemeClasses function to use pure black background
+- `lib/themeUtils.ts` - Updated themeDefaults and CSS generation with pure black background
+
+---
+
+## 2024-12-19 - Theme Mode Dropdown Enhancement
+
+### What was done:
+- **Enhanced theme mode selection UI** - Replaced basic select dropdown with modern shadcn dropdown menu featuring sun/moon icons
+- **Added visual theme indicators** - Theme mode dropdown now shows sun icon for light theme and moon icon for dark theme
+- **Implemented modern dropdown design** - Used shadcn DropdownMenu components with proper styling and animations
+- **Added active state indicators** - Selected theme mode shows a blue dot indicator for clear visual feedback
+- **Created reusable toggle component** - Built shadcn-compatible toggle component for future use
+- **Enhanced user experience** - More intuitive and visually appealing theme selection interface
+
+### Technical details:
+- **Shadcn dropdown integration**: Used DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, and DropdownMenuItem components
+- **Icon integration**: Added Sun, Moon, and ChevronDown icons from lucide-react for visual clarity
+- **Active state styling**: Added blue dot indicator (h-2 w-2 rounded-full bg-blue-500) for selected theme
+- **Button styling**: Used outline variant button with proper spacing and icon alignment
+- **Responsive design**: Dropdown works on both desktop and mobile devices
+- **Accessibility**: Proper ARIA attributes and keyboard navigation support
+
+### Files affected:
+- `components/ui/toggle.tsx` - New shadcn-compatible toggle component
+- `components/features/editor/panels/ThemePanel.tsx` - Enhanced theme mode selection with modern dropdown UI
+
+---
+
 ## 2024-12-19 - Major Code Architecture Refactoring
 
 ### What was done:

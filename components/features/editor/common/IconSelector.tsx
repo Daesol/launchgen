@@ -23,31 +23,31 @@ interface IconSelectorProps {
   options?: IconOption[];
 }
 
-// Default icon options - can be customized per section
+// Default icon options - using correct Lucide React icon names
 const defaultIconOptions: IconOption[] = [
   { value: 'rocket', label: 'Rocket' },
-  { value: 'lightning', label: 'Lightning' },
+  { value: 'zap', label: 'Lightning' },
   { value: 'lightbulb', label: 'Lightbulb' },
   { value: 'target', label: 'Target' },
-  { value: 'fire', label: 'Fire' },
+  { value: 'flame', label: 'Fire' },
   { value: 'star', label: 'Star' },
   { value: 'diamond', label: 'Diamond' },
   { value: 'helicopter', label: 'Helicopter' },
-  { value: 'tools', label: 'Tools' },
-  { value: 'mobile', label: 'Mobile' },
-  { value: 'computer', label: 'Computer' },
-  { value: 'web', label: 'Web' },
+  { value: 'wrench', label: 'Tools' },
+  { value: 'smartphone', label: 'Mobile' },
+  { value: 'monitor', label: 'Computer' },
+  { value: 'globe', label: 'Web' },
   { value: 'check', label: 'Checkmark' },
   { value: 'shield', label: 'Shield' },
   { value: 'lock', label: 'Lock' },
-  { value: 'strong', label: 'Strong' },
-  { value: 'alert', label: 'Alert' },
-  { value: 'warning', label: 'Warning' },
+  { value: 'zap', label: 'Strong' },
+  { value: 'alert-triangle', label: 'Alert' },
+  { value: 'alert-triangle', label: 'Warning' },
   { value: 'x', label: 'Cross' },
-  { value: 'broken-heart', label: 'Broken Heart' },
-  { value: 'anxious', label: 'Anxious' },
-  { value: 'frustrated', label: 'Frustrated' },
-  { value: 'tired', label: 'Tired' },
+  { value: 'heart-crack', label: 'Broken Heart' },
+  { value: 'frown', label: 'Anxious' },
+  { value: 'angry', label: 'Frustrated' },
+  { value: 'moon', label: 'Tired' },
   { value: 'angry', label: 'Angry' },
 ];
 
@@ -96,99 +96,80 @@ export default function IconSelector({
   );
 }
 
-// Specialized icon selectors for different sections
-export function HeroIconSelector({ value, onChange, className }: { value: string; onChange: (value: string) => void; className?: string }) {
-  const heroIcons: IconOption[] = [
+// Unified icon selector for all sections - much simpler and avoids duplicate key issues
+export function UnifiedIconSelector({ value, onChange, className }: { value: string; onChange: (value: string) => void; className?: string }) {
+  const unifiedIcons: IconOption[] = [
+    // Core icons
     { value: 'rocket', label: 'Rocket' },
-    { value: 'lightning', label: 'Lightning' },
+    { value: 'zap', label: 'Lightning' },
     { value: 'lightbulb', label: 'Lightbulb' },
     { value: 'target', label: 'Target' },
-    { value: 'fire', label: 'Fire' },
+    { value: 'flame', label: 'Fire' },
     { value: 'star', label: 'Star' },
     { value: 'diamond', label: 'Diamond' },
+    { value: 'shield', label: 'Shield' },
+    { value: 'check', label: 'Checkmark' },
+    { value: 'lock', label: 'Lock' },
+    
+    // Technology icons
+    { value: 'smartphone', label: 'Mobile' },
+    { value: 'monitor', label: 'Computer' },
+    { value: 'globe', label: 'Web' },
+    { value: 'wrench', label: 'Tools' },
     { value: 'helicopter', label: 'Helicopter' },
+    
+    // Problem/Alert icons
+    { value: 'alert-triangle', label: 'Alert' },
+    { value: 'alert-circle', label: 'Warning' },
+    { value: 'x', label: 'Cross' },
+    { value: 'heart-crack', label: 'Broken Heart' },
+    { value: 'frown', label: 'Frown' },
+    { value: 'angry', label: 'Angry' },
+    { value: 'moon', label: 'Moon' },
+    { value: 'sad', label: 'Sad' },
+    
+    // Additional icons
+    { value: 'heart', label: 'Heart' },
+    { value: 'trophy', label: 'Trophy' },
+    { value: 'award', label: 'Award' },
+    { value: 'crown', label: 'Crown' },
+    { value: 'gem', label: 'Gem' },
+    { value: 'medal', label: 'Medal' },
+    { value: 'clock', label: 'Clock' },
+    { value: 'book', label: 'Book' },
+    { value: 'wallet', label: 'Wallet' },
+    { value: 'users', label: 'Users' },
+    { value: 'chart', label: 'Chart' },
+    { value: 'brain', label: 'Brain' },
+    { value: 'cart', label: 'Cart' },
+    { value: 'key', label: 'Key' },
+    { value: 'badge', label: 'Badge' },
   ];
   
   return (
     <IconSelector
       value={value}
       onChange={onChange}
-      placeholder="Select hero icon"
+      placeholder="Select an icon"
       className={className}
-      options={heroIcons}
+      options={unifiedIcons}
     />
   );
+}
+
+// Legacy specialized selectors for backward compatibility - now all use the same unified set
+export function HeroIconSelector({ value, onChange, className }: { value: string; onChange: (value: string) => void; className?: string }) {
+  return <UnifiedIconSelector value={value} onChange={onChange} className={className} />;
 }
 
 export function FeatureIconSelector({ value, onChange, className }: { value: string; onChange: (value: string) => void; className?: string }) {
-  const featureIcons: IconOption[] = [
-    { value: 'rocket', label: 'Rocket' },
-    { value: 'lightning', label: 'Lightning' },
-    { value: 'lightbulb', label: 'Lightbulb' },
-    { value: 'target', label: 'Target' },
-    { value: 'fire', label: 'Fire' },
-    { value: 'star', label: 'Star' },
-    { value: 'diamond', label: 'Diamond' },
-    { value: 'helicopter', label: 'Helicopter' },
-    { value: 'tools', label: 'Tools' },
-    { value: 'mobile', label: 'Mobile' },
-    { value: 'computer', label: 'Computer' },
-    { value: 'web', label: 'Web' },
-  ];
-  
-  return (
-    <IconSelector
-      value={value}
-      onChange={onChange}
-      placeholder="Select feature icon"
-      className={className}
-      options={featureIcons}
-    />
-  );
+  return <UnifiedIconSelector value={value} onChange={onChange} className={className} />;
 }
 
 export function GuaranteeIconSelector({ value, onChange, className }: { value: string; onChange: (value: string) => void; className?: string }) {
-  const guaranteeIcons: IconOption[] = [
-    { value: 'check', label: 'Checkmark' },
-    { value: 'shield', label: 'Shield' },
-    { value: 'diamond', label: 'Diamond' },
-    { value: 'star', label: 'Star' },
-    { value: 'lock', label: 'Lock' },
-    { value: 'target', label: 'Target' },
-    { value: 'rocket', label: 'Rocket' },
-    { value: 'strong', label: 'Strong' },
-  ];
-  
-  return (
-    <IconSelector
-      value={value}
-      onChange={onChange}
-      placeholder="Select guarantee icon"
-      className={className}
-      options={guaranteeIcons}
-    />
-  );
+  return <UnifiedIconSelector value={value} onChange={onChange} className={className} />;
 }
 
 export function PainPointIconSelector({ value, onChange, className }: { value: string; onChange: (value: string) => void; className?: string }) {
-  const painPointIcons: IconOption[] = [
-    { value: 'alert', label: 'Alert' },
-    { value: 'warning', label: 'Warning' },
-    { value: 'x', label: 'Cross' },
-    { value: 'broken-heart', label: 'Broken Heart' },
-    { value: 'anxious', label: 'Anxious' },
-    { value: 'frustrated', label: 'Frustrated' },
-    { value: 'tired', label: 'Tired' },
-    { value: 'angry', label: 'Angry' },
-  ];
-  
-  return (
-    <IconSelector
-      value={value}
-      onChange={onChange}
-      placeholder="Select pain point icon"
-      className={className}
-      options={painPointIcons}
-    />
-  );
+  return <UnifiedIconSelector value={value} onChange={onChange} className={className} />;
 }

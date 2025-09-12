@@ -1,5 +1,13 @@
 import React from 'react';
 import { useTheme } from '@/lib/theme-context';
+import { Sun, Moon, ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface ThemePanelProps {
   theme: {
@@ -32,17 +40,46 @@ export default function ThemePanel({ theme, onThemeChange, onBack }: ThemePanelP
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Theme Mode
           </label>
-          <select
-            value={theme.mode}
-            onChange={(e) => {
-              const newMode = e.target.value as 'white' | 'black';
-              onThemeChange('theme.mode', newMode);
-            }}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-          >
-            <option value="white">Light Theme</option>
-            <option value="black">Dark Theme</option>
-          </select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-between text-sm"
+              >
+                <div className="flex items-center gap-2">
+                  {theme.mode === 'white' ? (
+                    <Sun className="h-4 w-4" />
+                  ) : (
+                    <Moon className="h-4 w-4" />
+                  )}
+                  <span>{theme.mode === 'white' ? 'Light Theme' : 'Dark Theme'}</span>
+                </div>
+                <ChevronDown className="h-4 w-4 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-full min-w-[200px]">
+              <DropdownMenuItem
+                onClick={() => onThemeChange('theme.mode', 'white')}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <Sun className="h-4 w-4" />
+                <span>Light Theme</span>
+                {theme.mode === 'white' && (
+                  <div className="ml-auto h-2 w-2 rounded-full bg-blue-500" />
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onThemeChange('theme.mode', 'black')}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <Moon className="h-4 w-4" />
+                <span>Dark Theme</span>
+                {theme.mode === 'black' && (
+                  <div className="ml-auto h-2 w-2 rounded-full bg-blue-500" />
+                )}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <p className="text-xs text-slate-500 mt-1">
             This setting applies to the landing page theme.
           </p>

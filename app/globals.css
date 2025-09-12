@@ -82,15 +82,18 @@
   }
 }
 
-/* Ensure input text is always black on mobile devices */
-input, textarea, select {
+/* Only apply to specific forms, not all inputs */
+.force-black-text input, 
+.force-black-text textarea, 
+.force-black-text select {
   color: #000000 !important;
   -webkit-text-fill-color: #000000 !important;
 }
 
-/* Override any dark mode preferences for form inputs */
 @media (prefers-color-scheme: dark) {
-  input, textarea, select {
+  .force-black-text input, 
+  .force-black-text textarea, 
+  .force-black-text select {
     color: #000000 !important;
     -webkit-text-fill-color: #000000 !important;
   }

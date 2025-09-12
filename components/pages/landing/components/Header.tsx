@@ -59,9 +59,14 @@ export default function Header({
   return (
     <>
       {/* Header */}
-      <header className={`px-4 sm:px-6 lg:px-8 flex items-center border-b ${themeClasses.border} ${themeClasses.background} sticky top-0 z-40 ${
-        isMobilePreview ? 'h-12' : 'h-14'
-      }`}>
+      <header 
+        className={`px-4 sm:px-6 lg:px-8 flex items-center border-b ${themeClasses.border} ${themeClasses.background} sticky top-0 z-40 ${
+          isMobilePreview ? 'h-12' : 'h-14'
+        }`}
+        style={{
+          backgroundColor: theme.mode === 'black' ? '#000000' : '#ffffff'
+        }}
+      >
         <div 
           className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
           onClick={() => onSectionSelect?.('business')}

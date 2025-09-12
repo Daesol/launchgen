@@ -3,7 +3,8 @@ import {
   Zap, Star, Shield, Rocket, Target, TrendingUp, Award, Sparkles,
   Heart, Check, ArrowUp, Trophy, Gem, Crown, Flame, Diamond, Medal,
   Clock, Book, Wallet, Users, BarChart3, Globe, AlertTriangle, HelpCircle, Minus, X, Info,
-  Brain, ShoppingCart, Lock, Key, FileText, Badge
+  Brain, ShoppingCart, Lock, Key, FileText, Badge, Lightbulb, Helicopter, Wrench,
+  Smartphone, Monitor, HeartCrack, Frown, Angry, Moon, AlertCircle, Sad
 } from "lucide-react";
 
 // Complete icon mapping for all icons used in the editor
@@ -57,6 +58,20 @@ export const iconMap: { [key: string]: React.ComponentType<any> } = {
   guarantee: Check, // Using check for guarantee
   certificate: FileText,
   badge: Badge,
+  
+  // Additional icons for IconSelector
+  lightbulb: Lightbulb,
+  helicopter: Helicopter,
+  wrench: Wrench,
+  smartphone: Smartphone,
+  monitor: Monitor,
+  'heart-crack': HeartCrack,
+  frown: Frown,
+  angry: Angry,
+  moon: Moon,
+  'alert-triangle': AlertTriangle,
+  'alert-circle': AlertCircle,
+  sad: Sad,
 };
 
 // Function to render icon with fallback

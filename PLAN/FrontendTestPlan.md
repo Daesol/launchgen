@@ -110,4 +110,13 @@ This document tracks tests for API endpoints, backend logic, and critical fronte
 - [x] **Chatbot Webhook Integration**: Messages are successfully sent to the specified webhook URL
 - [x] **Chatbot User Data**: User information (ID, email, timestamp) is included in webhook payload
 - [x] **Chatbot Error Handling**: Graceful error handling when webhook fails
-- [x] **Chatbot Responsive Design**: Chatbot works properly on mobile and desktop devices 
+- [x] **Chatbot Responsive Design**: Chatbot works properly on mobile and desktop devices
+- [x] **Theme Mode Dropdown**: Modern dropdown with sun/moon icons displays correctly and switches themes
+- [x] **Theme Visual Indicators**: Selected theme shows proper icon and blue dot indicator
+- [x] **Theme Dropdown Accessibility**: Dropdown supports keyboard navigation and proper ARIA attributes
+- [x] **Black Theme Background**: Black theme uses pure black (#000000) background color for maximum contrast and modern appearance
+- [x] **Theme Color Consistency**: All theme utilities and components use consistent background colors
+- [x] **IconSelector Icon Accuracy**: All icons in IconSelector display correct Lucide React icons instead of placeholders
+- [x] **Icon Library Integration**: IconSelector properly uses Lucide React v0.292.0 icon names and mappings
+- [x] **IconSelector Duplicate Key Fix**: Resolved React warnings about duplicate keys in icon selectors
+- [x] **Unified Icon Selection**: All icon selectors now use the same comprehensive icon set 
