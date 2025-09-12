@@ -3,8 +3,8 @@ import {
   Zap, Star, Shield, Rocket, Target, TrendingUp, Award, Sparkles,
   Heart, Check, ArrowUp, Trophy, Gem, Crown, Flame, Diamond, Medal,
   Clock, Book, Wallet, Users, BarChart3, Globe, AlertTriangle, HelpCircle, Minus, X, Info,
-  Brain, ShoppingCart, Lock, Key, FileText, Badge, Lightbulb, Helicopter, Wrench,
-  Smartphone, Monitor, HeartCrack, Frown, Angry, Moon, AlertCircle, Sad
+  Brain, ShoppingCart, Lock, Key, FileText, Badge, Lightbulb, Wrench,
+  Smartphone, Monitor, HeartCrack, Frown, Angry, Moon, AlertCircle
 } from "lucide-react";
 
 // Complete icon mapping for all icons used in the editor
@@ -62,7 +62,6 @@ export const iconMap: { [key: string]: React.ComponentType<any> } = {
   
   // Additional icons for IconSelector
   lightbulb: Lightbulb,
-  helicopter: Helicopter,
   wrench: Wrench,
   smartphone: Smartphone,
   monitor: Monitor,
@@ -72,19 +71,12 @@ export const iconMap: { [key: string]: React.ComponentType<any> } = {
   moon: Moon,
   'alert-triangle': AlertTriangle,
   'alert-circle': AlertCircle,
-  sad: Sad,
+  sad: Frown, // Map sad to frown icon
 };
 
 // Function to render icon with fallback
 export const renderIcon = (iconName: string, className: string = "h-4 w-4") => {
-  const lowerIconName = iconName.toLowerCase();
-  const IconComponent = iconMap[lowerIconName];
-  
-  // Debug specific icons
-  if (lowerIconName === 'flame' || lowerIconName === 'helicopter') {
-    console.log(`Rendering ${lowerIconName}:`, IconComponent ? 'Found' : 'Not found');
-  }
-  
+  const IconComponent = iconMap[iconName.toLowerCase()];
   if (IconComponent) {
     return React.createElement(IconComponent, { className });
   }

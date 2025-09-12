@@ -32,7 +32,6 @@ const defaultIconOptions: IconOption[] = [
   { value: 'flame', label: 'Fire' },
   { value: 'star', label: 'Star' },
   { value: 'diamond', label: 'Diamond' },
-  { value: 'helicopter', label: 'Helicopter' },
   { value: 'wrench', label: 'Tools' },
   { value: 'smartphone', label: 'Mobile' },
   { value: 'monitor', label: 'Computer' },
@@ -48,7 +47,7 @@ const defaultIconOptions: IconOption[] = [
   { value: 'frown', label: 'Frown' },
   { value: 'angry', label: 'Angry' },
   { value: 'moon', label: 'Moon' },
-  { value: 'sad', label: 'Sad' },
+  { value: 'sad', label: 'Meh' },
 ];
 
 export default function IconSelector({
@@ -116,7 +115,6 @@ export function UnifiedIconSelector({ value, onChange, className }: { value: str
     { value: 'monitor', label: 'Computer' },
     { value: 'globe', label: 'Web' },
     { value: 'wrench', label: 'Tools' },
-    { value: 'helicopter', label: 'Helicopter' },
     
     // Problem/Alert icons
     { value: 'alert-triangle', label: 'Alert' },
@@ -126,7 +124,7 @@ export function UnifiedIconSelector({ value, onChange, className }: { value: str
     { value: 'frown', label: 'Frown' },
     { value: 'angry', label: 'Angry' },
     { value: 'moon', label: 'Moon' },
-    { value: 'sad', label: 'Sad' },
+    { value: 'sad', label: 'Frown' },
     
     // Additional icons
     { value: 'heart', label: 'Heart' },
