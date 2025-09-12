@@ -40,15 +40,15 @@ const defaultIconOptions: IconOption[] = [
   { value: 'check', label: 'Checkmark' },
   { value: 'shield', label: 'Shield' },
   { value: 'lock', label: 'Lock' },
-  { value: 'zap', label: 'Strong' },
+  { value: 'sparkles', label: 'Sparkles' },
   { value: 'alert-triangle', label: 'Alert' },
-  { value: 'alert-triangle', label: 'Warning' },
+  { value: 'alert-circle', label: 'Warning' },
   { value: 'x', label: 'Cross' },
   { value: 'heart-crack', label: 'Broken Heart' },
-  { value: 'frown', label: 'Anxious' },
-  { value: 'angry', label: 'Frustrated' },
-  { value: 'moon', label: 'Tired' },
+  { value: 'frown', label: 'Frown' },
   { value: 'angry', label: 'Angry' },
+  { value: 'moon', label: 'Moon' },
+  { value: 'sad', label: 'Sad' },
 ];
 
 export default function IconSelector({
@@ -135,6 +135,7 @@ export function UnifiedIconSelector({ value, onChange, className }: { value: str
     { value: 'crown', label: 'Crown' },
     { value: 'gem', label: 'Gem' },
     { value: 'medal', label: 'Medal' },
+    { value: 'sparkles', label: 'Sparkles' },
     { value: 'clock', label: 'Clock' },
     { value: 'book', label: 'Book' },
     { value: 'wallet', label: 'Wallet' },

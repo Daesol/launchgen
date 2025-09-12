@@ -27,6 +27,7 @@ export const iconMap: { [key: string]: React.ComponentType<any> } = {
   gem: Gem,
   crown: Crown,
   fire: Flame,
+  flame: Flame,
   bolt: Zap,
   diamond: Diamond,
   medal: Medal,
