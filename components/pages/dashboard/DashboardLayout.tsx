@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import Chatbot from "@/components/widgets/Chatbot";
-import ThemeToggle from "@/components/widgets/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -289,11 +288,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // If it's an edit page, render a minimal layout with overlay sidebar
   if (isEditPage) {
     return (
-      <div className="flex h-screen bg-slate-50 overflow-hidden dashboard-layout">
+      <div className="flex h-screen bg-black overflow-hidden dashboard-layout">
         {/* Sidebar - Hidden on edit pages, shown as overlay */}
         {isEditPage && (
           <aside
-            className={`fixed left-0 top-0 z-50 w-64 bg-white shadow-2xl border-r border-slate-200 transition-all duration-300 ${
+            className={`fixed left-0 top-0 z-50 w-64 bg-black shadow-2xl border-r border-[#2D2D2D] transition-all duration-300 ${
               showSidebarOverlay ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full pointer-events-none'
             }`}
             style={{ top: '64px', height: 'calc(100vh - 64px)' }}
@@ -304,7 +303,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 {/* Dashboard */}
                 <button
                   onClick={() => router.push('/dashboard')}
-                  className="w-full flex items-center justify-center px-3 py-2 text-sm font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="w-full flex items-center justify-center px-3 py-2 text-sm font-medium text-neutral-300 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors"
                 >
                   Dashboard
                 </button>
@@ -312,24 +311,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 {/* Create New Page */}
                 <button
                   onClick={() => router.push('/dashboard/generate')}
-                  className="w-full flex items-center justify-center px-3 py-2 text-sm font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="w-full flex items-center justify-center px-3 py-2 text-sm font-medium text-neutral-300 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors"
                 >
                   New Page
                 </button>
                 
                 {/* Divider */}
-                <div className="border-t border-slate-200 my-4"></div>
+                <div className="border-t border-[#2D2D2D] my-4"></div>
                 
                 {/* Your Pages - Scrollable */}
                 <div className="flex-1 min-h-0">
-                  <h3 className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Your Pages</h3>
+                  <h3 className="px-3 text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">Your Pages</h3>
                   <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
                     {pages.map((page) => (
                       <button
                         key={page.id}
                         onClick={() => router.push(`/dashboard/page/${page.id}`)}
-                        className={`w-full flex items-center px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors text-left ${
-                          currentPageId === page.id ? 'bg-slate-100 text-slate-800' : ''
+                        className={`w-full flex items-center px-3 py-2 text-sm text-neutral-400 hover:bg-neutral-800 rounded-lg transition-colors text-left ${
+                          currentPageId === page.id ? 'bg-neutral-800 text-white' : ''
                         }`}
                       >
                         <span className="truncate">{page.title || 'Untitled'}</span>
@@ -345,7 +344,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Main content area - Full width for edit pages */}
         <div className="flex-1 flex flex-col h-full">
           {/* Top navbar - Enhanced with page title and action buttons */}
-          <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b border-slate-200 px-6 py-3">
+          <header className="sticky top-0 z-20 bg-black/80 backdrop-blur-sm border-b border-[#2D2D2D] px-6 py-3">
             <div className="flex items-center justify-between">
               {/* Left side - LaunchGen logo and editable page title */}
               <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -354,11 +353,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <div className="w-6 h-6 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-xs">🚀</span>
                   </div>
-                  <span className="text-lg font-bold text-slate-800">LaunchGen</span>
+                  <span className="text-lg font-bold text-white">LaunchGen</span>
                 </div>
                 
                 {/* Separator */}
-                <span className="text-slate-400 text-lg font-medium">/</span>
+                <span className="text-neutral-400 text-lg font-medium">/</span>
                 
                 {/* Editable page title */}
                 <div className="flex-1 min-w-0 title-input-container">
@@ -369,13 +368,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       onChange={(e) => setPageTitle(e.target.value)}
                       onBlur={handleTitleSave}
                       onKeyDown={handleTitleKeyDown}
-                      className="w-full text-base font-medium text-slate-800 bg-transparent border-b-2 border-slate-300 focus:border-slate-600 focus:outline-none px-1 py-1"
+                      className="w-full text-base font-medium text-white bg-transparent border-b-2 border-[#2D2D2D] focus:border-neutral-400 focus:outline-none px-1 py-1"
                       autoFocus
                     />
                   ) : (
                     <button
                       onClick={handleTitleEdit}
-                      className="text-base font-medium text-slate-800 hover:text-slate-600 hover:bg-slate-50 px-2 py-1 rounded transition-colors text-left w-full truncate"
+                      className="text-base font-medium text-white hover:text-neutral-300 hover:bg-neutral-800 px-2 py-1 rounded transition-colors text-left w-full truncate"
                       title="Click to edit title"
                     >
                       {pageTitle || 'Untitled'}
@@ -386,10 +385,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
               {/* Center - Action buttons */}
               <div className="flex items-center space-x-2 mx-4">
-                {/* Theme Toggle */}
-                <ThemeToggle />
-                
-                <div className="w-px h-6 bg-slate-300 mx-2"></div>
                 
                 {/* Desktop/Mobile view buttons */}
                 <button
@@ -474,61 +469,78 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   // Regular dashboard layout for non-edit pages
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden dashboard-layout">
+    <div className="flex h-screen bg-black overflow-hidden dashboard-layout">
       {/* Sidebar */}
-      <aside className={`fixed z-40 inset-y-0 left-0 w-64 bg-white shadow-xl border-r border-slate-200 flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-64"} lg:translate-x-0 lg:static lg:sticky lg:top-0 lg:h-screen`}>
-        <div className="flex items-center gap-3 px-6 py-6 border-b border-slate-100">
-          <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-bold text-sm">🚀</span>
+      <aside className={`fixed z-40 inset-y-0 left-0 w-72 bg-black shadow-xl border-r border-[#2D2D2D] flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-72"} lg:translate-x-0 lg:static lg:sticky lg:top-0 lg:h-screen`}>
+        {/* Header */}
+        <div className="flex items-center gap-3 px-6 py-6 border-b border-[#2D2D2D]">
+          <div className="w-8 h-8 bg-gradient-to-r from-white to-neutral-300 rounded-lg flex items-center justify-center flex-shrink-0">
+            <span className="text-black font-bold text-sm">🚀</span>
           </div>
-          <span className="text-xl font-bold text-slate-800">LaunchGen</span>
+          <div>
+            <span className="text-xl font-bold text-white">LaunchGen</span>
+            <p className="text-xs text-neutral-400">AI Landing Pages</p>
+          </div>
         </div>
         
         {/* Navigation Links */}
-        <nav className="px-4 py-6 space-y-1">
+        <nav className="px-4 py-6 space-y-2">
           {sidebarLinks.map(link => (
             <Link
               key={link.href}
               href={link.href}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200 group"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-all duration-200 group"
             >
-              <span className="text-lg group-hover:scale-110 transition-transform duration-200 flex-shrink-0">{link.icon}</span>
-              <span>{link.label}</span>
+              <div className="w-8 h-8 bg-neutral-800 rounded-lg flex items-center justify-center group-hover:bg-neutral-700 transition-colors">
+                <span className="text-sm group-hover:scale-110 transition-transform duration-200">{link.icon}</span>
+              </div>
+              <span className="text-sm">{link.label}</span>
             </Link>
           ))}
         </nav>
 
         {/* Generated Pages Section */}
-        <div className="px-4 py-4 border-t border-slate-100">
-          <div className="text-xs font-medium text-slate-500 px-4 mb-3">
-            Your Pages
+        <div className="px-4 py-4 border-t border-[#2D2D2D] flex-1 flex flex-col min-h-0">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+              Your Pages
+            </div>
+            <div className="text-xs text-neutral-400 bg-neutral-800 px-2 py-1 rounded-full">
+              {pages.length}
+            </div>
           </div>
-          <div className="space-y-1 max-h-48 overflow-y-auto">
+          <div className="space-y-1 flex-1 overflow-y-auto dashboard-scroll">
             {loading ? (
-              <div className="px-4 py-2 text-xs text-slate-400">Loading...</div>
+              <div className="px-4 py-3 text-xs text-neutral-400 text-center">Loading...</div>
             ) : pages.length === 0 ? (
-              <div className="px-4 py-2 text-xs text-slate-400">No pages yet</div>
+              <div className="px-4 py-3 text-xs text-neutral-400 text-center">No pages yet</div>
             ) : (
               pages.map(page => (
                 <Link
                   key={page.id}
                   href={`/dashboard/page/${page.id}`}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors transition-all duration-200 group"
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:bg-neutral-800 hover:text-white transition-all duration-200 group"
                   title={page.title || 'Untitled'}
                 >
-                  <span className="text-xs group-hover:scale-110 transition-transform duration-200">📄</span>
-                  <span className="truncate">{page.title || 'Untitled'}</span>
+                  <div className="w-6 h-6 bg-neutral-800 rounded flex items-center justify-center group-hover:bg-neutral-700 transition-colors">
+                    <span className="text-xs">📄</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="truncate font-medium">{page.title || 'Untitled'}</div>
+                    <div className="text-xs text-neutral-500 truncate">
+                      {new Date(page.created_at).toLocaleDateString()}
+                    </div>
+                  </div>
                 </Link>
               ))
             )}
           </div>
         </div>
 
-        <div className="flex-1"></div>
-
-        <div className="px-4 py-4 border-t border-slate-100">
-          <div className="text-xs text-slate-500 px-4">
-            AI-powered landing pages
+        {/* Footer */}
+        <div className="px-4 py-4 border-t border-[#2D2D2D]">
+          <div className="text-xs text-neutral-500 text-center">
+            Built with AI • Powered by LaunchGen
           </div>
         </div>
       </aside>
@@ -544,40 +556,39 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main content area */}
       <div className="flex-1 flex flex-col h-full lg:ml-0">
         {/* Top navbar */}
-        <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b border-slate-200 flex items-center justify-between px-6 py-2">
+        <header className="sticky top-0 z-20 bg-black/80 backdrop-blur-sm border-b border-[#2D2D2D] flex items-center justify-between px-6 py-2">
           <div className="flex items-center gap-3">
             <button 
-              className="lg:hidden p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+              className="lg:hidden p-1.5 rounded-lg hover:bg-neutral-800 transition-colors"
               onClick={() => setSidebarOpen(v => !v)}
             >
-              <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
             <div className="hidden lg:flex items-center gap-2">
-              <span className="text-base font-semibold text-slate-800">Dashboard</span>
+              <span className="text-base font-semibold text-white">Dashboard</span>
             </div>
           </div>
           
           <div className="flex items-center gap-3">
-            <ThemeToggle />
           </div>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center">
-                  <span className="text-white font-semibold text-xs">U</span>
+              <button className="flex items-center gap-2 px-3 py-1.5 bg-neutral-800 border border-[#2D2D2D] rounded-lg font-medium text-neutral-300 hover:bg-neutral-700 hover:border-[#2D2D2D] transition-all duration-200 shadow-sm">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-white to-neutral-300 flex items-center justify-center">
+                  <span className="text-black font-semibold text-xs">U</span>
                 </div>
                 <span className="hidden sm:inline text-sm">Profile</span>
-                <svg className="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-56 bg-black border-[#2D2D2D]">
               <DropdownMenuItem
-                className="text-red-600 hover:bg-red-50 cursor-pointer"
+                className="text-red-400 hover:bg-red-900/20 cursor-pointer"
                 onClick={handleSignOut}
               >
                 <span className="text-sm mr-3">🚪</span>
@@ -588,7 +599,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </header>
 
         {/* Main content */}
-        <main className="flex-1 p-6 lg:p-1 overflow-hidden">
+        <main className="flex-1 overflow-y-auto dashboard-scroll">
           {children}
         </main>
       </div>

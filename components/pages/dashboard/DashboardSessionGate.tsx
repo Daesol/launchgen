@@ -92,22 +92,6 @@ export default function DashboardSessionGate() {
   }
   if (!session) return null;
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-700 via-indigo-900 to-slate-950 p-2 sm:p-4">
-      <div className="max-w-5xl mx-auto mt-8 sm:mt-12">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 sm:mb-8 gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1">Welcome, {session.user.email}</h1>
-            <p className="text-sm sm:text-base text-slate-300">Your AI-powered landing pages, leads, and analytics in one place.</p>
-          </div>
-          <Link href="/dashboard/generate" className="inline-block bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold shadow-lg hover:from-purple-700 hover:to-indigo-700 transition text-base sm:text-lg">+ Create New Landing Page</Link>
-        </div>
-        <DashboardClient pages={pages || []} leadsByPage={leadsByPage} analyticsByPage={analyticsByPage} />
-        {/* Navigation */}
-        <div className="flex justify-end mt-6 sm:mt-8 gap-4">
-          <Link href="/auth/signin?signout=true" className="text-slate-400 hover:text-slate-700 text-sm sm:text-base">Sign Out</Link>
-        </div>
-      </div>
-    </div>
+    <DashboardClient pages={pages || []} leadsByPage={leadsByPage} analyticsByPage={analyticsByPage} user={session?.user} />
   );
 } 
