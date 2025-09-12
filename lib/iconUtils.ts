@@ -77,7 +77,14 @@ export const iconMap: { [key: string]: React.ComponentType<any> } = {
 
 // Function to render icon with fallback
 export const renderIcon = (iconName: string, className: string = "h-4 w-4") => {
-  const IconComponent = iconMap[iconName.toLowerCase()];
+  const lowerIconName = iconName.toLowerCase();
+  const IconComponent = iconMap[lowerIconName];
+  
+  // Debug specific icons
+  if (lowerIconName === 'flame' || lowerIconName === 'helicopter') {
+    console.log(`Rendering ${lowerIconName}:`, IconComponent ? 'Found' : 'Not found');
+  }
+  
   if (IconComponent) {
     return React.createElement(IconComponent, { className });
   }
