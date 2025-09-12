@@ -124,6 +124,24 @@ function HeroSectionEditor({ hero, onPageContentChange }: { hero: any; onPageCon
       <h4 className="text-sm font-medium text-slate-800 mb-3">Hero Section</h4>
       <div className="space-y-4">
         <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Hero Tag</label>
+          <input
+            type="text"
+            value={hero?.heroTag || ''}
+            onChange={(e) => handlers.handleHeroChange("heroTag", e.target.value)}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            placeholder="e.g., AI-Powered Solution"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Hero Tag Icon</label>
+          <HeroIconSelector
+            value={hero?.heroTagIcon || ''}
+            onChange={(value) => handlers.handleHeroChange("heroTagIcon", value)}
+            className="w-full"
+          />
+        </div>
+        <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">Headline</label>
           <input
             type="text"
@@ -197,24 +215,6 @@ function HeroSectionEditor({ hero, onPageContentChange }: { hero: any; onPageCon
             onChange={(e) => handlers.handleHeroChange("cta", e.target.value)}
             className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
             placeholder="Enter CTA button text"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Hero Tag</label>
-          <input
-            type="text"
-            value={hero?.heroTag || ''}
-            onChange={(e) => handlers.handleHeroChange("heroTag", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-            placeholder="e.g., AI-Powered Solution"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Hero Tag Icon</label>
-          <HeroIconSelector
-            value={hero?.heroTagIcon || ''}
-            onChange={(value) => handlers.handleHeroChange("heroTagIcon", value)}
-            className="w-full"
           />
         </div>
       </div>
