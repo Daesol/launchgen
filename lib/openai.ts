@@ -27,8 +27,8 @@ export async function generatePageConfig(userPrompt: string, existingConfig?: an
 
   // Make OpenAI request
   const completion = await makeOpenAIRequest([
-    { role: "system", content: systemPrompt },
-    { role: "user", content: userPrompt }
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt }
   ], !!existingConfig);
 
   // Extract and process the response
@@ -75,4 +75,4 @@ export async function generatePageConfig(userPrompt: string, existingConfig?: an
   const finalConfig = applyFallbacks(config);
 
   return finalConfig;
-}
+} 

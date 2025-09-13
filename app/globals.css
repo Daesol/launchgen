@@ -169,6 +169,31 @@ body.dashboard-page {
   scrollbar-color: #2D2D2D #0A0A0A;
 }
 
+/* Mobile scrollbar styling - Completely hidden */
+.mobile-scrollbar-overlay {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.mobile-scrollbar-overlay::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+/* Simple mobile preview adjustments */
+.mobile-preview-container #hero {
+  min-height: 60vh !important;
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+
+.mobile-preview-container #hero .space-y-6 > * + * {
+  margin-top: 1rem !important;
+}
+
+.mobile-preview-container #hero .space-y-4 > * + * {
+  margin-top: 0.75rem !important;
+}
+
 @theme inline {
   @keyframes shine {
   0% {

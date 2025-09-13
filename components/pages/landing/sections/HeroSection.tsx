@@ -34,13 +34,15 @@ export default function HeroSection({
       onClick={() => onSectionSelect?.('hero')}
       style={{ cursor: onSectionSelect ? 'pointer' : 'default' }}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-        <div className="space-y-6 sm:space-y-8">
-          <div className="space-y-4 sm:space-y-6">
+      <div className={`max-w-6xl mx-auto text-center relative z-10 ${
+        isMobilePreview ? 'px-2' : 'px-4 sm:px-6 lg:px-8'
+      }`}>
+        <div className={`${isMobilePreview ? 'space-y-4' : 'space-y-6 sm:space-y-8'}`}>
+          <div className={`${isMobilePreview ? 'space-y-3' : 'space-y-4 sm:space-y-6'}`}>
             {/* Hero Tag */}
             <Badge 
               variant="secondary" 
-              className={`mb-4 sm:mb-6 flex items-center gap-2 w-fit mx-auto px-4 py-2 ${theme.mode === 'black' ? 'text-white' : ''}`}
+              className={`${isMobilePreview ? 'mb-3' : 'mb-4 sm:mb-6'} flex items-center gap-2 w-fit mx-auto px-4 py-2 ${theme.mode === 'black' ? 'text-white' : ''}`}
               style={{ 
                 backgroundColor: getAccentColor(theme.accentColor, 0.1),
                 color: theme.mode === 'black' ? '#fff' : theme.accentColor,

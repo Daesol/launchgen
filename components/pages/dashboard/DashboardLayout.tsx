@@ -344,7 +344,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Main content area - Full width for edit pages */}
         <div className="flex-1 flex flex-col h-full">
           {/* Top navbar - Enhanced with page title and action buttons */}
-          <header className="sticky top-0 z-20 bg-black/80 backdrop-blur-sm border-b border-[#2D2D2D] px-6 py-3">
+          <header className="sticky top-0 z-20 bg-black/80 backdrop-blur-sm px-6 py-3">
             <div className="flex items-center justify-between">
               {/* Left side - LaunchGen logo and editable page title */}
               <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -393,14 +393,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   title="Preview page"
                 >
                   Preview
-                </button>
-                <button
-                  onClick={() => window.dispatchEvent(new CustomEvent('regenerate-page'))}
-                  className="px-3 py-1.5 text-sm border border-[#2D2D2D] text-white hover:bg-neutral-800 hover:border-neutral-600 rounded transition-colors"
-                  style={{ backgroundColor: '#0A0A0A' }}
-                  title="Regenerate page"
-                >
-                  Regenerate
                 </button>
                 <button
                   onClick={() => window.dispatchEvent(new CustomEvent('publish-page'))}

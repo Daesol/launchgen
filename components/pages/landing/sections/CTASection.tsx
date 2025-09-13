@@ -35,7 +35,9 @@ export default function CTASection({
       }}
       onClick={() => onSectionSelect?.('cta')}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className={`max-w-6xl mx-auto ${
+        isMobilePreview ? 'px-2' : 'px-4 sm:px-6 lg:px-8'
+      }`}>
         <div className="flex flex-col items-center justify-center space-y-6 sm:space-y-8 text-center">
           
           <div className="space-y-3 sm:space-y-4">

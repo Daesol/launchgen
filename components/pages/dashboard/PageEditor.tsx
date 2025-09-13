@@ -251,40 +251,43 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       {/* Edit Panel - Desktop Sidebar - Now on the left */}
       <div className={`hidden lg:flex ${
         sidePanelCollapsed ? 'w-0 overflow-hidden' : 'w-96'
-      } bg-black border-r border-[#2D2D2D] flex-col transition-all duration-300`}>
-        
-        {/* Edit Panel Header */}
-        <div className="p-4 border-b border-[#2D2D2D]">
-          <h2 className="text-lg font-semibold text-white">Edit Page</h2>
-        </div>
+      } pr-1 pt-0 pb-2 pl-2 transition-all duration-300`}>
+        <div className="rounded-lg border border-[#2D2D2D] overflow-hidden h-full flex flex-col w-full" style={{ backgroundColor: '#0A0A0A' }}>
+          {/* Edit Panel Header */}
+          <div className="p-4 border-b border-[#2D2D2D]">
+            <h2 className="text-lg font-semibold text-white">Edit Page</h2>
+          </div>
 
-        {/* Edit Panel Content */}
-        <EditPanel
-          view={editPanelState.editPanelView}
-          selectedSection={editPanelState.selectedSection}
-          pageContent={pageContent}
-          pageStyle={pageStyle}
-          onSectionSelect={(sectionId) => {
-            if (sectionId === 'theme' || sectionId === 'business' || sectionId === 'layout') {
-              setEditPanelView(sectionId);
-            } else {
-              handleSectionSelectFromPreview(sectionId);
-            }
-          }}
-          onBackToMain={handleBackToMain}
-          onPageContentChange={handlePageContentChange}
-          onPageStyleChange={handlePageStyleChange}
-          onSectionToggle={toggleSection}
-          onSectionVisibilityToggle={handleSectionVisibilityToggle}
-          onSectionOrderUpdate={handleSectionOrderUpdate}
-          sectionState={sectionState}
-        />
+          {/* Edit Panel Content */}
+          <div className="flex-1 overflow-auto">
+            <EditPanel
+              view={editPanelState.editPanelView}
+              selectedSection={editPanelState.selectedSection}
+              pageContent={pageContent}
+              pageStyle={pageStyle}
+              onSectionSelect={(sectionId) => {
+                if (sectionId === 'theme' || sectionId === 'business' || sectionId === 'layout') {
+                  setEditPanelView(sectionId);
+                } else {
+                  handleSectionSelectFromPreview(sectionId);
+                }
+              }}
+              onBackToMain={handleBackToMain}
+              onPageContentChange={handlePageContentChange}
+              onPageStyleChange={handlePageStyleChange}
+              onSectionToggle={toggleSection}
+              onSectionVisibilityToggle={handleSectionVisibilityToggle}
+              onSectionOrderUpdate={handleSectionOrderUpdate}
+              sectionState={sectionState}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Preview Container with rounded corners */}
-        <div className="flex-1 overflow-auto p-2 pt-0">
+        <div className="flex-1 overflow-auto pl-1 pr-2 pt-0 pb-2">
           <div className="bg-neutral-900 rounded-lg border border-[#2D2D2D] overflow-hidden h-full flex flex-col">
             {/* Preview Header */}
             <PreviewHeader
@@ -296,19 +299,55 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
             
             {/* Preview Content */}
             <div className="flex-1 overflow-auto bg-white">
-              <div className={`w-full min-h-full ${previewMode === 'mobile' ? 'max-w-sm mx-auto p-4' : 'max-w-none'}`}>
-                <LandingPageTemplate 
-                  config={{ 
-                    ...pageContent, 
-                    theme: pageStyle?.theme,
-                    sectionOrder: sectionState.sectionOrder 
-                  }} 
-                  pageId={id || 'preview'}
-                  previewMode={previewMode}
-                  visibleSections={sectionState.visibleSections}
-                  onSectionSelect={handleSectionSelectFromPreview}
-                />
-              </div>
+              {previewMode === 'mobile' ? (
+                <div className="flex justify-center items-center py-4 px-4 h-full">
+                  {/* iPhone Mockup Container */}
+                  <div className="relative w-full max-w-sm">
+                    {/* iPhone Frame - Responsive with iPhone ratio */}
+                    <div className="w-full aspect-[9/19.5] max-w-[320px] mx-auto bg-gradient-to-b from-gray-800 to-gray-900 rounded-[1.75rem] p-1 shadow-2xl">
+                      {/* Screen Bezel */}
+                      <div className="w-full h-full bg-black rounded-[1.5rem] p-1">
+                        {/* iPhone Screen */}
+                        <div className="w-full h-full bg-black rounded-[1.25rem] overflow-hidden relative">
+                          {/* Content Area with Mobile Scrollbar */}
+                          <div className="h-full overflow-auto mobile-scrollbar-overlay">
+                            <div className="mobile-preview-container">
+                              <LandingPageTemplate 
+                                config={{ 
+                                  ...pageContent, 
+                                  theme: pageStyle?.theme,
+                                  sectionOrder: sectionState.sectionOrder 
+                                }} 
+                                pageId={id || 'preview'}
+                                previewMode={previewMode}
+                                visibleSections={sectionState.visibleSections}
+                                onSectionSelect={handleSectionSelectFromPreview}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                      {/* Home Indicator */}
+                      <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-white rounded-full opacity-80"></div>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full min-h-full max-w-none">
+                  <LandingPageTemplate 
+                    config={{ 
+                      ...pageContent, 
+                      theme: pageStyle?.theme,
+                      sectionOrder: sectionState.sectionOrder 
+                    }} 
+                    pageId={id || 'preview'}
+                    previewMode={previewMode}
+                    visibleSections={sectionState.visibleSections}
+                    onSectionSelect={handleSectionSelectFromPreview}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

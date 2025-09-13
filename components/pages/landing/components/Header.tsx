@@ -60,8 +60,8 @@ export default function Header({
     <>
       {/* Header */}
       <header 
-        className={`px-4 sm:px-6 lg:px-8 flex items-center border-b ${themeClasses.border} ${themeClasses.background} sticky top-0 z-40 ${
-          isMobilePreview ? 'h-12' : 'h-14'
+        className={`flex items-center border-b ${themeClasses.border} ${themeClasses.background} sticky top-0 z-40 ${
+          isMobilePreview ? 'h-12 px-2' : 'h-14 px-4 sm:px-6 lg:px-8'
         }`}
         style={{
           backgroundColor: theme.mode === 'black' ? '#000000' : '#ffffff'

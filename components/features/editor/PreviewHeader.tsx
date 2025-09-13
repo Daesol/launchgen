@@ -15,7 +15,7 @@ export default function PreviewHeader({
   regenerating 
 }: PreviewHeaderProps) {
   return (
-    <div className="bg-neutral-800 border-b border-[#2D2D2D] px-3 py-2 flex items-center justify-between">
+    <div className="border-b border-[#2D2D2D] px-3 py-2 flex items-center justify-between" style={{ backgroundColor: '#0A0A0A' }}>
       {/* Left side - View toggle buttons */}
       <div className="flex items-center space-x-2">
         <span className="text-sm font-medium text-neutral-300 mr-3">Preview</span>

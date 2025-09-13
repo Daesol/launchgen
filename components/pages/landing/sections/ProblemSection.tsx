@@ -29,7 +29,9 @@ export default function ProblemSection({
       onClick={() => onSectionSelect?.('problemSection')}
       style={{ cursor: onSectionSelect ? 'pointer' : 'default' }}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className={`max-w-6xl mx-auto ${
+        isMobilePreview ? 'px-2' : 'px-4 sm:px-6 lg:px-8'
+      }`}>
         <div className={`grid gap-8 sm:gap-12 lg:gap-16 ${
           isMobilePreview 
             ? 'grid-cols-1' 
