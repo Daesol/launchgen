@@ -184,14 +184,20 @@ function HeroSectionEditor({ hero, onPageContentChange }: { hero: any; onPageCon
             <div>
               <p className="text-sm text-neutral-400 mb-2">Highlighted words:</p>
               <div className="flex flex-wrap gap-1">
-                {hero.headlineHighlights.map((word: string, index: number) => (
-                  <span
-                    key={index}
-                    className="px-2 py-1 bg-blue-100 text-blue-800 text-sm rounded"
-                  >
-                    {word}
-                  </span>
-                ))}
+                {hero.headlineHighlights
+                  .filter((word: string) => {
+                    // Only show highlighted words that actually exist in the current headline
+                    const headlineWords = hero.headline?.split(' ').map((w: string) => w.replace(/[^\w]/g, '')) || [];
+                    return headlineWords.includes(word);
+                  })
+                  .map((word: string, index: number) => (
+                    <span
+                      key={index}
+                      className="px-2 py-1 bg-blue-100 text-blue-800 text-sm rounded"
+                    >
+                      {word}
+                    </span>
+                  ))}
               </div>
             </div>
           )}

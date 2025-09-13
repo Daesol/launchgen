@@ -1,6 +1,7 @@
 // Field handling utilities for the editor system
 
 import { PageContent } from '../types/editor.types';
+import { cleanupHighlights } from '@/lib/textHighlightUtils';
 
 // Type for field change handlers
 export type FieldChangeHandler = (fieldPath: string, value: any) => void;
@@ -29,6 +30,17 @@ export const createHeroHandlers = (
 ) => ({
   handleHeroChange: (field: string, value: string) => {
     onPageContentChange(`hero.${field}`, value);
+    
+    // If headline is changing, clean up highlights that no longer exist in the new headline
+    if (field === 'headline') {
+      const currentHighlights = pageContent?.hero?.headlineHighlights || [];
+      const cleanedHighlights = cleanupHighlights(currentHighlights, value);
+      
+      // Only update if there are invalid highlights to remove
+      if (cleanedHighlights.length !== currentHighlights.length) {
+        onPageContentChange('hero.headlineHighlights', cleanedHighlights);
+      }
+    }
   },
   handleHighlightToggle: (word: string) => {
     const currentHighlights = pageContent?.hero?.headlineHighlights || [];
