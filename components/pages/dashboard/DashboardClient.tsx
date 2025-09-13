@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
+import { ShineBorder } from "@/components/magicui/shine-border";
 import { 
   BarChart3, 
   Eye, 
@@ -151,16 +152,22 @@ export default function DashboardClient({ pages, leadsByPage, analyticsByPage, u
               return (
                 <Card 
                   key={page.id} 
-                  className="border border-[#2D2D2D] shadow-sm hover:shadow-md hover:bg-neutral-800 transition-all duration-200 cursor-pointer group" 
+                  className="border border-[#2D2D2D] shadow-sm hover:shadow-md hover:bg-neutral-800 hover:border-neutral-600 transition-all duration-200 cursor-pointer group relative overflow-hidden" 
                   style={{ backgroundColor: '#0A0A0A' }}
                   onClick={() => router.push(`/dashboard/analytics/${page.id}`)}
                 >
-                  <CardContent className="p-6">
+                  <ShineBorder 
+                    shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} 
+                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    borderWidth={1}
+                    duration={3}
+                  />
+                  <CardContent className="p-6 relative z-10">
                     {/* Header with title and status */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1 min-w-0">
                         <h3 className="text-lg font-semibold text-white truncate mb-2">
-                          {page.page_content?.hero?.headline || page.title || 'Untitled'}
+                        {page.page_content?.hero?.headline || page.title || 'Untitled'}
                         </h3>
                         <div className="flex items-center gap-2">
                           {isPublished && (
@@ -211,15 +218,15 @@ export default function DashboardClient({ pages, leadsByPage, analyticsByPage, u
                       <div className="flex items-center gap-1 text-xs text-neutral-500">
                         <Calendar className="w-3 h-3" />
                         <span>{formatDate(page.created_at)}</span>
-                      </div>
+                              </div>
                       <div className="flex items-center gap-1">
                         <Link href={`/dashboard/page/${page.id}`} onClick={(e) => e.stopPropagation()}>
-                          <Button variant="outline" size="sm" className="h-7 px-2 text-white border-[#2D2D2D] hover:bg-neutral-800" style={{ backgroundColor: '#0A0A0A' }}>
+                          <Button variant="outline" size="sm" className="h-7 px-2 text-white border-[#2D2D2D] hover:bg-neutral-800 hover:text-white hover:border-neutral-600" style={{ backgroundColor: '#0A0A0A' }}>
                             <Edit3 className="w-3 h-3" />
                           </Button>
                         </Link>
                         <Link href={`/page/${page.slug}`} target="_blank" onClick={(e) => e.stopPropagation()}>
-                          <Button variant="outline" size="sm" className="h-7 px-2 text-white border-[#2D2D2D] hover:bg-neutral-800" style={{ backgroundColor: '#0A0A0A' }}>
+                          <Button variant="outline" size="sm" className="h-7 px-2 text-white border-[#2D2D2D] hover:bg-neutral-800 hover:text-white hover:border-neutral-600" style={{ backgroundColor: '#0A0A0A' }}>
                             <ExternalLink className="w-3 h-3" />
                           </Button>
                         </Link>
@@ -235,8 +242,8 @@ export default function DashboardClient({ pages, leadsByPage, analyticsByPage, u
                         >
                           <Trash2 className="w-3 h-3" />
                         </Button>
-                      </div>
-                    </div>
+                          </div>
+          </div>
                   </CardContent>
                 </Card>
               );

@@ -58,7 +58,8 @@ module.exports = {
   		},
   		animation: {
   			'fade-in': 'fadeIn 0.5s ease-in-out',
-  			'slide-in': 'slideIn 0.5s ease-out'
+  			'slide-in': 'slideIn 0.5s ease-out',
+  			'shine': 'shine var(--duration) infinite linear'
   		},
   		keyframes: {
   			fadeIn: {
@@ -77,6 +78,14 @@ module.exports = {
   				'100%': {
   					transform: 'translateY(0)',
   					opacity: '1'
+  				}
+  			},
+  			shine: {
+  				'0%': {
+  					backgroundPosition: '0% 0%'
+  				},
+  				'100%': {
+  					backgroundPosition: '100% 100%'
   				}
   			}
   		}

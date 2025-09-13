@@ -246,15 +246,15 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   }, []);
 
   return (
-    <div className="flex flex-col lg:flex-row h-full bg-gray-100">
+    <div className="flex flex-col lg:flex-row h-full bg-black">
       {/* Edit Panel - Desktop Sidebar - Now on the left */}
       <div className={`hidden lg:flex ${
         sidePanelCollapsed ? 'w-0 overflow-hidden' : 'w-96'
-      } bg-white border-r border-gray-200 flex-col transition-all duration-300`}>
+      } bg-black border-r border-[#2D2D2D] flex-col transition-all duration-300`}>
         
         {/* Edit Panel Header */}
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Edit Page</h2>
+        <div className="p-4 border-b border-[#2D2D2D]">
+          <h2 className="text-lg font-semibold text-white">Edit Page</h2>
         </div>
 
         {/* Edit Panel Content */}
@@ -303,13 +303,13 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       {/* Mobile Sidebar Overlay */}
       {showSidePanel && (
         <div className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40">
-          <div className="absolute left-0 top-0 h-full w-80 bg-white shadow-xl">
-            <div className="p-4 border-b border-gray-200">
+          <div className="absolute left-0 top-0 h-full w-80 bg-black border-r border-[#2D2D2D] shadow-xl">
+            <div className="p-4 border-b border-[#2D2D2D]">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">Edit Page</h2>
+                <h2 className="text-lg font-semibold text-white">Edit Page</h2>
                 <button
                   onClick={() => setShowSidePanel(false)}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-neutral-400 hover:text-white"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -347,7 +347,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
         <div className="lg:hidden fixed bottom-4 left-4 right-4 z-40">
           <button
             onClick={() => setShowSidePanel(true)}
-            className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-colors font-medium"
+            className="w-full px-4 py-3 bg-white text-black rounded-lg shadow-lg hover:bg-neutral-100 transition-colors font-medium"
           >
             Show Editor
           </button>
@@ -357,28 +357,28 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       {/* Publish Success Modal */}
       {showPublishModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <div className="bg-neutral-800 border border-[#2D2D2D] rounded-lg shadow-xl max-w-md w-full p-6">
             <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 bg-green-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Page Published Successfully!</h3>
-              <p className="text-sm text-gray-600 mb-4">Your landing page is now live and ready to share.</p>
+              <h3 className="text-lg font-semibold text-white mb-2">Page Published Successfully!</h3>
+              <p className="text-sm text-neutral-400 mb-4">Your landing page is now live and ready to share.</p>
               
-              <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <label className="block text-xs font-medium text-gray-700 mb-2">Published URL</label>
+              <div className="bg-neutral-700 border border-[#2D2D2D] rounded-lg p-4 mb-4">
+                <label className="block text-xs font-medium text-neutral-300 mb-2">Published URL</label>
                 <div className="flex items-center space-x-2">
                   <input
                     type="text"
                     value={publishedUrl}
                     readOnly
-                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md bg-white"
+                    className="flex-1 px-3 py-2 text-sm border border-[#2D2D2D] rounded-md bg-neutral-800 text-white"
                   />
                   <button
                     onClick={() => navigator.clipboard.writeText(publishedUrl)}
-                    className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+                    className="px-3 py-2 bg-white text-black rounded-md hover:bg-neutral-100 transition-colors text-sm"
                   >
                     Copy
                   </button>
@@ -387,7 +387,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
 
               {/* QR Code */}
               <div className="mb-4">
-                <label className="block text-xs font-medium text-gray-700 mb-2">QR Code</label>
+                <label className="block text-xs font-medium text-neutral-300 mb-2">QR Code</label>
                 <div className="flex justify-center">
                   <MobilePreviewQR 
                     pageUrl={publishedUrl}
@@ -399,7 +399,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
               <div className="flex space-x-3">
                 <button
                   onClick={() => setShowPublishModal(false)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                  className="flex-1 px-4 py-2 bg-neutral-700 text-white rounded-md hover:bg-neutral-600 transition-colors"
                 >
                   Close
                 </button>
@@ -408,7 +408,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
                     window.open(publishedUrl, '_blank');
                     setShowPublishModal(false);
                   }}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  className="flex-1 px-4 py-2 bg-white text-black rounded-md hover:bg-neutral-100 transition-colors"
                 >
                   View Page
                 </button>
@@ -420,11 +420,11 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
 
       {/* Error Toast */}
       {showErrorToast && error && (
-        <div className="fixed bottom-4 left-4 right-4 sm:right-4 sm:left-auto bg-red-500 text-white p-4 rounded-lg shadow-lg z-50 max-w-md mx-auto sm:mx-0">
+        <div className="fixed bottom-4 left-4 right-4 sm:right-4 sm:left-auto bg-red-600 text-white p-4 rounded-lg shadow-lg z-50 max-w-md mx-auto sm:mx-0">
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0 mt-1">
               <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
-                <span className="text-red-500 text-xs font-bold">!</span>
+                <span className="text-red-600 text-xs font-bold">!</span>
               </div>
             </div>
             <div className="flex-1">
@@ -436,7 +436,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
             </div>
             <button
               onClick={clearError}
-              className="flex-shrink-0 text-white hover:text-gray-200 text-lg font-bold"
+              className="flex-shrink-0 text-white hover:text-neutral-200 text-lg font-bold"
             >
               ×
             </button>

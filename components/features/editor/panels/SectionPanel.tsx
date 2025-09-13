@@ -57,7 +57,7 @@ export default function SectionPanel({ sectionId, pageContent, onPageContentChan
         return <UrgencySectionEditor urgency={pageContent?.urgency || {}} onPageContentChange={onPageContentChange} />;
       
       default:
-        return <div className="text-xs text-slate-500">Section editor not found</div>;
+        return <div className="text-xs text-neutral-400">Section editor not found</div>;
     }
   };
 
@@ -66,14 +66,14 @@ export default function SectionPanel({ sectionId, pageContent, onPageContentChan
       <div className="flex items-center gap-2 mb-4">
         <button
           onClick={onBack}
-          className="p-1 text-slate-500 hover:text-slate-700 transition-colors"
+          className="p-1 text-neutral-400 hover:text-white transition-colors"
           title="Back to main panel"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h3 className="text-sm font-semibold text-slate-800 capitalize">
+        <h3 className="text-sm font-semibold text-white capitalize">
           {getSectionDisplayName(sectionId)} Editor
         </h3>
       </div>
@@ -89,25 +89,25 @@ function BusinessSectionEditor({ business, onPageContentChange }: { business: an
   
   return (
     <div className="space-y-4">
-      <h4 className="text-sm font-medium text-slate-800 mb-3">Business Information</h4>
+      <h4 className="text-sm font-medium text-white mb-3">Business Information</h4>
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Business Name</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Business Name</label>
           <input
             type="text"
             value={business?.name || ''}
             onChange={(e) => handlers.handleBusinessChange("name", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter your business name"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Logo URL</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Logo URL</label>
           <input
             type="text"
             value={business?.logo || ''}
             onChange={(e) => handlers.handleBusinessChange("logo", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter logo URL or leave empty for default"
           />
         </div>
@@ -121,20 +121,20 @@ function HeroSectionEditor({ hero, onPageContentChange }: { hero: any; onPageCon
   
   return (
     <div className="space-y-4">
-      <h4 className="text-sm font-medium text-slate-800 mb-3">Hero Section</h4>
+      <h4 className="text-sm font-medium text-white mb-3">Hero Section</h4>
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Hero Tag</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Hero Tag</label>
           <input
             type="text"
             value={hero?.heroTag || ''}
             onChange={(e) => handlers.handleHeroChange("heroTag", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="e.g., AI-Powered Solution"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Hero Tag Icon</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Hero Tag Icon</label>
           <HeroIconSelector
             value={hero?.heroTagIcon || ''}
             onChange={(value) => handlers.handleHeroChange("heroTagIcon", value)}
@@ -142,23 +142,23 @@ function HeroSectionEditor({ hero, onPageContentChange }: { hero: any; onPageCon
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Headline</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Headline</label>
           <input
             type="text"
             value={hero?.headline || ''}
             onChange={(e) => handlers.handleHeroChange("headline", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter your main headline"
           />
         </div>
         
         {/* Highlight Words Section */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <label className="block text-sm font-medium text-slate-700 mb-2">Highlight Words</label>
-          <p className="text-xs text-slate-600 mb-3">Click on words in your headline to highlight them</p>
+        <div className="bg-blue-900/20 border border-blue-800 rounded-lg p-3">
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Highlight Words</label>
+          <p className="text-xs text-neutral-400 mb-3">Click on words in your headline to highlight them</p>
           {hero?.headline && (
             <div className="mb-3">
-              <p className="text-sm text-slate-600 mb-2">Headline:</p>
+              <p className="text-sm text-neutral-400 mb-2">Headline:</p>
               <div className="flex flex-wrap gap-1">
                 {hero.headline.split(' ').map((word: string, index: number) => {
                   const cleanWord = word.replace(/[^\w]/g, '');
@@ -170,7 +170,7 @@ function HeroSectionEditor({ hero, onPageContentChange }: { hero: any; onPageCon
                       className={`px-2 py-1 text-sm rounded transition-colors ${
                         isHighlighted
                           ? 'bg-blue-500 text-white'
-                          : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
+                          : 'bg-neutral-900 text-neutral-300 border border-[#2D2D2D] hover:bg-neutral-800'
                       }`}
                     >
                       {word}
@@ -182,7 +182,7 @@ function HeroSectionEditor({ hero, onPageContentChange }: { hero: any; onPageCon
           )}
           {hero?.headlineHighlights && hero.headlineHighlights.length > 0 && (
             <div>
-              <p className="text-sm text-slate-600 mb-2">Highlighted words:</p>
+              <p className="text-sm text-neutral-400 mb-2">Highlighted words:</p>
               <div className="flex flex-wrap gap-1">
                 {hero.headlineHighlights.map((word: string, index: number) => (
                   <span
@@ -198,22 +198,22 @@ function HeroSectionEditor({ hero, onPageContentChange }: { hero: any; onPageCon
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Subheadline</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Subheadline</label>
           <textarea
             value={hero?.subheadline || ''}
             onChange={(e) => handlers.handleHeroChange("subheadline", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm resize-none"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white resize-none"
             rows={3}
             placeholder="Enter your subheadline"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">CTA Button Text</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">CTA Button Text</label>
           <input
             type="text"
             value={hero?.cta || ''}
             onChange={(e) => handlers.handleHeroChange("cta", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter CTA button text"
           />
         </div>
@@ -228,43 +228,43 @@ function ProblemSectionEditor({ problemSection, onPageContentChange }: { problem
   
   return (
     <div className="space-y-4">
-      <h4 className="text-sm font-medium text-slate-800 mb-3">Problem Section</h4>
+      <h4 className="text-sm font-medium text-white mb-3">Problem Section</h4>
       
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Title</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Title</label>
           <input
             type="text"
             value={problemSection?.title || ''}
             onChange={(e) => handlers.handleProblemChange("title", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter problem section title"
           />
 
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Subtitle</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Subtitle</label>
           <input
             type="text"
             value={problemSection?.subtitle || ''}
             onChange={(e) => handlers.handleProblemChange("subtitle", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter problem section subtitle"
           />
 
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Pain Points</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Pain Points</label>
           <div className="space-y-3">
             {problemSection?.painPoints?.map((painPoint: any, idx: number) => (
-              <div key={idx} className="space-y-3 p-3 border border-slate-200 rounded-md bg-slate-50">
+              <div key={idx} className="space-y-3 p-3 border border-[#2D2D2D] rounded-md bg-neutral-900">
                 <input
                   type="text"
                   value={painPoint?.text || ''}
                   onChange={(e) => handlers.handlePainPointChange(idx, "text", e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                  className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                   placeholder="Enter pain point"
                 />
                 <PainPointIconSelector
@@ -285,7 +285,7 @@ function ProblemSectionEditor({ problemSection, onPageContentChange }: { problem
             ))}
             <button
               onClick={handlers.handleAddPainPoint}
-              className="w-full px-3 py-2 border border-slate-300 border-dashed rounded-md text-slate-500 hover:text-slate-700 hover:border-slate-400 transition-colors text-sm"
+              className="w-full px-3 py-2 border border-[#2D2D2D] border-dashed rounded-md text-neutral-400 hover:text-neutral-300 hover:border-neutral-600 bg-neutral-900 transition-colors text-sm"
             >
               + Add Pain Point
             </button>
@@ -301,38 +301,38 @@ function FeaturesSectionEditor({ features, onPageContentChange, pageContent }: {
   
   return (
     <div className="space-y-4">
-      <h4 className="text-sm font-medium text-slate-800 mb-3">Features Section</h4>
+      <h4 className="text-sm font-medium text-white mb-3">Features Section</h4>
       
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Features Title</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Features Title</label>
           <input
             type="text"
             value={pageContent?.featuresTitle || ''}
             onChange={(e) => onPageContentChange("featuresTitle", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter features title"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Features Subtitle</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Features Subtitle</label>
           <input
             type="text"
             value={pageContent?.featuresSubtitle || ''}
             onChange={(e) => onPageContentChange("featuresSubtitle", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter features subtitle"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Features</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Features</label>
           <div className="space-y-3">
             {pageContent?.features?.map((feature: any, idx: number) => (
-              <div key={idx} className="space-y-3 p-3 border border-slate-200 rounded-md bg-slate-50">
+              <div key={idx} className="space-y-3 p-3 border border-[#2D2D2D] rounded-md bg-neutral-900">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-slate-600">Feature {idx + 1}</label>
+                  <label className="text-xs font-medium text-neutral-400">Feature {idx + 1}</label>
                   <button
                     onClick={() => handlers.handleRemoveFeature(idx)}
                     className="p-1 text-red-500 hover:text-red-700 transition-colors"
@@ -344,7 +344,7 @@ function FeaturesSectionEditor({ features, onPageContentChange, pageContent }: {
                   </button>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Icon</label>
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Icon</label>
                   <FeatureIconSelector
                     value={feature?.icon || ''}
                     onChange={(value) => handlers.handleFeatureChange(idx, "icon", value)}
@@ -352,32 +352,32 @@ function FeaturesSectionEditor({ features, onPageContentChange, pageContent }: {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Title</label>
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Title</label>
                   <input
                     type="text"
                     value={feature?.title || ''}
                     onChange={(e) => handlers.handleFeatureChange(idx, "title", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                     placeholder="Feature title"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Description</label>
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Description</label>
                   <input
                     type="text"
                     value={feature?.description || ''}
                     onChange={(e) => handlers.handleFeatureChange(idx, "description", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                     placeholder="Feature description"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Benefit</label>
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Benefit</label>
                   <input
                     type="text"
                     value={feature?.benefit || ''}
                     onChange={(e) => handlers.handleFeatureChange(idx, "benefit", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                     placeholder="What this means for you..."
                   />
                 </div>
@@ -385,7 +385,7 @@ function FeaturesSectionEditor({ features, onPageContentChange, pageContent }: {
             ))}
             <button
               onClick={handlers.handleAddFeature}
-              className="w-full px-3 py-2 border border-slate-300 border-dashed rounded-md text-slate-500 hover:text-slate-700 hover:border-slate-400 transition-colors text-sm"
+              className="w-full px-3 py-2 border border-[#2D2D2D] border-dashed rounded-md text-neutral-400 hover:text-neutral-300 hover:border-neutral-600 bg-neutral-900 transition-colors text-sm"
             >
               + Add Feature
             </button>
@@ -401,38 +401,38 @@ function SocialProofSectionEditor({ socialProof, onPageContentChange, pageConten
   
   return (
     <div className="space-y-4">
-      <h4 className="text-sm font-medium text-slate-800 mb-3">Social Proof Section</h4>
+      <h4 className="text-sm font-medium text-white mb-3">Social Proof Section</h4>
       
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Title</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Title</label>
           <input
             type="text"
             value={socialProof?.title || ''}
             onChange={(e) => handlers.handleSocialProofChange("title", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter social proof title"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Subtitle</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Subtitle</label>
           <input
             type="text"
             value={socialProof?.subtitle || ''}
             onChange={(e) => handlers.handleSocialProofChange("subtitle", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter social proof subtitle"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Stats</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Stats</label>
           <div className="space-y-3">
             {socialProof?.stats?.map((stat: any, idx: number) => (
-              <div key={idx} className="space-y-3 p-3 border border-slate-200 rounded-md bg-slate-50">
+              <div key={idx} className="space-y-3 p-3 border border-[#2D2D2D] rounded-md bg-neutral-900">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-slate-600">Stat {idx + 1}</label>
+                  <label className="text-xs font-medium text-neutral-400">Stat {idx + 1}</label>
                   <button
                     onClick={() => handlers.handleRemoveStat(idx)}
                     className="p-1 text-red-500 hover:text-red-700 transition-colors"
@@ -444,32 +444,32 @@ function SocialProofSectionEditor({ socialProof, onPageContentChange, pageConten
                   </button>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Number</label>
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Number</label>
                   <input
                     type="text"
                     value={stat?.number || ''}
                     onChange={(e) => handlers.handleStatChange(idx, "number", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                     placeholder="e.g., 10,000+"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Label</label>
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Label</label>
                   <input
                     type="text"
                     value={stat?.label || ''}
                     onChange={(e) => handlers.handleStatChange(idx, "label", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                     placeholder="e.g., Happy Customers"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Description</label>
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Description</label>
                   <input
                     type="text"
                     value={stat?.description || ''}
                     onChange={(e) => handlers.handleStatChange(idx, "description", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                     placeholder="e.g., Trusted by businesses worldwide"
                   />
                 </div>
@@ -477,7 +477,7 @@ function SocialProofSectionEditor({ socialProof, onPageContentChange, pageConten
             ))}
             <button
               onClick={handlers.handleAddStat}
-              className="w-full px-3 py-2 border border-slate-300 border-dashed rounded-md text-slate-500 hover:text-slate-700 hover:border-slate-400 transition-colors text-sm"
+              className="w-full px-3 py-2 border border-[#2D2D2D] border-dashed rounded-md text-neutral-400 hover:text-neutral-300 hover:border-neutral-600 bg-neutral-900 transition-colors text-sm"
             >
               + Add Stat
             </button>
@@ -485,12 +485,12 @@ function SocialProofSectionEditor({ socialProof, onPageContentChange, pageConten
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Testimonials</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Testimonials</label>
           <div className="space-y-3">
             {socialProof?.testimonials?.map((testimonial: any, idx: number) => (
-              <div key={idx} className="space-y-3 p-3 border border-slate-200 rounded-md bg-slate-50">
+              <div key={idx} className="space-y-3 p-3 border border-[#2D2D2D] rounded-md bg-neutral-900">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-slate-600">Testimonial {idx + 1}</label>
+                  <label className="text-xs font-medium text-neutral-400">Testimonial {idx + 1}</label>
                   <button
                     onClick={() => handlers.handleRemoveTestimonial(idx)}
                     className="p-1 text-red-500 hover:text-red-700 transition-colors"
@@ -502,57 +502,57 @@ function SocialProofSectionEditor({ socialProof, onPageContentChange, pageConten
                   </button>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Name</label>
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Name</label>
                   <input
                     type="text"
                     value={testimonial?.name || ''}
                     onChange={(e) => handlers.handleTestimonialChange(idx, "name", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                     placeholder="Customer name"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Role</label>
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Role</label>
                   <input
                     type="text"
                     value={testimonial?.role || ''}
                     onChange={(e) => handlers.handleTestimonialChange(idx, "role", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                     placeholder="e.g., CEO, Marketing Director"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Company</label>
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Company</label>
                   <input
                     type="text"
                     value={testimonial?.company || ''}
                     onChange={(e) => handlers.handleTestimonialChange(idx, "company", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                     placeholder="Company name"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Quote</label>
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Quote</label>
                   <textarea
                     value={testimonial?.quote || ''}
                     onChange={(e) => handlers.handleTestimonialChange(idx, "quote", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                     placeholder="Customer testimonial quote"
                     rows={3}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Result (Optional)</label>
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Result (Optional)</label>
                   <input
                     type="text"
                     value={testimonial?.result || ''}
                     onChange={(e) => handlers.handleTestimonialChange(idx, "result", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                     placeholder="e.g., 300% increase in sales"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Rating</label>
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Rating</label>
                   <IconSelector
                     value={testimonial?.rating?.toString() || '5'}
                     onChange={(value) => handlers.handleTestimonialChange(idx, "rating", parseInt(value))}
@@ -571,7 +571,7 @@ function SocialProofSectionEditor({ socialProof, onPageContentChange, pageConten
             ))}
             <button
               onClick={handlers.handleAddTestimonial}
-              className="w-full px-3 py-2 border border-slate-300 border-dashed rounded-md text-slate-500 hover:text-slate-700 hover:border-slate-400 transition-colors text-sm"
+              className="w-full px-3 py-2 border border-[#2D2D2D] border-dashed rounded-md text-neutral-400 hover:text-neutral-300 hover:border-neutral-600 bg-neutral-900 transition-colors text-sm"
             >
               + Add Testimonial
             </button>
@@ -587,36 +587,36 @@ function GuaranteesSectionEditor({ guarantees, onPageContentChange }: { guarante
   
   return (
     <div className="space-y-4">
-      <h4 className="text-sm font-medium text-slate-800 mb-3">Guarantees Section</h4>
+      <h4 className="text-sm font-medium text-white mb-3">Guarantees Section</h4>
       
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Title</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Title</label>
           <input
             type="text"
             value={guarantees?.title || ''}
             onChange={(e) => handlers.handleGuaranteesChange("title", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter guarantees title"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Subtitle</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Subtitle</label>
           <input
             type="text"
             value={guarantees?.subtitle || ''}
             onChange={(e) => handlers.handleGuaranteesChange("subtitle", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter guarantees subtitle"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Guarantees</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Guarantees</label>
           <div className="space-y-3">
             {guarantees?.guarantees?.map((guarantee: any, idx: number) => (
-              <div key={idx} className="space-y-3 p-3 border border-slate-200 rounded-md bg-slate-50">
+              <div key={idx} className="space-y-3 p-3 border border-[#2D2D2D] rounded-md bg-neutral-900">
                 <GuaranteeIconSelector
                   value={guarantee?.icon || ''}
                   onChange={(value) => handlers.handleGuaranteeChange(idx, "icon", value)}
@@ -626,14 +626,14 @@ function GuaranteesSectionEditor({ guarantees, onPageContentChange }: { guarante
                   type="text"
                   value={guarantee?.title || ''}
                   onChange={(e) => handlers.handleGuaranteeChange(idx, "title", e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                  className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                   placeholder="Guarantee title"
                 />
                 <input
                   type="text"
                   value={guarantee?.description || ''}
                   onChange={(e) => handlers.handleGuaranteeChange(idx, "description", e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                  className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                   placeholder="Guarantee description"
                 />
                 <button
@@ -649,7 +649,7 @@ function GuaranteesSectionEditor({ guarantees, onPageContentChange }: { guarante
             ))}
             <button
               onClick={handlers.handleAddGuarantee}
-              className="w-full px-3 py-2 border border-slate-300 border-dashed rounded-md text-slate-500 hover:text-slate-700 hover:border-slate-400 transition-colors text-sm"
+              className="w-full px-3 py-2 border border-[#2D2D2D] border-dashed rounded-md text-neutral-400 hover:text-neutral-300 hover:border-neutral-600 bg-neutral-900 transition-colors text-sm"
             >
               + Add Guarantee
             </button>
@@ -665,42 +665,42 @@ function FAQSectionEditor({ faq, onPageContentChange, pageContent }: { faq: any;
   
   return (
     <div className="space-y-4">
-      <h4 className="text-sm font-medium text-slate-800 mb-3">FAQ Section</h4>
+      <h4 className="text-sm font-medium text-white mb-3">FAQ Section</h4>
       
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Title</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Title</label>
           <input
             type="text"
             value={faq?.title || ''}
             onChange={(e) => handlers.handleFAQChange("title", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter FAQ title"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Subtitle</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Subtitle</label>
           <input
             type="text"
             value={faq?.subtitle || ''}
             onChange={(e) => handlers.handleFAQChange("subtitle", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter FAQ subtitle"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Questions & Answers</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Questions & Answers</label>
           <div className="space-y-3">
             {faq?.questions?.map((qa: any, idx: number) => (
-              <div key={idx} className="space-y-2 p-3 border border-slate-200 rounded-md">
+              <div key={idx} className="space-y-2 p-3 border border-[#2D2D2D] rounded-md bg-neutral-900">
                 <div className="flex items-center gap-2">
                   <input
                     type="text"
                     value={qa?.question || ''}
                     onChange={(e) => handlers.handleQAChange(idx, "question", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                    className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                     placeholder="Question"
                   />
                   <button
@@ -716,7 +716,7 @@ function FAQSectionEditor({ faq, onPageContentChange, pageContent }: { faq: any;
                 <textarea
                   value={qa?.answer || ''}
                   onChange={(e) => handlers.handleQAChange(idx, "answer", e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+                  className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
                   placeholder="Answer"
                   rows={3}
                 />
@@ -724,7 +724,7 @@ function FAQSectionEditor({ faq, onPageContentChange, pageContent }: { faq: any;
             ))}
             <button
               onClick={handlers.handleAddQA}
-              className="w-full px-3 py-2 border border-slate-300 border-dashed rounded-md text-slate-500 hover:text-slate-700 hover:border-slate-400 transition-colors text-sm"
+              className="w-full px-3 py-2 border border-[#2D2D2D] border-dashed rounded-md text-neutral-400 hover:text-neutral-300 hover:border-neutral-600 bg-neutral-900 transition-colors text-sm"
             >
               + Add Question & Answer
             </button>
@@ -740,38 +740,38 @@ function CTASectionEditor({ cta, onPageContentChange }: { cta: any; onPageConten
   
   return (
     <div className="space-y-4">
-      <h4 className="text-sm font-medium text-slate-800 mb-3">CTA Section</h4>
+      <h4 className="text-sm font-medium text-white mb-3">CTA Section</h4>
       
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Title</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Title</label>
           <input
             type="text"
             value={cta?.title || ''}
             onChange={(e) => handlers.handleCTAChange("title", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter CTA title"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Subtitle</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Subtitle</label>
           <input
             type="text"
             value={cta?.subtitle || ''}
             onChange={(e) => handlers.handleCTAChange("subtitle", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter CTA subtitle"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Button Text</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Button Text</label>
           <input
             type="text"
             value={cta?.buttonText || ''}
             onChange={(e) => handlers.handleCTAChange("buttonText", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter button text"
           />
         </div>
@@ -785,11 +785,11 @@ function UrgencySectionEditor({ urgency, onPageContentChange }: { urgency: any; 
   
   return (
     <div className="space-y-4">
-      <h4 className="text-sm font-medium text-slate-800 mb-3">Urgency Section</h4>
+      <h4 className="text-sm font-medium text-white mb-3">Urgency Section</h4>
       
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Enable Urgency</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Enable Urgency</label>
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
@@ -797,28 +797,28 @@ function UrgencySectionEditor({ urgency, onPageContentChange }: { urgency: any; 
               onChange={(e) => handlers.handleUrgencyChange("enabled", e.target.checked)}
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
-            <span className="text-sm text-slate-600">Show urgency message</span>
+            <span className="text-sm text-neutral-400">Show urgency message</span>
           </label>
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Message</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Message</label>
           <input
             type="text"
             value={urgency?.message || ''}
             onChange={(e) => handlers.handleUrgencyChange("message", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="e.g., Limited Time Offer"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Deadline</label>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">Deadline</label>
           <input
             type="text"
             value={urgency?.deadline || ''}
             onChange={(e) => handlers.handleUrgencyChange("deadline", e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
+            className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="e.g., Ends in 24 hours"
           />
         </div>

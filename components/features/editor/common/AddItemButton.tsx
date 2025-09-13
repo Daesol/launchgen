@@ -26,8 +26,8 @@ export default function AddItemButton({
   };
 
   const variantClasses = {
-    outline: 'border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400',
-    filled: 'bg-slate-600 text-white hover:bg-slate-700 border border-slate-600',
+    outline: 'border border-[#2D2D2D] text-white hover:bg-neutral-800 hover:border-neutral-600 bg-neutral-900',
+    filled: 'bg-neutral-600 text-white hover:bg-neutral-700 border border-neutral-600',
   };
 
   const buttonClasses = `${sizeClasses[size]} ${variantClasses[variant]} rounded-md transition-colors font-medium ${className} ${

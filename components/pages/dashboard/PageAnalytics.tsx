@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { 
-  ArrowLeft, 
   BarChart3, 
   Eye, 
   Users, 
@@ -90,37 +89,35 @@ export default function PageAnalytics({ data }: PageAnalyticsProps) {
     <div className="min-h-screen bg-black p-6 space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="border-[#2D2D2D] text-neutral-300 hover:bg-neutral-800"
-            onClick={() => router.push("/dashboard")}
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Dashboard
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-white">{page.title}</h1>
-            <p className="text-neutral-400 text-sm">Analytics & Performance</p>
-          </div>
+        <div>
+          <h1 className="text-2xl font-bold text-white">{page.title}</h1>
+          <p className="text-neutral-400 text-sm">Analytics & Performance</p>
         </div>
         <div className="flex items-center gap-3">
           <Link href={`/dashboard/page/${page.id}`}>
-            <Button variant="outline" className="border-[#2D2D2D] text-neutral-300 hover:bg-neutral-800">
+            <Button 
+              variant="outline" 
+              className="border-[#2D2D2D] text-neutral-300 hover:bg-neutral-800 hover:text-white hover:border-neutral-600"
+              style={{ backgroundColor: '#0A0A0A' }}
+            >
               <Edit3 className="w-4 h-4 mr-2" />
               Edit Page
             </Button>
           </Link>
-          <Link href={`/${page.slug}`} target="_blank">
-            <Button variant="outline" className="border-[#2D2D2D] text-neutral-300 hover:bg-neutral-800">
+          <Link href={`/page/${page.slug}`} target="_blank">
+            <Button 
+              variant="outline" 
+              className="border-[#2D2D2D] text-neutral-300 hover:bg-neutral-800 hover:text-white hover:border-neutral-600"
+              style={{ backgroundColor: '#0A0A0A' }}
+            >
               <ExternalLink className="w-4 h-4 mr-2" />
               View Live
             </Button>
           </Link>
           <Button 
             variant="outline" 
-            className="border-red-800 text-red-400 hover:bg-red-900/20"
+            className="border-red-800 text-red-400 hover:bg-red-900/20 hover:text-red-300 hover:border-red-600"
+            style={{ backgroundColor: '#0A0A0A' }}
             onClick={() => setDeleteId(page.id)}
           >
             <Trash2 className="w-4 h-4 mr-2" />
@@ -130,62 +127,34 @@ export default function PageAnalytics({ data }: PageAnalyticsProps) {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="border border-[#2D2D2D]" style={{ backgroundColor: '#0A0A0A' }}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-neutral-400">Total Views</p>
-                <p className="text-2xl font-bold text-white">{views.toLocaleString()}</p>
-              </div>
-              <div className="w-10 h-10 bg-blue-900/50 rounded-lg flex items-center justify-center">
-                <Eye className="w-5 h-5 text-blue-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border border-[#2D2D2D]" style={{ backgroundColor: '#0A0A0A' }}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-neutral-400">Total Leads</p>
-                <p className="text-2xl font-bold text-white">{leads.length}</p>
-              </div>
-              <div className="w-10 h-10 bg-green-900/50 rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-green-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border border-[#2D2D2D]" style={{ backgroundColor: '#0A0A0A' }}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-neutral-400">Conversion Rate</p>
-                <p className="text-2xl font-bold text-white">{conversionRate.toFixed(1)}%</p>
-              </div>
-              <div className="w-10 h-10 bg-purple-900/50 rounded-lg flex items-center justify-center">
-                <Target className="w-5 h-5 text-purple-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border border-[#2D2D2D]" style={{ backgroundColor: '#0A0A0A' }}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-neutral-400">Form Submits</p>
-                <p className="text-2xl font-bold text-white">{submits}</p>
-              </div>
-              <div className="w-10 h-10 bg-orange-900/50 rounded-lg flex items-center justify-center">
-                <MousePointer className="w-5 h-5 text-orange-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="flex items-center gap-6 bg-neutral-800 border border-[#2D2D2D] rounded-lg p-4">
+        <div className="flex items-center gap-2">
+          <Eye className="w-5 h-5 text-blue-400" />
+          <div>
+            <p className="text-neutral-400 text-xs">Views</p>
+            <p className="text-lg font-bold text-white">{views.toLocaleString()}</p>
+          </div>
+        </div>
+        
+        <Separator orientation="vertical" className="h-12 bg-[#2D2D2D]" />
+        
+        <div className="flex items-center gap-2">
+          <Users className="w-5 h-5 text-green-400" />
+          <div>
+            <p className="text-neutral-400 text-xs">Leads</p>
+            <p className="text-lg font-bold text-white">{leads.length}</p>
+          </div>
+        </div>
+        
+        <Separator orientation="vertical" className="h-12 bg-[#2D2D2D]" />
+        
+        <div className="flex items-center gap-2">
+          <Target className="w-5 h-5 text-purple-400" />
+          <div>
+            <p className="text-neutral-400 text-xs">Conversion</p>
+            <p className="text-lg font-bold text-white">{conversionRate.toFixed(1)}%</p>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -344,7 +313,8 @@ export default function PageAnalytics({ data }: PageAnalyticsProps) {
                 <Button
                   variant="outline"
                   onClick={() => setDeleteId(null)}
-                  className="border-[#2D2D2D] text-white hover:bg-neutral-800"
+                  className="border-[#2D2D2D] text-white hover:bg-neutral-800 hover:text-white hover:border-neutral-600"
+                  style={{ backgroundColor: '#0A0A0A' }}
                 >
                   Cancel
                 </Button>

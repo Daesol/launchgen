@@ -34,8 +34,7 @@ export default function SectionRenderer({
   };
 
   // Render sections based on sectionOrder or default order
-  const sectionOrder = config.sectionOrder || [
-    'hero',
+  let sectionOrder = config.sectionOrder || [
     'problemSection', 
     'features',
     'socialProof',
@@ -49,10 +48,8 @@ export default function SectionRenderer({
     console.log('SectionRenderer - Theme changed:', theme);
   }, [theme]);
 
-  // Always include hero section if it's not in sectionOrder
-  if (!sectionOrder.includes('hero')) {
-    sectionOrder.unshift('hero');
-  }
+  // Always render hero first, then the rest of the sections in the specified order
+  const finalSectionOrder = ['hero', ...sectionOrder];
 
   const renderSection = (sectionId: SectionName) => {
     switch (sectionId) {
@@ -148,7 +145,7 @@ export default function SectionRenderer({
 
   return (
     <>
-      {sectionOrder.map((sectionId, index) => (
+      {finalSectionOrder.map((sectionId, index) => (
         <React.Fragment key={`${sectionId}-${index}`}>
           {renderSection(sectionId as SectionName)}
         </React.Fragment>

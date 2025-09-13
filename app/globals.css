@@ -57,6 +57,9 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
+  .theme {
+    --animate-shine: shine var(--duration) infinite linear;
+  }
 }
 
 @layer base {
@@ -119,20 +122,63 @@ body.dashboard-page {
   overflow: hidden;
 }
 
-/* Custom scrollbar for dashboard */
+/* Custom scrollbar for dashboard - dark theme */
 .dashboard-scroll::-webkit-scrollbar {
   width: 6px;
 }
 
 .dashboard-scroll::-webkit-scrollbar-track {
-  background: #1f2937;
+  background: #0A0A0A;
 }
 
 .dashboard-scroll::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: #2D2D2D;
   border-radius: 3px;
 }
 
 .dashboard-scroll::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
-} 
+  background: #404040;
+}
+
+/* Global scrollbar styling for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2D2D2D;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #404040;
+}
+
+::-webkit-scrollbar-corner {
+  background: #0A0A0A;
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2D2D2D #0A0A0A;
+}
+
+@theme inline {
+  @keyframes shine {
+  0% {
+    background-position: 0% 0%;
+    }
+  50% {
+    background-position: 100% 100%;
+    }
+  to {
+    background-position: 0% 0%;
+    }
+  }
+}

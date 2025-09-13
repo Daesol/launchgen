@@ -411,14 +411,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 {/* Action buttons */}
                 <button
                   onClick={() => window.dispatchEvent(new CustomEvent('preview-page'))}
-                  className="px-3 py-1.5 text-sm border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 rounded transition-colors"
+                  className="px-3 py-1.5 text-sm border border-[#2D2D2D] text-white hover:bg-neutral-800 hover:border-neutral-600 rounded transition-colors"
+                  style={{ backgroundColor: '#0A0A0A' }}
                   title="Preview page"
                 >
                   Preview
                 </button>
                 <button
                   onClick={() => window.dispatchEvent(new CustomEvent('regenerate-page'))}
-                  className="px-3 py-1.5 text-sm border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 rounded transition-colors"
+                  className="px-3 py-1.5 text-sm border border-[#2D2D2D] text-white hover:bg-neutral-800 hover:border-neutral-600 rounded transition-colors"
+                  style={{ backgroundColor: '#0A0A0A' }}
                   title="Regenerate page"
                 >
                   Regenerate

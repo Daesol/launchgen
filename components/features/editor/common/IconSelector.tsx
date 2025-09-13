@@ -64,7 +64,8 @@ export default function IconSelector({
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className={`justify-between ${className}`}
+          className={`justify-between border-[#2D2D2D] text-white hover:bg-neutral-800 hover:text-white hover:border-neutral-600 ${className}`}
+          style={{ backgroundColor: '#0A0A0A' }}
         >
           <div className="flex items-center gap-2">
             {selectedOption ? (
@@ -73,18 +74,18 @@ export default function IconSelector({
                 <span>{selectedOption.label || selectedOption.value}</span>
               </>
             ) : (
-              <span className="text-muted-foreground">{placeholder}</span>
+              <span className="text-neutral-400">{placeholder}</span>
             )}
           </div>
           <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-56">
+      <DropdownMenuContent align="start" className="w-56 bg-neutral-800 border-[#2D2D2D]">
         {options.map((option) => (
           <DropdownMenuItem
             key={option.value}
             onClick={() => onChange(option.value)}
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex items-center gap-2 cursor-pointer text-white hover:bg-neutral-700"
           >
             {renderIcon(option.value, "h-4 w-4")}
             <span>{option.label || option.value}</span>

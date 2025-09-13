@@ -73,18 +73,18 @@ export default function LayoutPanel({
       <div className="flex items-center gap-2 mb-4">
         <button
           onClick={onBack}
-          className="p-1 text-slate-500 hover:text-slate-700 transition-colors"
+          className="p-1 text-neutral-400 hover:text-white transition-colors"
           title="Back to main panel"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h3 className="text-sm font-semibold text-slate-800">Page Layout</h3>
+        <h3 className="text-sm font-semibold text-white">Page Layout</h3>
       </div>
       
       <div className="space-y-3">
-        <h4 className="text-xs font-medium text-slate-600 uppercase tracking-wider">Section Order & Visibility</h4>
+        <h4 className="text-xs font-medium text-neutral-400 uppercase tracking-wider">Section Order & Visibility</h4>
         
         <DndContext
           sensors={sensors}
@@ -97,10 +97,10 @@ export default function LayoutPanel({
           >
             {sectionState.sectionOrder.map((sectionId) => (
               <DraggableSection key={sectionId} id={sectionId}>
-                <div className="flex items-center justify-between p-3 text-sm text-slate-700 bg-slate-50 rounded border hover:bg-slate-100 transition-colors">
+                <div className="flex items-center justify-between p-3 text-sm text-white bg-neutral-800 rounded border border-[#2D2D2D] hover:bg-neutral-700 transition-colors">
                   <div className="flex items-center gap-3">
                     {/* Drag Handle */}
-                    <div className="cursor-grab text-slate-400 hover:text-slate-600">
+                    <div className="cursor-grab text-neutral-400 hover:text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
                       </svg>
@@ -133,9 +133,10 @@ export default function LayoutPanel({
         </DndContext>
         
         {/* Help Text */}
-        <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
-          <p className="text-xs text-blue-800">
+        <div className="bg-blue-900/20 border border-blue-800 rounded-md p-3">
+          <p className="text-xs text-blue-300">
             <strong>Drag & Drop:</strong> Reorder sections by dragging them up or down. 
+            The Hero section is always fixed at the top and cannot be reordered. 
             Use the visibility toggle to show/hide sections, and expand/collapse to manage the editor view.
           </p>
         </div>

@@ -114,34 +114,34 @@ function MainPanel({
 }) {
   return (
     <div className="p-4 space-y-4">
-      <h3 className="text-sm font-semibold text-slate-800 mb-4">Edit Page</h3>
+      <h3 className="text-sm font-semibold text-white mb-4">Edit Page</h3>
       
       {/* Main Edit Panel Buttons */}
       <div className="space-y-3">
         <button
           onClick={onThemeClick}
-          className="w-full flex items-center justify-center px-3 py-2 text-xs font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded border transition-colors"
+          className="w-full flex items-center justify-center px-3 py-2 text-xs font-medium text-white bg-neutral-800 hover:bg-neutral-700 rounded border border-[#2D2D2D] transition-colors"
         >
           Theme Settings
         </button>
         
         <button
           onClick={onBusinessClick}
-          className="w-full flex items-center justify-center px-3 py-2 text-xs font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded border transition-colors"
+          className="w-full flex items-center justify-center px-3 py-2 text-xs font-medium text-white bg-neutral-800 hover:bg-neutral-700 rounded border border-[#2D2D2D] transition-colors"
         >
           Business Info
         </button>
         
         <button
           onClick={onLayoutClick}
-          className="w-full flex items-center justify-center px-3 py-2 text-xs font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded border transition-colors"
+          className="w-full flex items-center justify-center px-3 py-2 text-xs font-medium text-white bg-neutral-800 hover:bg-neutral-700 rounded border border-[#2D2D2D] transition-colors"
         >
           Page Layout
         </button>
       </div>
       
-      <div className="border-t border-slate-200 pt-4">
-        <p className="text-xs text-slate-500 text-center">
+      <div className="border-t border-[#2D2D2D] pt-4">
+        <p className="text-xs text-neutral-400 text-center">
           Click on any section in the preview to edit its content
         </p>
       </div>

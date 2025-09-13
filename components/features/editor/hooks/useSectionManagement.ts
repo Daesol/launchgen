@@ -83,7 +83,9 @@ export function useSectionManagement(): UseSectionManagementReturn {
 
   // Update section order (for drag and drop)
   const updateSectionOrder = useCallback((newOrder: string[]) => {
-    setSectionOrder(newOrder);
+    // Filter out 'hero' from the new order since it's always fixed at the top
+    const filteredOrder = newOrder.filter(section => section !== 'hero');
+    setSectionOrder(filteredOrder);
   }, []);
 
   // Get section state
