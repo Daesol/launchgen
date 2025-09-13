@@ -9,9 +9,10 @@
 /**
  * Creates the system prompt for new landing page generation
  * @param schemaString - The JSON schema string for validation
+ * @param userPrompt - The user's prompt for the landing page
  * @returns The complete system prompt for new generation
  */
-export function createNewGenerationPrompt(schemaString: string): string {
+export function createNewGenerationPrompt(schemaString: string, userPrompt: string): string {
   return `You are an expert SaaS landing page copywriter and designer. You must respond with ONLY a valid JSON object that follows this exact schema structure. Do not include any explanations, markdown formatting, or text outside the JSON object.
 
 SCHEMA:
@@ -70,7 +71,7 @@ IMPORTANT: All required fields above MUST be present and must NOT be empty. Do n
 
 CRITICAL: Ensure your JSON is complete and properly formatted. Do not truncate or leave strings unclosed. The JSON must be valid and parseable.
 
-Generate a landing page config for: {userPrompt}
+Generate a landing page config for: ${userPrompt}
 
 Respond with ONLY the JSON object, no markdown formatting.`;
 }

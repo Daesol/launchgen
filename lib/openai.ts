@@ -23,7 +23,7 @@ export async function generatePageConfig(userPrompt: string, existingConfig?: an
   // Create appropriate prompt based on whether this is regeneration or new generation
   const systemPrompt = existingConfig 
     ? createRegenerationPrompt(schemaString, userPrompt, existingConfig)
-    : createNewGenerationPrompt(schemaString).replace('{userPrompt}', userPrompt);
+    : createNewGenerationPrompt(schemaString, userPrompt);
 
   // Make OpenAI request
   const completion = await makeOpenAIRequest([
