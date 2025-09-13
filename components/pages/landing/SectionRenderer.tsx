@@ -130,7 +130,6 @@ export default function SectionRenderer({
             key="cta"
             ctaTitle={config.ctaTitle}
             ctaSubtitle={config.ctaSubtitle}
-            urgency={config.urgency}
             theme={theme}
             pageId={pageId}
             previewMode={previewMode}

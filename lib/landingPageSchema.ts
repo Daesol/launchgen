@@ -6,7 +6,7 @@ export const landingPageSchema = {
   },
   hero: {
     headline: "",
-    headlineHighlights: [], // Array of words/phrases to highlight
+    headlineHighlights: [] as string[], // Array of words/phrases to highlight
     subheadline: "",
     cta: "",
     heroTag: "",
