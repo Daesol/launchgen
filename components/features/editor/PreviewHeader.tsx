@@ -15,7 +15,7 @@ export default function PreviewHeader({
   regenerating 
 }: PreviewHeaderProps) {
   return (
-    <div className="bg-neutral-800 border-b border-[#2D2D2D] px-4 py-3 flex items-center justify-between">
+    <div className="bg-neutral-800 border-b border-[#2D2D2D] px-3 py-2 flex items-center justify-between">
       {/* Left side - View toggle buttons */}
       <div className="flex items-center space-x-2">
         <span className="text-sm font-medium text-neutral-300 mr-3">Preview</span>
@@ -23,7 +23,7 @@ export default function PreviewHeader({
         {/* Desktop/Mobile view buttons */}
         <button
           onClick={() => onPreviewModeChange('desktop')}
-          className={`p-2 rounded transition-colors ${
+          className={`p-1.5 rounded transition-colors ${
             previewMode === 'desktop'
               ? 'bg-blue-600 text-white'
               : 'text-neutral-400 hover:text-white hover:bg-neutral-700'
@@ -37,7 +37,7 @@ export default function PreviewHeader({
         
         <button
           onClick={() => onPreviewModeChange('mobile')}
-          className={`p-2 rounded transition-colors ${
+          className={`p-1.5 rounded transition-colors ${
             previewMode === 'mobile'
               ? 'bg-blue-600 text-white'
               : 'text-neutral-400 hover:text-white hover:bg-neutral-700'
@@ -55,7 +55,7 @@ export default function PreviewHeader({
         <button
           onClick={onRegenerate}
           disabled={regenerating}
-          className="px-4 py-2 text-sm border border-[#2D2D2D] text-white hover:bg-neutral-700 hover:border-neutral-600 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-1.5 text-sm border border-[#2D2D2D] text-white hover:bg-neutral-700 hover:border-neutral-600 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ backgroundColor: '#0A0A0A' }}
         >
           {regenerating ? (

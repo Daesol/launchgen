@@ -284,7 +284,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Preview Container with rounded corners */}
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-2 pt-0">
           <div className="bg-neutral-900 rounded-lg border border-[#2D2D2D] overflow-hidden h-full flex flex-col">
             {/* Preview Header */}
             <PreviewHeader
