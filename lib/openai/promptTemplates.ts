@@ -104,12 +104,13 @@ CRITICAL REQUIREMENTS FOR REGENERATION:
 - Ensure ALL sections have meaningful content (not empty arrays or strings)
 - DO NOT generate placeholder or generic content - make it specific to the user's original prompt
 - The regeneration should better align with what the user originally requested
+- PRESERVE existing headlineHighlights if the headline is similar - only update highlights if the headline changes significantly
 
 CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 - business.name: Keep existing name or improve it based on the original prompt. Must NOT be empty.
 - business.logo: Leave empty string "" for default logo placeholder.
 - hero.headline: Improve the existing headline or create a compelling, conversion-focused one that better matches the original prompt.
-- hero.headlineHighlights: Array of 1-3 key words from the headline that should be highlighted.
+- hero.headlineHighlights: Array of 1-3 key words from the headline that should be highlighted. If the headline is similar to the existing one, preserve the existing highlights. If the headline changes significantly, generate new highlights based on the most impactful words in the new headline.
 - hero.heroTag: A short, catchy tag/badge text. Must NOT be empty.
 - hero.heroTagIcon: MUST be one of these exact values: "zap", "star", "shield", "rocket", "target", "trendingUp", "award", "sparkles".
 - hero.subheadline: A compelling subheadline that expands on the value proposition and aligns with the original prompt.
@@ -155,6 +156,8 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 - theme.accentColor: A valid CSS color string.
 
 IMPORTANT: This is a REGENERATION based on the user's ORIGINAL PROMPT. Improve the existing content to better match what the user originally requested. Do not leave any sections with empty arrays or strings. DO NOT generate generic placeholder content - make everything specific and relevant to the user's original prompt.
+
+SPECIAL INSTRUCTION FOR HEADLINE HIGHLIGHTS: If the existing headlineHighlights array has values and the headline is similar to the existing one, preserve those highlights. Only generate new highlights if the headline changes significantly or if there are no existing highlights.
 
 CRITICAL: Ensure your JSON is complete and properly formatted. If you cannot generate meaningful content for any section, DO NOT include that section rather than filling it with placeholder text.
 
