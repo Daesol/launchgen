@@ -9,6 +9,7 @@ import { useFieldAutoSave } from "../../features/editor/hooks/useFieldAutoSave";
 import { useSectionManagement } from "../../features/editor/hooks/useSectionManagement";
 import { useEventHandlers } from "../../features/editor/hooks/useEventHandlers";
 import EditPanel from "../../features/editor/panels/EditPanel";
+import PreviewHeader from "../../features/editor/PreviewHeader";
 
 interface PageEditorProps {
   initialConfig: any; // Should contain page_content, page_style, template_id, id (if editing)
@@ -282,20 +283,33 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
-        {/* Preview Content */}
-        <div className="flex-1 overflow-auto">
-          <div className={`w-full min-h-full ${previewMode === 'mobile' ? 'max-w-sm mx-auto p-4 bg-white rounded-lg shadow-lg relative' : 'max-w-none'}`}>
-            <LandingPageTemplate 
-              config={{ 
-                ...pageContent, 
-                theme: pageStyle?.theme,
-                sectionOrder: sectionState.sectionOrder 
-              }} 
-              pageId={id || 'preview'}
+        {/* Preview Container with rounded corners */}
+        <div className="flex-1 overflow-auto p-4">
+          <div className="bg-neutral-900 rounded-lg border border-[#2D2D2D] overflow-hidden h-full flex flex-col">
+            {/* Preview Header */}
+            <PreviewHeader
               previewMode={previewMode}
-              visibleSections={sectionState.visibleSections}
-              onSectionSelect={handleSectionSelectFromPreview}
+              onPreviewModeChange={setPreviewMode}
+              onRegenerate={handleRegenerate}
+              regenerating={regenerating}
             />
+            
+            {/* Preview Content */}
+            <div className="flex-1 overflow-auto bg-white">
+              <div className={`w-full min-h-full ${previewMode === 'mobile' ? 'max-w-sm mx-auto p-4' : 'max-w-none'}`}>
+                <LandingPageTemplate 
+                  config={{ 
+                    ...pageContent, 
+                    theme: pageStyle?.theme,
+                    sectionOrder: sectionState.sectionOrder 
+                  }} 
+                  pageId={id || 'preview'}
+                  previewMode={previewMode}
+                  visibleSections={sectionState.visibleSections}
+                  onSectionSelect={handleSectionSelectFromPreview}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
