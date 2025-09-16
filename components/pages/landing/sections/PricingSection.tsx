@@ -62,7 +62,7 @@ export default function PricingSection({
           <h2 className={`font-bold mb-3 sm:mb-4 ${isDark ? 'text-white' : 'text-gray-900'} ${
             isMobilePreview 
               ? 'text-xl' 
-              : 'text-2xl sm:text-3xl lg:text-4xl'
+              : 'text-4xl'
           }`}>
             {title}
           </h2>
@@ -84,13 +84,15 @@ export default function PricingSection({
                 plan.popular 
                   ? 'ring-2' 
                   : isDark 
-                    ? 'bg-gray-800 border border-gray-700' 
+                    ? 'border border-gray-700' 
                     : 'bg-white border border-gray-200'
               }`}
               style={plan.popular ? {
                 '--tw-ring-color': theme.accentColor,
                 backgroundColor: isDark ? getAccentColor(theme.accentColor, 0.1) : getAccentColor(theme.accentColor, 0.05)
-              } as React.CSSProperties : {}}
+              } : {
+                backgroundColor: isDark ? '#000000' : undefined
+              } as React.CSSProperties}
             >
               {/* Popular Badge */}
               {plan.popular && (
@@ -175,12 +177,6 @@ export default function PricingSection({
           )}
         </div>
 
-        {/* Additional Info */}
-        <div className="text-center mt-8 sm:mt-12">
-          <p className={`text-xs sm:text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-            All plans include 30-day money-back guarantee
-          </p>
-        </div>
       </div>
     </section>
   );

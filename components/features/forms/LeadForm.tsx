@@ -20,8 +20,8 @@ export default function LeadForm({ pageId, theme, ctaText = "Submit", previewMod
 
   const accent = theme?.accentColor || "#6366f1";
   const isDark = theme?.mode === "black";
-  const inputBg = isDark ? "bg-slate-800/80 text-white" : "bg-white text-black";
-  const borderClass = isDark ? "border-slate-700" : "border-slate-300";
+  const inputBg = isDark ? "text-white" : "bg-white text-black";
+  const borderClass = isDark ? "border-gray-600" : "border-slate-300";
 
   // Set placeholder color based on theme
   useEffect(() => {
@@ -102,6 +102,7 @@ export default function LeadForm({ pageId, theme, ctaText = "Submit", previewMod
           id="leadform-input"
           className={`px-4 py-2 border rounded focus:ring-2 focus:ring-opacity-60 focus:outline-none ${inputBg} ${borderClass}`}
           style={{
+            backgroundColor: isDark ? '#000000' : '#ffffff',
             borderColor: accent,
             boxShadow: `0 0 0 2px ${accent}22`,
             minWidth: isMobilePreview ? '100%' : '200px',
