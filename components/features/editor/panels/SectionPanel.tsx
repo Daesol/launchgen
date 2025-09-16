@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBusinessHandlers, createHeroHandlers, createProblemHandlers, createFeaturesHandlers, createSocialProofHandlers, createGuaranteesHandlers, createFAQHandlers, createCTAHandlers, createUrgencyHandlers } from '../utils/fieldHandlers';
+import { createBusinessHandlers, createHeroHandlers, createProblemHandlers, createFeaturesHandlers, createSocialProofHandlers, createPricingHandlers, createGuaranteesHandlers, createFAQHandlers, createCTAHandlers, createUrgencyHandlers } from '../utils/fieldHandlers';
 import IconSelector, { HeroIconSelector, FeatureIconSelector, PainPointIconSelector, GuaranteeIconSelector } from '../common/IconSelector';
 
 interface SectionPanelProps {
@@ -18,6 +18,7 @@ export default function SectionPanel({ sectionId, pageContent, onPageContentChan
       case 'problemSection': return 'Problem Section';
       case 'features': return 'Features Section';
       case 'socialProof': return 'Social Proof Section';
+      case 'pricing': return 'Pricing Section';
       case 'guarantees': return 'Guarantees Section';
       case 'faq': return 'FAQ Section';
       case 'cta': return 'CTA Section';
@@ -43,6 +44,9 @@ export default function SectionPanel({ sectionId, pageContent, onPageContentChan
       
       case 'socialProof':
         return <SocialProofSectionEditor socialProof={pageContent?.socialProof || {}} onPageContentChange={onPageContentChange} pageContent={pageContent} />;
+      
+      case 'pricing':
+        return <PricingSectionEditor pricing={pageContent?.pricing || {}} onPageContentChange={onPageContentChange} pageContent={pageContent} />;
       
       case 'guarantees':
         return <GuaranteesSectionEditor guarantees={pageContent?.guarantees || {}} onPageContentChange={onPageContentChange} />;
@@ -827,6 +831,188 @@ function UrgencySectionEditor({ urgency, onPageContentChange }: { urgency: any; 
             className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="e.g., Ends in 24 hours"
           />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+// Pricing Section Editor
+function PricingSectionEditor({ pricing, onPageContentChange, pageContent }: { pricing: any; onPageContentChange: (field: string, value: any) => void; pageContent: any }) {
+  const handlers = createPricingHandlers(pageContent, onPageContentChange);
+
+  return (
+    <div className="space-y-6">
+      {/* Section Title */}
+      <div>
+        <label className="block text-sm font-medium text-white mb-2">Section Title</label>
+        <input
+          type="text"
+          value={pricing?.title || ""}
+          onChange={(e) => handlers.handlePricingChange("title", e.target.value)}
+          className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
+          placeholder="e.g., Simple Pricing"
+        />
+      </div>
+
+      {/* Section Description */}
+      <div>
+        <label className="block text-sm font-medium text-white mb-2">Section Description</label>
+        <input
+          type="text"
+          value={pricing?.description || ""}
+          onChange={(e) => handlers.handlePricingChange("description", e.target.value)}
+          className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
+          placeholder="e.g., Choose the plan that is right for you"
+        />
+      </div>
+
+      {/* Pricing Plans */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <label className="block text-sm font-medium text-white">Pricing Plans</label>
+          <button
+            onClick={handlers.handleAddPlan}
+            className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Add Plan
+          </button>
+        </div>
+
+        <div className="space-y-6">
+          {(pricing?.plans || []).map((plan: any, planIndex: number) => (
+            <div key={planIndex} className="border border-[#2D2D2D] rounded-lg p-4 bg-neutral-900">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-medium text-white">Plan {planIndex + 1}</h4>
+                <button
+                  onClick={() => handlers.handleRemovePlan(planIndex)}
+                  className="text-red-400 hover:text-red-300 text-sm"
+                >
+                  Remove
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Plan Name */}
+                <div>
+                  <label className="block text-xs font-medium text-neutral-300 mb-1">Plan Name</label>
+                  <input
+                    type="text"
+                    value={plan.name || ""}
+                    onChange={(e) => handlers.handlePlanChange(planIndex, "name", e.target.value)}
+                    className="w-full px-2 py-1 border border-[#2D2D2D] rounded text-sm bg-neutral-800 text-white"
+                    placeholder="e.g., Basic"
+                  />
+                </div>
+
+                {/* Price */}
+                <div>
+                  <label className="block text-xs font-medium text-neutral-300 mb-1">Price</label>
+                  <input
+                    type="text"
+                    value={plan.price || ""}
+                    onChange={(e) => handlers.handlePlanChange(planIndex, "price", e.target.value)}
+                    className="w-full px-2 py-1 border border-[#2D2D2D] rounded text-sm bg-neutral-800 text-white"
+                    placeholder="e.g., $29"
+                  />
+                </div>
+
+                {/* Period */}
+                <div>
+                  <label className="block text-xs font-medium text-neutral-300 mb-1">Period</label>
+                  <select
+                    value={plan.period || "month"}
+                    onChange={(e) => handlers.handlePlanChange(planIndex, "period", e.target.value)}
+                    className="w-full px-2 py-1 border border-[#2D2D2D] rounded text-sm bg-neutral-800 text-white"
+                  >
+                    <option value="month">Month</option>
+                    <option value="year">Year</option>
+                    <option value="contact">Contact</option>
+                  </select>
+                </div>
+
+                {/* Popular */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={plan.popular || false}
+                    onChange={(e) => handlers.handlePlanChange(planIndex, "popular", e.target.checked)}
+                    className="w-4 h-4 text-blue-600"
+                  />
+                  <label className="text-xs text-neutral-300">Most Popular</label>
+                </div>
+
+                {/* Description */}
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-medium text-neutral-300 mb-1">Description</label>
+                  <input
+                    type="text"
+                    value={plan.description || ""}
+                    onChange={(e) => handlers.handlePlanChange(planIndex, "description", e.target.value)}
+                    className="w-full px-2 py-1 border border-[#2D2D2D] rounded text-sm bg-neutral-800 text-white"
+                    placeholder="e.g., Perfect for small teams"
+                  />
+                </div>
+
+                {/* CTA Text */}
+                <div>
+                  <label className="block text-xs font-medium text-neutral-300 mb-1">CTA Text</label>
+                  <input
+                    type="text"
+                    value={plan.ctaText || ""}
+                    onChange={(e) => handlers.handlePlanChange(planIndex, "ctaText", e.target.value)}
+                    className="w-full px-2 py-1 border border-[#2D2D2D] rounded text-sm bg-neutral-800 text-white"
+                    placeholder="e.g., Get Started"
+                  />
+                </div>
+
+                {/* CTA Link */}
+                <div>
+                  <label className="block text-xs font-medium text-neutral-300 mb-1">CTA Link</label>
+                  <input
+                    type="text"
+                    value={plan.ctaLink || ""}
+                    onChange={(e) => handlers.handlePlanChange(planIndex, "ctaLink", e.target.value)}
+                    className="w-full px-2 py-1 border border-[#2D2D2D] rounded text-sm bg-neutral-800 text-white"
+                    placeholder="e.g., # or https://..."
+                  />
+                </div>
+              </div>
+
+              {/* Features */}
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-medium text-neutral-300">Features</label>
+                  <button
+                    onClick={() => handlers.handleAddFeature(planIndex)}
+                    className="text-xs text-blue-400 hover:text-blue-300"
+                  >
+                    + Add Feature
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {(plan.features || []).map((feature: string, featureIndex: number) => (
+                    <div key={featureIndex} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={feature}
+                        onChange={(e) => handlers.handleUpdateFeature(planIndex, featureIndex, e.target.value)}
+                        className="flex-1 px-2 py-1 border border-[#2D2D2D] rounded text-sm bg-neutral-800 text-white"
+                        placeholder="e.g., 10GB Storage"
+                      />
+                      <button
+                        onClick={() => handlers.handleRemoveFeature(planIndex, featureIndex)}
+                        className="text-red-400 hover:text-red-300 text-xs"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

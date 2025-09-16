@@ -77,6 +77,24 @@ export interface FAQSection {
   questions?: FAQ[];
 }
 
+export interface PricingPlan {
+  id: string;
+  name: string;
+  price: string;
+  period: string;
+  description: string;
+  features: string[];
+  popular?: boolean;
+  ctaText: string;
+  ctaLink: string;
+}
+
+export interface Pricing {
+  title?: string;
+  description?: string;
+  plans?: PricingPlan[];
+}
+
 export interface Urgency {
   enabled?: boolean;
   message?: string;
@@ -84,7 +102,7 @@ export interface Urgency {
 }
 
 export interface Theme {
-  mode: "white" | "black";
+  mode: "white" | "black" | "light" | "dark";
   accentColor: string;
 }
 
@@ -102,6 +120,7 @@ export interface LandingPageConfig {
   features: Feature[];
   featuresTitle?: string;
   featuresSubtitle?: string;
+  pricing?: Pricing;
   guarantees?: Guarantees;
   faq?: FAQSection;
   ctaTitle?: string;
@@ -126,6 +145,7 @@ export type SectionName =
   | 'problemSection'
   | 'features'
   | 'socialProof'
+  | 'pricing'
   | 'guarantees'
   | 'faq'
   | 'cta';

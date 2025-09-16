@@ -64,6 +64,23 @@ export function createFallbackConfig(): LandingPageConfig {
     ],
     featuresTitle: "Powerful Features",
     featuresSubtitle: "Everything you need to build, deploy, and scale your applications with confidence.",
+    pricing: {
+      title: "Simple Pricing",
+      description: "Choose the plan that's right for you",
+      plans: [
+        {
+          id: "basic",
+          name: "Basic",
+          price: "$29",
+          period: "month",
+          description: "Perfect for small teams",
+          features: ["10GB Storage", "Basic Support", "Email Integration"],
+          popular: false,
+          ctaText: "Get Started",
+          ctaLink: "#"
+        }
+      ]
+    },
     guarantees: {
       title: "Our Guarantees",
       subtitle: "We're confident you'll love our solution",
@@ -87,8 +104,9 @@ export function createFallbackConfig(): LandingPageConfig {
     },
     sectionOrder: [
       "problemSection",
-      "features", 
+      "features",
       "socialProof",
+      "pricing",
       "guarantees",
       "faq",
       "cta"
@@ -189,6 +207,18 @@ export function applyFallbacks(config: any): LandingPageConfig {
     config.guarantees.guarantees = [];
   }
 
+  // Pricing fallbacks
+  if (!config.pricing) {
+    config.pricing = {
+      title: "Simple Pricing",
+      description: "Choose the plan that's right for you",
+      plans: []
+    };
+  }
+  if (!config.pricing.plans || !Array.isArray(config.pricing.plans)) {
+    config.pricing.plans = [];
+  }
+
   // FAQ fallbacks
   if (!config.faq) {
     config.faq = {
@@ -230,6 +260,22 @@ export function applyFallbacks(config: any): LandingPageConfig {
   }
   if (!config.theme.accentColor || config.theme.accentColor.trim() === "") {
     config.theme.accentColor = "#6366f1";
+  }
+
+  // Section order validation - ensure pricing is included
+  if (!config.sectionOrder || !Array.isArray(config.sectionOrder)) {
+    config.sectionOrder = [
+      "problemSection",
+      "features", 
+      "socialProof",
+      "pricing",
+      "guarantees",
+      "faq",
+      "cta"
+    ];
+  } else if (!config.sectionOrder.includes("pricing")) {
+    // Add pricing to section order if it's missing
+    config.sectionOrder.splice(3, 0, "pricing"); // Insert after socialProof
   }
 
   return config;

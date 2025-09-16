@@ -86,7 +86,7 @@ export default function Header({
               isMobilePreview ? 'h-6 w-6 text-xs' : 'h-8 w-8 text-sm'
             } text-white`}
             style={{ 
-              backgroundColor: theme.mode === 'black' ? '#1e293b' : theme.accentColor
+              backgroundColor: theme.accentColor
             }}>
               {business?.name ? business.name.charAt(0).toUpperCase() : 'L'}
             </div>

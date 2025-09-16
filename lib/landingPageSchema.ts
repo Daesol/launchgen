@@ -60,6 +60,24 @@ export const landingPageSchema = {
       { question: "", answer: "" }
     ]
   },
+  // Pricing Section
+  pricing: {
+    title: "",
+    description: "",
+    plans: [
+      {
+        id: "",
+        name: "",
+        price: "",
+        period: "",
+        description: "",
+        features: [""],
+        popular: false,
+        ctaText: "",
+        ctaLink: ""
+      }
+    ]
+  },
   ctaTitle: "",
   ctaSubtitle: "",
   // Urgency/Scarcity elements
@@ -77,6 +95,7 @@ export const landingPageSchema = {
     "problemSection",
     "features", 
     "socialProof",
+    "pricing",
     "guarantees",
     "faq",
     "cta"

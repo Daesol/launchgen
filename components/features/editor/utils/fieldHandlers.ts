@@ -221,6 +221,61 @@ export const createCTAHandlers = (
   },
 });
 
+// Pricing section handlers
+export const createPricingHandlers = (
+  pageContent: any,
+  onPageContentChange: (field: string, value: any) => void
+) => ({
+  handlePricingChange: (field: string, value: any) => {
+    onPageContentChange(`pricing.${field}`, value);
+  },
+  handlePlanChange: (planIndex: number, field: string, value: any) => {
+    const currentPlans = pageContent?.pricing?.plans || [];
+    const newPlans = currentPlans.map((plan: any, i: number) => 
+      i === planIndex ? { ...plan, [field]: value } : plan
+    );
+    onPageContentChange('pricing.plans', newPlans);
+  },
+  handleAddPlan: () => {
+    const currentPlans = pageContent?.pricing?.plans || [];
+    const newPlans = [...currentPlans, {
+      id: `plan-${Date.now()}`,
+      name: "",
+      price: "",
+      period: "month",
+      description: "",
+      features: [""],
+      popular: false,
+      ctaText: "Get Started",
+      ctaLink: "#"
+    }];
+    onPageContentChange('pricing.plans', newPlans);
+  },
+  handleRemovePlan: (planIndex: number) => {
+    const currentPlans = pageContent?.pricing?.plans || [];
+    const newPlans = currentPlans.filter((_: any, i: number) => i !== planIndex);
+    onPageContentChange('pricing.plans', newPlans);
+  },
+  handleAddFeature: (planIndex: number) => {
+    const currentPlans = pageContent?.pricing?.plans || [];
+    const newPlans = [...currentPlans];
+    newPlans[planIndex].features.push("");
+    onPageContentChange('pricing.plans', newPlans);
+  },
+  handleRemoveFeature: (planIndex: number, featureIndex: number) => {
+    const currentPlans = pageContent?.pricing?.plans || [];
+    const newPlans = [...currentPlans];
+    newPlans[planIndex].features.splice(featureIndex, 1);
+    onPageContentChange('pricing.plans', newPlans);
+  },
+  handleUpdateFeature: (planIndex: number, featureIndex: number, value: string) => {
+    const currentPlans = pageContent?.pricing?.plans || [];
+    const newPlans = [...currentPlans];
+    newPlans[planIndex].features[featureIndex] = value;
+    onPageContentChange('pricing.plans', newPlans);
+  },
+});
+
 // Urgency section handlers
 export const createUrgencyHandlers = (
   pageContent: PageContent,

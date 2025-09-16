@@ -13,6 +13,7 @@ export default function LandingPageTemplate({
   onSectionSelect 
 }: LandingPageTemplateProps) {
   
+  
   if (!config || !config.hero || !config.features) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 text-red-600 text-lg font-semibold">
@@ -61,10 +62,11 @@ export default function LandingPageTemplate({
   const isMobilePreview = previewMode === 'mobile';
 
   return (
-    <div className={`flex flex-col min-h-screen ${themeClasses.background}`} style={{
+    <div className={`flex flex-col ${themeClasses.background}`} style={{
       // Force styles as backup if Tailwind classes don't work
       backgroundColor: theme.mode === 'black' ? '#000000' : '#ffffff',
-      color: theme.mode === 'black' ? '#f8fafc' : '#0f172a'
+      color: theme.mode === 'black' ? '#f8fafc' : '#0f172a',
+      minHeight: previewMode === 'mobile' ? '100vh' : 'auto'
     }}>
       {/* Header */}
       <Header

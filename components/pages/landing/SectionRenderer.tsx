@@ -4,6 +4,7 @@ import HeroSection from "./sections/HeroSection";
 import ProblemSection from "./sections/ProblemSection";
 import FeaturesSection from "./sections/FeaturesSection";
 import SocialProofSection from "./sections/SocialProofSection";
+import PricingSection from "./sections/PricingSection";
 import GuaranteesSection from "./sections/GuaranteesSection";
 import FAQSection from "./sections/FAQSection";
 import CTASection from "./sections/CTASection";
@@ -34,10 +35,12 @@ export default function SectionRenderer({
   };
 
   // Render sections based on sectionOrder or default order
-  let sectionOrder = config.sectionOrder || [
+  // Handle both old format (config.sectionOrder) and new format (config.page_content.sectionOrder)
+  let sectionOrder = config.sectionOrder || (config as any).page_content?.sectionOrder || [
     'problemSection', 
     'features',
     'socialProof',
+    'pricing',
     'guarantees',
     'faq',
     'cta'
@@ -48,8 +51,24 @@ export default function SectionRenderer({
     console.log('SectionRenderer - Theme changed:', theme);
   }, [theme]);
 
+  // Debug config and section order
+  React.useEffect(() => {
+    console.log('🔍 SectionRenderer - Full config:', config);
+    console.log('🔍 SectionRenderer - Config sectionOrder:', config.sectionOrder);
+    console.log('🔍 SectionRenderer - Page content sectionOrder:', (config as any).page_content?.sectionOrder);
+    console.log('🔍 SectionRenderer - Final section order:', sectionOrder);
+    console.log('🔍 SectionRenderer - Pricing config:', pageContent.pricing);
+    console.log('🔍 SectionRenderer - Visible sections:', visibleSections);
+    console.log('🔍 SectionRenderer - Is pricing visible?', isSectionVisible('pricing'));
+    console.log('🔍 SectionRenderer - Pricing in section order?', sectionOrder.includes('pricing'));
+  }, [config, sectionOrder, visibleSections]);
+
+  // Get the actual page content from the config
+  const pageContent = (config as any).page_content || config;
+  
   // Always render hero first, then the rest of the sections in the specified order
   const finalSectionOrder = ['hero', ...sectionOrder];
+  
 
   const renderSection = (sectionId: SectionName) => {
     switch (sectionId) {
@@ -58,7 +77,7 @@ export default function SectionRenderer({
           <div className={isSectionVisible('hero') ? 'block' : 'hidden'}>
             <HeroSection
               key="hero"
-              hero={config.hero}
+              hero={pageContent.hero}
               theme={theme}
               pageId={pageId}
               previewMode={previewMode}
@@ -68,10 +87,10 @@ export default function SectionRenderer({
         );
 
       case 'problemSection':
-        return isSectionVisible('problemSection') && config.problemSection ? (
+        return isSectionVisible('problemSection') && pageContent.problemSection ? (
           <ProblemSection
             key="problemSection"
-            problemSection={config.problemSection}
+            problemSection={pageContent.problemSection}
             theme={theme}
             previewMode={previewMode}
             onSectionSelect={onSectionSelect}
@@ -82,9 +101,9 @@ export default function SectionRenderer({
         return isSectionVisible('features') ? (
           <FeaturesSection
             key="features"
-            features={config.features}
-            featuresTitle={config.featuresTitle}
-            featuresSubtitle={config.featuresSubtitle}
+            features={pageContent.features}
+            featuresTitle={pageContent.featuresTitle}
+            featuresSubtitle={pageContent.featuresSubtitle}
             theme={theme}
             previewMode={previewMode}
             onSectionSelect={onSectionSelect}
@@ -92,21 +111,50 @@ export default function SectionRenderer({
         ) : null;
 
       case 'socialProof':
-        return isSectionVisible('socialProof') && config.socialProof ? (
+        return isSectionVisible('socialProof') && pageContent.socialProof ? (
           <SocialProofSection
             key="socialProof"
-            socialProof={config.socialProof}
+            socialProof={pageContent.socialProof}
             theme={theme}
             previewMode={previewMode}
             onSectionSelect={onSectionSelect}
           />
         ) : null;
 
+      case 'pricing':
+        console.log('🔍 PRICING SECTION RENDER CHECK:', {
+          sectionId: 'pricing',
+          isVisible: isSectionVisible('pricing'),
+          hasConfig: !!pageContent.pricing,
+          configPricing: pageContent.pricing,
+          title: pageContent.pricing?.title || "Simple Pricing",
+          description: pageContent.pricing?.description || "Choose the plan that's right for you",
+          plans: pageContent.pricing?.plans || [],
+          plansLength: (pageContent.pricing?.plans || []).length,
+          theme: theme
+        });
+        
+        // Always show pricing section, even with fallback data
+        const pricingElement = isSectionVisible('pricing') ? (
+          <PricingSection
+            key="pricing"
+            title={pageContent.pricing?.title || "Simple Pricing"}
+            description={pageContent.pricing?.description || "Choose the plan that's right for you"}
+            plans={pageContent.pricing?.plans || []}
+            theme={theme}
+            isMobilePreview={previewMode === 'mobile'}
+            onSectionSelect={onSectionSelect}
+          />
+        ) : null;
+        
+        console.log('🔍 PRICING SECTION RENDERED:', pricingElement ? 'YES' : 'NO');
+        return pricingElement;
+
       case 'guarantees':
-        return isSectionVisible('guarantees') && config.guarantees ? (
+        return isSectionVisible('guarantees') && pageContent.guarantees ? (
           <GuaranteesSection
             key="guarantees"
-            guarantees={config.guarantees}
+            guarantees={pageContent.guarantees}
             theme={theme}
             previewMode={previewMode}
             onSectionSelect={onSectionSelect}
@@ -114,10 +162,10 @@ export default function SectionRenderer({
         ) : null;
 
       case 'faq':
-        return isSectionVisible('faq') && config.faq ? (
+        return isSectionVisible('faq') && pageContent.faq ? (
           <FAQSection
             key="faq"
-            faq={config.faq}
+            faq={pageContent.faq}
             theme={theme}
             previewMode={previewMode}
             onSectionSelect={onSectionSelect}
@@ -128,8 +176,8 @@ export default function SectionRenderer({
         return isSectionVisible('cta') ? (
           <CTASection
             key="cta"
-            ctaTitle={config.ctaTitle}
-            ctaSubtitle={config.ctaSubtitle}
+            ctaTitle={pageContent.ctaTitle}
+            ctaSubtitle={pageContent.ctaSubtitle}
             theme={theme}
             pageId={pageId}
             previewMode={previewMode}

@@ -17,6 +17,7 @@ export function useSectionManagement(): UseSectionManagementReturn {
     cta: true,
     problemSection: true,
     socialProof: true,
+    pricing: true,
     guarantees: true,
     faq: true,
     urgency: true,
@@ -29,6 +30,7 @@ export function useSectionManagement(): UseSectionManagementReturn {
     cta: true,
     problemSection: true,
     socialProof: true,
+    pricing: true,
     guarantees: true,
     faq: true,
   });
@@ -37,7 +39,8 @@ export function useSectionManagement(): UseSectionManagementReturn {
   const [sectionOrder, setSectionOrder] = useState<string[]>([
     'problemSection',
     'features',
-    'socialProof', 
+    'socialProof',
+    'pricing',
     'guarantees',
     'faq',
     'cta'

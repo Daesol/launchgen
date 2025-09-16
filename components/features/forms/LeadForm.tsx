@@ -5,7 +5,7 @@ interface LeadFormProps {
   pageId: string;
   theme?: {
     accentColor: string;
-    mode: "white" | "black";
+    mode: "white" | "black" | "light" | "dark";
   };
   ctaText?: string;
   previewMode?: 'desktop' | 'mobile';

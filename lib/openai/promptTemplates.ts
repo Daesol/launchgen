@@ -44,6 +44,20 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 - featuresSubtitle: A descriptive subtitle explaining benefits and it must NOT be empty.
 - features: Array of 3-6 features with titles, descriptions, and benefits (what this means for the user).
 
+// Pricing Section
+- pricing.title: A compelling pricing section title (e.g., "Simple Pricing", "Choose Your Plan", "Pricing That Scales") and it must NOT be empty.
+- pricing.description: A subtitle that explains the pricing approach and it must NOT be empty.
+- pricing.plans: Array of 2-3 pricing plans. Each plan must have:
+  * id: Unique identifier (e.g., "basic", "pro", "enterprise")
+  * name: Plan name (e.g., "Basic", "Professional", "Enterprise")
+  * price: Price amount (e.g., "$29", "$99", "Custom")
+  * period: Billing period (e.g., "month", "year", "contact")
+  * description: Brief plan description
+  * features: Array of 4-6 key features included in this plan
+  * popular: Boolean indicating if this is the most popular plan (only one plan should be true)
+  * ctaText: Call-to-action text (e.g., "Get Started", "Choose Plan", "Contact Sales")
+  * ctaLink: Link for the CTA (can be "#" for demo purposes)
+
 // Risk Reversal Section
 - guarantees.title: A title that reduces risk (e.g., "Our Guarantees", "Risk-Free", "We've Got You Covered").
 - guarantees.subtitle: A subtitle that builds confidence.
@@ -131,6 +145,11 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 - featuresTitle: A compelling section title. Must NOT be empty.
 - featuresSubtitle: A descriptive subtitle. Must NOT be empty.
 - features: Array of 3-6 features with titles, descriptions, and benefits that align with the original prompt.
+
+// Pricing Section - MUST have content
+- pricing.title: A compelling pricing section title. Must NOT be empty.
+- pricing.description: A subtitle that explains the pricing approach. Must NOT be empty.
+- pricing.plans: Array of 2-3 pricing plans. Each plan must have: id, name, price, period, description, features (4-6 items), popular (boolean), ctaText, and ctaLink. MUST NOT be empty.
 
 // Risk Reversal Section - MUST have content
 - guarantees.title: A title that reduces risk.
