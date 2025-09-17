@@ -48,20 +48,25 @@ export default function RegularLayout({
 }: RegularLayoutProps) {
   return (
     <div className="flex h-screen bg-black overflow-hidden dashboard-layout">
-      {/* Sidebar */}
-      <Sidebar
-        pages={pages}
-        currentPageId={currentPageId}
-        isEditPage={isEditPage}
-        showSidebarOverlay={showSidebarOverlay}
-        sidebarHovered={sidebarHovered}
-        onPageClick={onPageClick}
-      />
+      {/* Desktop Sidebar - Hidden on mobile */}
+      <div className="hidden lg:block">
+        <Sidebar
+          pages={pages}
+          currentPageId={currentPageId}
+          isEditPage={isEditPage}
+          showSidebarOverlay={showSidebarOverlay}
+          sidebarHovered={sidebarHovered}
+          onPageClick={onPageClick}
+        />
+      </div>
 
-      {/* Mobile sidebar overlay */}
+      {/* Mobile sidebar */}
       <MobileSidebar
         sidebarOpen={sidebarOpen}
         onClose={onCloseSidebar}
+        pages={pages}
+        currentPageId={currentPageId}
+        onPageClick={onPageClick}
       />
 
       {/* Main content area */}

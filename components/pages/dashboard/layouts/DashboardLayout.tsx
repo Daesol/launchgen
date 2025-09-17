@@ -57,10 +57,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         currentPageId={currentPageId}
         isEditPage={isEditPage}
         showSidebarOverlay={showSidebarOverlay}
+        sidebarOpen={sidebarOpen}
         pageTitle={pageTitle}
         editingTitle={editingTitle}
         onPageClick={handlePageClick}
         onToggleSidebar={toggleSidebar}
+        onCloseSidebar={closeSidebar}
         onStartEditingTitle={startEditingTitle}
         onStopEditingTitle={stopEditingTitle}
         onUpdatePageTitle={updatePageTitle}

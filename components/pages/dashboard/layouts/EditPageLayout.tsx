@@ -2,6 +2,7 @@
 import React from "react";
 import Chatbot from "@/components/widgets/Chatbot";
 import Sidebar from "../layout/Sidebar";
+import MobileSidebar from "../layout/MobileSidebar";
 import Header from "../layout/Header";
 
 interface EditPageLayoutProps {
@@ -10,10 +11,12 @@ interface EditPageLayoutProps {
   currentPageId: string | null;
   isEditPage: boolean;
   showSidebarOverlay: boolean;
+  sidebarOpen: boolean;
   pageTitle: string;
   editingTitle: boolean;
   onPageClick: (page: any) => void;
   onToggleSidebar: () => void;
+  onCloseSidebar: () => void;
   onStartEditingTitle: () => void;
   onStopEditingTitle: () => void;
   onUpdatePageTitle: (title: string) => void;
@@ -29,10 +32,12 @@ export default function EditPageLayout({
   currentPageId,
   isEditPage,
   showSidebarOverlay,
+  sidebarOpen,
   pageTitle,
   editingTitle,
   onPageClick,
   onToggleSidebar,
+  onCloseSidebar,
   onStartEditingTitle,
   onStopEditingTitle,
   onUpdatePageTitle,
@@ -43,14 +48,25 @@ export default function EditPageLayout({
 }: EditPageLayoutProps) {
   return (
     <div className="flex h-screen bg-black overflow-hidden dashboard-layout">
-      {/* Sidebar - Hidden on edit pages, shown as overlay */}
-      <Sidebar
+      {/* Desktop Sidebar - Hidden on mobile, shown as overlay on edit pages */}
+      <div className="hidden lg:block">
+        <Sidebar
+          pages={pages}
+          currentPageId={currentPageId}
+          isEditPage={isEditPage}
+          showSidebarOverlay={showSidebarOverlay}
+          onPageClick={onPageClick}
+          onSidebarMouseLeave={onSidebarMouseLeave}
+        />
+      </div>
+
+      {/* Mobile sidebar */}
+      <MobileSidebar
+        sidebarOpen={sidebarOpen}
+        onClose={onCloseSidebar}
         pages={pages}
         currentPageId={currentPageId}
-        isEditPage={isEditPage}
-        showSidebarOverlay={showSidebarOverlay}
         onPageClick={onPageClick}
-        onSidebarMouseLeave={onSidebarMouseLeave}
       />
 
       {/* Main content area - Full width for edit pages */}
