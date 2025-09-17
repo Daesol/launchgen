@@ -269,8 +269,9 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
               onToggleFullScreen={toggleFullScreen}
               pageUrl={publishedUrl}
               pageId={id || ''}
-              previewUrl={id && initialConfig.slug ? `${window.location.origin}/page/${initialConfig.slug}` : undefined}
+              previewUrl={undefined}
               isPublished={published}
+              slug={initialConfig.slug}
             />
             
             {/* Preview Content */}

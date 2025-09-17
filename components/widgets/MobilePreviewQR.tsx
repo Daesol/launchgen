@@ -8,22 +8,31 @@ interface MobilePreviewQRProps {
   pageId: string;
   previewUrl?: string;
   isPublished?: boolean;
+  slug?: string;
 }
 
-export default function MobilePreviewQR({ pageUrl, pageId, previewUrl, isPublished = false }: MobilePreviewQRProps) {
+export default function MobilePreviewQR({ pageUrl, pageId, previewUrl, isPublished = false, slug }: MobilePreviewQRProps) {
   const [copied, setCopied] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeTab, setActiveTab] = useState<'preview' | 'published'>('preview');
   const [showPublishedTooltip, setShowPublishedTooltip] = useState(false);
+  const [clientPreviewUrl, setClientPreviewUrl] = useState<string>('');
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
+  // Generate preview URL on client side
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && slug) {
+      setClientPreviewUrl(`${window.location.origin}/page/${slug}`);
+    }
+  }, [slug]);
+
   // Check if we have URLs available
-  const hasPreviewUrl = previewUrl && previewUrl.trim() !== '';
+  const hasPreviewUrl = clientPreviewUrl && clientPreviewUrl.trim() !== '';
   const hasPublishedUrl = pageUrl && pageUrl.trim() !== '';
   const hasAnyUrl = hasPreviewUrl || hasPublishedUrl;
 
   // Get current URL based on active tab
-  const currentUrl = activeTab === 'preview' ? previewUrl : pageUrl;
+  const currentUrl = activeTab === 'preview' ? clientPreviewUrl : pageUrl;
 
   const handleCopyUrl = async () => {
     try {
@@ -151,7 +160,7 @@ export default function MobilePreviewQR({ pageUrl, pageId, previewUrl, isPublish
                 </div>
               </div>
 
-              {currentUrl && currentUrl.trim() !== '' ? (
+              {currentUrl && currentUrl.trim() !== '' && typeof currentUrl === 'string' ? (
                 <>
                   {/* QR Code */}
                   <div className="flex justify-center mb-4">

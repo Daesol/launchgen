@@ -76,10 +76,17 @@ export const iconMap: { [key: string]: React.ComponentType<any> } = {
 
 // Function to render icon with fallback
 export const renderIcon = (iconName: string, className: string = "h-4 w-4") => {
-  const IconComponent = iconMap[iconName.toLowerCase()];
+  if (!iconName) {
+    return React.createElement(Sparkles, { className });
+  }
+  
+  const normalizedName = iconName.toLowerCase().trim();
+  const IconComponent = iconMap[normalizedName];
+  
   if (IconComponent) {
     return React.createElement(IconComponent, { className });
   }
+  
   // Fallback to sparkles if icon not found
   return React.createElement(Sparkles, { className });
 };

@@ -13,6 +13,7 @@ interface PreviewHeaderProps {
   pageId?: string;
   previewUrl?: string;
   isPublished?: boolean;
+  slug?: string;
 }
 
 export default function PreviewHeader({ 
@@ -25,7 +26,8 @@ export default function PreviewHeader({
   pageUrl,
   pageId,
   previewUrl,
-  isPublished = false
+  isPublished = false,
+  slug
 }: PreviewHeaderProps) {
   return (
     <div className="border-b border-[#2D2D2D] px-3 py-2 flex items-center justify-between" style={{ backgroundColor: '#0A0A0A' }}>
@@ -97,6 +99,7 @@ export default function PreviewHeader({
             pageId={pageId || ''}
             previewUrl={previewUrl}
             isPublished={isPublished}
+            slug={slug}
           />
         </div>
         

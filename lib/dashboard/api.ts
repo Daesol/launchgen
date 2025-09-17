@@ -142,7 +142,7 @@ class DashboardAPI {
       const { data, error } = await this.supabase
         .from('analytics_events')
         .select('*')
-        .eq('page_id', pageId)
+        .eq('landing_page_id', pageId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;

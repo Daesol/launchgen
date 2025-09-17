@@ -5,8 +5,8 @@ import { Home, Plus } from "lucide-react";
 import { DashboardPage } from "../types/dashboard.types";
 
 const sidebarLinks = [
-  { href: "/dashboard", label: "Dashboard", icon: Home },
-  { href: "/dashboard/generate", label: "Create Page", icon: Plus },
+  { href: "/dashboard", label: "Dashboard", icon: "🏠" },
+  { href: "/dashboard/generate", label: "Create Page", icon: "➕" },
 ];
 
 interface SidebarProps {
@@ -40,20 +40,17 @@ export default function Sidebar({
         <div className="flex flex-col h-full">
           {/* Navigation */}
           <nav className="px-4 py-6 space-y-2">
-            {sidebarLinks.map(link => {
-              const IconComponent = link.icon;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-all duration-200 group"
-                  style={{ fontSize: '14px' }}
-                >
-                  {React.createElement(IconComponent, { className: "w-5 h-5" })}
-                  <span>{link.label}</span>
-                </Link>
-              );
-            })}
+            {sidebarLinks.map(link => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-all duration-200 group"
+                style={{ fontSize: '14px' }}
+              >
+                <span className="w-5 h-5 flex items-center justify-center text-sm">{link.icon}</span>
+                <span>{link.label}</span>
+              </Link>
+            ))}
           </nav>
 
           {/* Pages List */}

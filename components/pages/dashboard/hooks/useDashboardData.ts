@@ -58,24 +58,49 @@ export function useDashboardData() {
         }
       }
 
-      // Fetch analytics for all pages
+      // Fetch analytics for all pages (batched to avoid URL length limits)
       let analyticsByPage: Record<string, { views: number; submits: number }> = {};
       if (pages && pages.length > 0) {
         const pageIds = pages.map((p: DashboardPage) => p.id);
-        const { data: analytics } = await supabase
-          .from('analytics_events')
-          .select('page_id, event_type')
-          .in('page_id', pageIds);
         
-        if (analytics) {
-          analyticsByPage = analytics.reduce((acc: any, event: any) => {
-            if (!acc[event.page_id]) {
-              acc[event.page_id] = { views: 0, submits: 0 };
+        // Batch the queries to avoid URL length limits
+        const batchSize = 10; // Process 10 page IDs at a time
+        const batches = [];
+        for (let i = 0; i < pageIds.length; i += batchSize) {
+          batches.push(pageIds.slice(i, i + batchSize));
+        }
+        
+        const allAnalytics = [];
+        for (const batch of batches) {
+          try {
+            const { data: analytics, error } = await supabase
+              .from('analytics_events')
+              .select('landing_page_id, event_type')
+              .in('landing_page_id', batch);
+            
+            if (error) {
+              console.warn('Analytics fetch error for batch:', error);
+              continue; // Skip this batch but continue with others
+            }
+            
+            if (analytics) {
+              allAnalytics.push(...analytics);
+            }
+          } catch (err) {
+            console.warn('Analytics batch error:', err);
+            continue; // Skip this batch but continue with others
+          }
+        }
+        
+        if (allAnalytics.length > 0) {
+          analyticsByPage = allAnalytics.reduce((acc: any, event: any) => {
+            if (!acc[event.landing_page_id]) {
+              acc[event.landing_page_id] = { views: 0, submits: 0 };
             }
             if (event.event_type === 'page_view') {
-              acc[event.page_id].views++;
+              acc[event.landing_page_id].views++;
             } else if (event.event_type === 'form_submit') {
-              acc[event.page_id].submits++;
+              acc[event.landing_page_id].submits++;
             }
             return acc;
           }, {});
