@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import Link from "next/link";
 import { Home, Plus } from "lucide-react";
 import { DashboardPage } from "../types/dashboard.types";
@@ -48,7 +49,7 @@ export default function Sidebar({
                   className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-all duration-200 group"
                   style={{ fontSize: '14px' }}
                 >
-                  <IconComponent className="w-5 h-5" />
+                  {React.createElement(IconComponent, { className: "w-5 h-5" })}
                   <span>{link.label}</span>
                 </Link>
               );
