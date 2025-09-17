@@ -20,6 +20,7 @@ interface EditPageLayoutProps {
   onTitleSave: () => void;
   onTitleKeyDown: (e: React.KeyboardEvent) => void;
   onSignOut: () => void;
+  onSidebarMouseLeave?: () => void;
 }
 
 export default function EditPageLayout({
@@ -37,7 +38,8 @@ export default function EditPageLayout({
   onUpdatePageTitle,
   onTitleSave,
   onTitleKeyDown,
-  onSignOut
+  onSignOut,
+  onSidebarMouseLeave
 }: EditPageLayoutProps) {
   return (
     <div className="flex h-screen bg-black overflow-hidden dashboard-layout">
@@ -48,6 +50,7 @@ export default function EditPageLayout({
         isEditPage={isEditPage}
         showSidebarOverlay={showSidebarOverlay}
         onPageClick={onPageClick}
+        onSidebarMouseLeave={onSidebarMouseLeave}
       />
 
       {/* Main content area - Full width for edit pages */}

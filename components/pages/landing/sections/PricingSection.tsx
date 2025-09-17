@@ -39,15 +39,7 @@ export default function PricingSection({
 }: PricingSectionProps) {
   const isDark = theme.mode === 'dark' || theme.mode === 'black';
   
-  console.log('🎯 PRICING SECTION COMPONENT RENDERED:', {
-    title,
-    description,
-    plans,
-    plansLength: plans.length,
-    theme,
-    isMobilePreview,
-    windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'SSR'
-  });
+  // Removed debug console.log
   
   return (
     <section 
@@ -90,7 +82,7 @@ export default function PricingSection({
               style={plan.popular ? {
                 '--tw-ring-color': theme.accentColor,
                 backgroundColor: isDark ? getAccentColor(theme.accentColor, 0.1) : getAccentColor(theme.accentColor, 0.05)
-              } : {
+              } as React.CSSProperties & { '--tw-ring-color': string } : {
                 backgroundColor: isDark ? '#000000' : undefined
               } as React.CSSProperties}
             >
@@ -159,8 +151,29 @@ export default function PricingSection({
                       : '#000000'
                 }}
                 onClick={() => {
-                  if (plan.ctaLink) {
-                    window.open(plan.ctaLink, '_blank');
+                  if (plan.ctaLink && plan.ctaLink.trim() !== '') {
+                    // Navigate to external URL in the same page
+                    window.location.href = plan.ctaLink;
+                  } else {
+                    // Default behavior: scroll to hero section
+                    const heroSection = document.getElementById('hero');
+                    if (heroSection) {
+                      // Check if we're in a scrollable container
+                      const scrollableParent = heroSection.closest('.overflow-auto');
+                      if (scrollableParent) {
+                        // Scroll within the container
+                        const heroRect = heroSection.getBoundingClientRect();
+                        const containerRect = scrollableParent.getBoundingClientRect();
+                        const scrollTop = scrollableParent.scrollTop + heroRect.top - containerRect.top;
+                        scrollableParent.scrollTo({
+                          top: scrollTop,
+                          behavior: 'smooth'
+                        });
+                      } else {
+                        // Use the same approach as the header navigation
+                        heroSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }
                   }
                 }}
               >

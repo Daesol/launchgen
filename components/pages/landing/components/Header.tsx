@@ -42,6 +42,7 @@ export default function Header({
       case 'problemSection': return 'Why';
       case 'features': return 'How';
       case 'socialProof': return 'Testimonials';
+      case 'pricing': return 'Pricing';
       case 'guarantees': return 'Guarantees';
       case 'faq': return 'FAQs';
       default: return null;
@@ -52,6 +53,7 @@ export default function Header({
     switch (section) {
       case 'problemSection': return 'problem-section';
       case 'socialProof': return 'social-proof';
+      case 'pricing': return 'pricing';
       default: return section;
     }
   };
@@ -143,19 +145,19 @@ export default function Header({
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className={`${previewMode === 'mobile' ? 'flex' : 'md:hidden'} ${previewMode === 'mobile' ? 'absolute inset-0' : 'fixed inset-0'} bg-black bg-opacity-50 z-50 animate-in fade-in duration-300`}>
-          <div className={`${previewMode === 'mobile' ? 'absolute' : 'absolute'} top-0 left-0 right-0 bg-white shadow-lg transform transition-transform duration-300 ease-in-out animate-in slide-in-from-top-2`}>
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <span className="font-semibold text-gray-800">Menu</span>
+          <div className={`${previewMode === 'mobile' ? 'absolute' : 'absolute'} top-0 left-0 right-0 ${themeClasses.background} shadow-lg transform transition-transform duration-300 ease-in-out animate-in slide-in-from-top-2`}>
+            <div className={`flex items-center justify-between p-4 border-b ${themeClasses.border}`}>
+              <span className={`font-semibold ${themeClasses.text}`}>Menu</span>
               <button
                 onClick={toggleMobileMenu}
-                className="p-2 text-gray-500 hover:text-gray-700"
+                className={`p-2 ${themeClasses.textSecondary} hover:${themeClasses.text} transition-colors`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <nav className="p-4 space-y-4">
+            <nav className="p-4 space-y-4 mobile-menu">
               {config.sectionOrder?.map((sectionName: string, index: number) => {
                 const label = getSectionLabel(sectionName);
                 if (!label) return null;
@@ -166,7 +168,17 @@ export default function Header({
                   <button
                     key={index}
                     onClick={() => scrollToSection(sectionId)}
-                    className={`block w-full text-left py-2 px-3 rounded-lg transition-colors ${themeClasses.textSecondary} hover:${themeClasses.text} hover:bg-gray-100`}
+                    className={`block w-full text-left py-2 px-3 rounded-lg transition-colors ${themeClasses.textSecondary} hover:${themeClasses.text}`}
+                    style={{
+                      backgroundColor: 'transparent',
+                      transition: 'background-color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = theme.mode === 'black' ? '#1f2937' : '#f3f4f6';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
                   >
                     {label}
                   </button>

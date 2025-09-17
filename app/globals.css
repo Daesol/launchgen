@@ -32,24 +32,24 @@
   }
 
   .dark {
-    --background: 0 0% 3.9%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
+    --card: 0 0% 9%;
     --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
+    --popover: 0 0% 9%;
     --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
     --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
+    --secondary: 0 0% 9%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
+    --muted: 0 0% 9%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
+    --accent: 0 0% 9%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
+    --border: 0 0% 25%;
+    --input: 0 0% 9%;
     --ring: 0 0% 83.1%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -169,6 +169,29 @@ body.dashboard-page {
   scrollbar-color: #2D2D2D #0A0A0A;
 }
 
+/* Override blue-ish colors with true neutral gray */
+.dark .bg-gray-800,
+.dark .bg-gray-900 {
+  background-color: #1f2937 !important;
+}
+
+.dark .border-gray-700,
+.dark .border-gray-600 {
+  border-color: #374151 !important;
+}
+
+/* Ensure lead form inputs use neutral gray */
+.dark input[type="email"] {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+/* Ensure pricing cards use neutral gray */
+.dark .pricing-card {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
 /* Mobile scrollbar styling - Completely hidden */
 .mobile-scrollbar-overlay {
   scrollbar-width: none; /* Firefox */
@@ -181,10 +204,12 @@ body.dashboard-page {
 
 /* Simple mobile preview adjustments */
 .mobile-preview-container #hero {
-  min-height: 60vh !important;
-  padding-top: 1rem !important;
-  padding-bottom: 1rem !important;
+  /* Removed min-height constraint to allow natural content flow */
+  min-height: auto !important;
+  height: auto !important;
 }
+
+/* Debug CSS removed - root cause found and fixed */
 
 .mobile-preview-container #hero .space-y-6 > * + * {
   margin-top: 1rem !important;
@@ -193,6 +218,7 @@ body.dashboard-page {
 .mobile-preview-container #hero .space-y-4 > * + * {
   margin-top: 0.75rem !important;
 }
+
 
 @theme inline {
   @keyframes shine {

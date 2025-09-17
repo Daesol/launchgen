@@ -45,6 +45,9 @@ LaunchGen is a platform to generate AI-powered landing pages, capture leads, and
 - Add analytics script injection
 - Test and debug all flows
 - Implement global theme switching (dark/light mode) ✅
+- Add media component to hero section (images, videos, YouTube/Vimeo) ✅
+- Implement file upload with Supabase Storage ✅
+- Add media toggle functionality ✅
 
 ### 4. Deployment & Launch
 - Prepare for Vercel deployment

@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
+import { Home, Plus } from "lucide-react";
 import { DashboardPage } from "../types/dashboard.types";
 
 const sidebarLinks = [
-  { href: "/dashboard", label: "Dashboard", icon: "🏠" },
-  { href: "/dashboard/generate", label: "Create Page", icon: "➕" },
+  { href: "/dashboard", label: "Dashboard", icon: Home },
+  { href: "/dashboard/generate", label: "Create Page", icon: Plus },
 ];
 
 interface SidebarProps {
@@ -14,6 +15,7 @@ interface SidebarProps {
   showSidebarOverlay: boolean;
   sidebarHovered?: boolean;
   onPageClick: (page: DashboardPage) => void;
+  onSidebarMouseLeave?: () => void;
 }
 
 export default function Sidebar({ 
@@ -22,7 +24,8 @@ export default function Sidebar({
   isEditPage, 
   showSidebarOverlay, 
   sidebarHovered = false,
-  onPageClick 
+  onPageClick,
+  onSidebarMouseLeave
 }: SidebarProps) {
   if (isEditPage) {
     return (
@@ -31,25 +34,30 @@ export default function Sidebar({
           showSidebarOverlay ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full pointer-events-none'
         }`}
         style={{ top: '64px', height: 'calc(100vh - 64px)' }}
+        onMouseLeave={onSidebarMouseLeave}
       >
         <div className="flex flex-col h-full">
           {/* Navigation */}
           <nav className="px-4 py-6 space-y-2">
-            {sidebarLinks.map(link => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-all duration-200 group"
-              >
-                <span className="text-lg">{link.icon}</span>
-                <span>{link.label}</span>
-              </Link>
-            ))}
+            {sidebarLinks.map(link => {
+              const IconComponent = link.icon;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-all duration-200 group"
+                  style={{ fontSize: '14px' }}
+                >
+                  <IconComponent className="w-5 h-5" />
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Pages List */}
           <div className="flex-1 px-4 py-6 border-t border-[#2D2D2D]">
-            <h3 className="text-sm font-semibold text-neutral-400 mb-4 uppercase tracking-wider">
+            <h3 className="font-semibold text-neutral-400 mb-4 uppercase tracking-wider" style={{ fontSize: '14px' }}>
               Your Pages
             </h3>
             <div className="space-y-1 max-h-96 overflow-y-auto">
@@ -57,11 +65,12 @@ export default function Sidebar({
                 <button
                   key={page.id}
                   onClick={() => onPageClick(page)}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-all duration-200 ${
                     currentPageId === page.id
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-neutral-700 text-white'
                       : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
                   }`}
+                  style={{ fontSize: '13px' }}
                 >
                   <div className="truncate">{page.title}</div>
                   <div className="text-xs text-neutral-500 mt-1">

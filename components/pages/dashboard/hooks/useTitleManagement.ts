@@ -7,6 +7,33 @@ export function useTitleManagement(currentPageId: string | null) {
   const [pageTitle, setPageTitle] = useState("");
   const supabase = createPagesBrowserClient();
 
+  // Fetch page title when currentPageId changes
+  useEffect(() => {
+    const fetchPageTitle = async () => {
+      if (!currentPageId) {
+        setPageTitle("");
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('landing_pages')
+          .select('title')
+          .eq('id', currentPageId)
+          .single();
+
+        if (error) throw error;
+
+        setPageTitle(data?.title || 'Untitled');
+      } catch (error) {
+        console.error('Error fetching page title:', error);
+        setPageTitle('Untitled');
+      }
+    };
+
+    fetchPageTitle();
+  }, [currentPageId, supabase]);
+
   const startEditingTitle = () => {
     setEditingTitle(true);
   };

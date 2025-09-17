@@ -6,12 +6,12 @@ export const getThemeClasses = (theme: Theme) => {
   
   return {
     background: isDark ? 'bg-black' : 'bg-white',
-    surface: isDark ? 'bg-slate-900' : 'bg-slate-50',
-    muted: isDark ? 'bg-slate-800' : 'bg-slate-100',
-    text: isDark ? 'text-slate-50' : 'text-slate-900',
-    textSecondary: isDark ? 'text-slate-400' : 'text-slate-600',
-    border: isDark ? 'border-slate-700' : 'border-slate-200',
-    mutedText: isDark ? 'text-slate-400' : 'text-slate-500',
+    surface: isDark ? 'bg-gray-900' : 'bg-slate-50',
+    muted: isDark ? 'bg-black' : 'bg-white',
+    text: isDark ? 'text-gray-50' : 'text-slate-900',
+    textSecondary: isDark ? 'text-gray-400' : 'text-slate-600',
+    border: isDark ? 'border-gray-600' : 'border-slate-200',
+    mutedText: isDark ? 'text-gray-400' : 'text-slate-500',
   };
 };
 

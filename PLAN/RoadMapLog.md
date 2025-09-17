@@ -1,5 +1,30 @@
 # Road Map Log
 
+## 2025-01-20 - Hero Section Media Component Implementation
+
+### What was done:
+- **Added media support to hero section** - Implemented comprehensive media component for images, videos, YouTube, and Vimeo embeds
+- **File upload functionality** - Added Supabase Storage integration with 10MB limit for images and 25MB for videos
+- **Media type detection** - Automatic detection of media types from URLs (YouTube, Vimeo, images, videos)
+- **Editor panel integration** - Added media controls to hero section editor with toggle functionality
+- **Responsive design** - Implemented responsive media display for both desktop and mobile preview modes
+- **AI prompt enhancement** - Updated AI prompts to suggest relevant media URLs and generate creative alt text
+- **Database schema updates** - Extended Hero type definition to include media fields with proper TypeScript types
+- **Accessibility features** - Added alt text support and proper ARIA labels for media content
+- **Toggle functionality** - Users can completely hide/show media section per page
+- **Storage bucket setup** - Created Supabase storage migration for media file uploads
+- **Theme integration** - Media component respects dark/light theme settings
+- **Preview modes** - Full support for both desktop and mobile preview modes
+
+### Technical details:
+- Created `MediaComponent.tsx` with comprehensive upload and URL handling
+- Updated `HeroSection.tsx` to include media display below lead form
+- Enhanced `SectionPanel.tsx` with media editor controls
+- Modified `types/landing-page.types.ts` to include media interface
+- Updated `lib/landingPageSchema.ts` with media defaults
+- Enhanced AI prompts in `lib/openai/promptTemplates.ts` for media suggestions
+- Added storage migration for Supabase file uploads
+
 ## 2025-01-11 - Complete Dark Theme Implementation and UI/UX Improvements
 
 ### What was done:

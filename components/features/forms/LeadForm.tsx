@@ -94,53 +94,58 @@ export default function LeadForm({ pageId, theme, ctaText = "Submit", previewMod
 
   return (
     <div className="w-full flex justify-center">
-      <form onSubmit={handleSubmit} className={`flex gap-2 items-stretch ${
-        isMobilePreview ? 'flex-col w-full' : 'flex-col sm:flex-row sm:items-center'
+      <div className={`flex flex-col gap-2 ${
+        isMobilePreview ? 'w-full' : 'w-full sm:w-auto'
       }`}>
-      <input
-          ref={inputRef}
-          id="leadform-input"
-          className={`px-4 py-2 border rounded focus:ring-2 focus:ring-opacity-60 focus:outline-none ${inputBg} ${borderClass}`}
-          style={{
-            backgroundColor: isDark ? '#000000' : '#ffffff',
-            borderColor: accent,
-            boxShadow: `0 0 0 2px ${accent}22`,
-            minWidth: isMobilePreview ? '100%' : '200px',
-            width: isMobilePreview ? '100%' : '280px',
-            color: isDark ? '#f8fafc' : '#000000'
-          }}
-        placeholder="Your Email"
-        type="email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        required
-        disabled={loading}
-          aria-label="Email address"
-      />
-      <button
-        type="submit"
-          className={`font-semibold px-6 py-2 rounded-lg shadow transition whitespace-nowrap ${
-            isMobilePreview ? 'w-full text-sm' : 'text-base w-full sm:w-auto'
-          }`}
-          style={{
-            background: accent,
-            color: isDark ? "#fff" : "#fff",
-            boxShadow: `0 2px 8px 0 ${accent}33`,
-            border: `1px solid ${accent}`,
-            minWidth: isMobilePreview ? '100%' : '140px'
-          }}
-          disabled={loading || !validateEmail(email)}
-          aria-label={ctaText}
-      >
-          {loading ? "..." : ctaText}
-      </button>
-    </form>
-      {(error || success) && (
-        <div className="mt-2 min-h-[1.5em]">
-          {error && <div className={`text-red-500 ${isMobilePreview ? 'text-xs' : 'text-xs'}`}>{error}</div>}
-          {success && <div className={`text-green-600 ${isMobilePreview ? 'text-xs' : 'text-xs'}`}>Thank you!</div>}
-        </div>
-      )}
+        <form onSubmit={handleSubmit} className={`flex gap-2 items-stretch ${
+          isMobilePreview ? 'flex-col w-full' : 'flex-col sm:flex-row sm:items-center'
+        }`}>
+          <input
+            ref={inputRef}
+            id="leadform-input"
+            className={`px-4 py-2 border rounded focus:ring-2 focus:ring-opacity-60 focus:outline-none ${inputBg} ${borderClass} ${
+              isMobilePreview ? 'w-full' : 'w-full sm:w-auto'
+            }`}
+            style={{
+              backgroundColor: isDark ? '#000000' : '#ffffff',
+              borderColor: accent,
+              boxShadow: `0 0 0 2px ${accent}22`,
+              minWidth: isMobilePreview ? '100%' : '200px',
+              color: isDark ? '#f8fafc' : '#000000'
+            }}
+            placeholder="Your Email"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+            disabled={loading}
+            aria-label="Email address"
+          />
+          <button
+            type="submit"
+            className={`font-semibold px-6 py-2 rounded-lg shadow transition whitespace-nowrap ${
+              isMobilePreview ? 'w-full text-sm' : 'text-base w-full sm:w-auto'
+            }`}
+            style={{
+              background: accent,
+              color: isDark ? "#fff" : "#fff",
+              boxShadow: `0 2px 8px 0 ${accent}33`,
+              border: `1px solid ${accent}`,
+              minWidth: isMobilePreview ? '100%' : '140px'
+            }}
+            disabled={loading || !validateEmail(email)}
+            aria-label={ctaText}
+          >
+            {loading ? "..." : ctaText}
+          </button>
+        </form>
+        {(error || success) && (
+          <div className="mt-2 min-h-[1.5em] text-center">
+            {error && <div className={`text-red-500 ${isMobilePreview ? 'text-xs' : 'text-xs'}`}>{error}</div>}
+            {success && <div className={`${isMobilePreview ? 'text-xs' : 'text-xs'}`} style={{ color: accent }}>Thank you!</div>}
+          </div>
+        )}
+      </div>
     </div>
   );
 } 

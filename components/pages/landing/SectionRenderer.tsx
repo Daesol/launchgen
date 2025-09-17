@@ -46,22 +46,9 @@ export default function SectionRenderer({
     'cta'
   ];
 
-  // Debug theme changes in SectionRenderer  
-  React.useEffect(() => {
-    console.log('SectionRenderer - Theme changed:', theme);
-  }, [theme]);
+  // Removed debug console.logs
 
-  // Debug config and section order
-  React.useEffect(() => {
-    console.log('🔍 SectionRenderer - Full config:', config);
-    console.log('🔍 SectionRenderer - Config sectionOrder:', config.sectionOrder);
-    console.log('🔍 SectionRenderer - Page content sectionOrder:', (config as any).page_content?.sectionOrder);
-    console.log('🔍 SectionRenderer - Final section order:', sectionOrder);
-    console.log('🔍 SectionRenderer - Pricing config:', pageContent.pricing);
-    console.log('🔍 SectionRenderer - Visible sections:', visibleSections);
-    console.log('🔍 SectionRenderer - Is pricing visible?', isSectionVisible('pricing'));
-    console.log('🔍 SectionRenderer - Pricing in section order?', sectionOrder.includes('pricing'));
-  }, [config, sectionOrder, visibleSections]);
+  // Removed debug console.logs
 
   // Get the actual page content from the config
   const pageContent = (config as any).page_content || config;
@@ -122,18 +109,6 @@ export default function SectionRenderer({
         ) : null;
 
       case 'pricing':
-        console.log('🔍 PRICING SECTION RENDER CHECK:', {
-          sectionId: 'pricing',
-          isVisible: isSectionVisible('pricing'),
-          hasConfig: !!pageContent.pricing,
-          configPricing: pageContent.pricing,
-          title: pageContent.pricing?.title || "Simple Pricing",
-          description: pageContent.pricing?.description || "Choose the plan that's right for you",
-          plans: pageContent.pricing?.plans || [],
-          plansLength: (pageContent.pricing?.plans || []).length,
-          theme: theme
-        });
-        
         // Always show pricing section, even with fallback data
         const pricingElement = isSectionVisible('pricing') ? (
           <PricingSection
@@ -147,7 +122,6 @@ export default function SectionRenderer({
           />
         ) : null;
         
-        console.log('🔍 PRICING SECTION RENDERED:', pricingElement ? 'YES' : 'NO');
         return pricingElement;
 
       case 'guarantees':
@@ -176,8 +150,8 @@ export default function SectionRenderer({
         return isSectionVisible('cta') ? (
           <CTASection
             key="cta"
-            ctaTitle={pageContent.ctaTitle}
-            ctaSubtitle={pageContent.ctaSubtitle}
+            ctaTitle={pageContent.cta?.title || pageContent.ctaTitle}
+            ctaSubtitle={pageContent.cta?.subtitle || pageContent.ctaSubtitle}
             theme={theme}
             pageId={pageId}
             previewMode={previewMode}

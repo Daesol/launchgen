@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBusinessHandlers, createHeroHandlers, createProblemHandlers, createFeaturesHandlers, createSocialProofHandlers, createPricingHandlers, createGuaranteesHandlers, createFAQHandlers, createCTAHandlers, createUrgencyHandlers } from '../utils/fieldHandlers';
 import IconSelector, { HeroIconSelector, FeatureIconSelector, PainPointIconSelector, GuaranteeIconSelector } from '../common/IconSelector';
+import MediaComponent from '@/components/features/media/MediaComponent';
 
 interface SectionPanelProps {
   sectionId: string;
@@ -226,6 +227,45 @@ function HeroSectionEditor({ hero, onPageContentChange }: { hero: any; onPageCon
             className="w-full px-3 py-2 border border-[#2D2D2D] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-neutral-800 text-white"
             placeholder="Enter CTA button text"
           />
+        </div>
+
+        {/* Media Section */}
+        <div className="bg-purple-900/20 border border-purple-800 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h5 className="text-sm font-medium text-white">Media Content</h5>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={hero?.media?.enabled || false}
+                onChange={(e) => {
+                  const currentMedia = hero?.media || {
+                    enabled: false,
+                    type: 'image',
+                    url: '',
+                    file: '',
+                    altText: '',
+                    thumbnail: ''
+                  };
+                  handlers.handleHeroChange("media", {
+                    ...currentMedia,
+                    enabled: e.target.checked
+                  });
+                }}
+                className="w-4 h-4 text-blue-600 bg-neutral-800 border-neutral-600 rounded focus:ring-blue-500"
+              />
+              <span className="text-sm text-neutral-300">Enable Media</span>
+            </label>
+          </div>
+          
+          {hero?.media?.enabled && (
+            <MediaComponent
+              media={hero.media}
+              theme={{ mode: 'black', accentColor: '#6366f1' }}
+              onMediaChange={(newMedia) => handlers.handleHeroChange("media", newMedia)}
+              isEditor={true}
+              userId={undefined} // Will use auth.getUser() as fallback
+            />
+          )}
         </div>
       </div>
     </div>

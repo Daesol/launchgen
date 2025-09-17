@@ -27,6 +27,12 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 - hero.heroTagIcon: MUST be one of these exact values: "zap", "star", "shield", "rocket", "target", "trendingUp", "award", "sparkles" and it must NOT be empty.
 - hero.subheadline: A compelling subheadline that expands on the value proposition and creates intrigue.
 - hero.cta: A clear call-to-action button text (e.g., "Get Started", "Start Free Trial", "Learn More").
+- hero.media: Media content for the hero section. Include:
+  * enabled: Set to true if media would enhance the landing page (product demos, testimonials, before/after images, etc.)
+  * type: "image" (default), "video", "youtube", or "vimeo"
+  * url: If enabled, MUST use a valid image URL from Unsplash (https://images.unsplash.com/photo-...) or Pexels (https://images.pexels.com/photos/...). Choose high-quality, professional images that match the product/business theme. NEVER use placeholder URLs like "example.com" or "placeholder.com". For videos, suggest real YouTube/Vimeo URLs that would be relevant to the product. Example valid URLs: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop" or "https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?w=800&h=600&fit=crop"
+  * altText: Descriptive alt text for accessibility (be creative and artistic - describe the mood, colors, and relevance to the business)
+  * thumbnail: Leave empty for images, suggest thumbnail URL for videos
 
 // Problem Section (DIC Framework - Disrupt)
 - problemSection.title: A compelling title that identifies the problem (e.g., "The Problem", "Common Challenges", "What's Holding You Back").
@@ -47,16 +53,16 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 // Pricing Section
 - pricing.title: A compelling pricing section title (e.g., "Simple Pricing", "Choose Your Plan", "Pricing That Scales") and it must NOT be empty.
 - pricing.description: A subtitle that explains the pricing approach and it must NOT be empty.
-- pricing.plans: Array of 2-3 pricing plans. Each plan must have:
+- pricing.plans: Array of exactly 3 pricing plans. Each plan must have:
   * id: Unique identifier (e.g., "basic", "pro", "enterprise")
   * name: Plan name (e.g., "Basic", "Professional", "Enterprise")
   * price: Price amount (e.g., "$29", "$99", "Custom")
   * period: Billing period (e.g., "month", "year", "contact")
   * description: Brief plan description
   * features: Array of 4-6 key features included in this plan
-  * popular: Boolean indicating if this is the most popular plan (only one plan should be true)
+  * popular: Boolean indicating if this is the most popular plan (MUST set the middle plan - second plan - as popular: true, others as false)
   * ctaText: Call-to-action text (e.g., "Get Started", "Choose Plan", "Contact Sales")
-  * ctaLink: Link for the CTA (can be "#" for demo purposes)
+  * ctaLink: Link for the CTA (leave empty "" to scroll to hero section, or provide external URL to navigate to in same page)
 
 // Risk Reversal Section
 - guarantees.title: A title that reduces risk (e.g., "Our Guarantees", "Risk-Free", "We've Got You Covered").
@@ -129,6 +135,12 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 - hero.heroTagIcon: MUST be one of these exact values: "zap", "star", "shield", "rocket", "target", "trendingUp", "award", "sparkles".
 - hero.subheadline: A compelling subheadline that expands on the value proposition and aligns with the original prompt.
 - hero.cta: A clear call-to-action button text.
+- hero.media: Media content for the hero section. Include:
+  * enabled: Set to true if media would enhance the landing page (product demos, testimonials, before/after images, etc.)
+  * type: "image" (default), "video", "youtube", or "vimeo"
+  * url: If enabled, MUST use a valid image URL from Unsplash (https://images.unsplash.com/photo-...) or Pexels (https://images.pexels.com/photos/...). Choose high-quality, professional images that match the product/business theme. NEVER use placeholder URLs like "example.com" or "placeholder.com". For videos, suggest real YouTube/Vimeo URLs that would be relevant to the product. Example valid URLs: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop" or "https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?w=800&h=600&fit=crop"
+  * altText: Descriptive alt text for accessibility (be creative and artistic - describe the mood, colors, and relevance to the business)
+  * thumbnail: Leave empty for images, suggest thumbnail URL for videos
 
 // Problem Section - MUST have content
 - problemSection.title: A compelling title that identifies the problem mentioned in the original prompt.
@@ -149,7 +161,7 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 // Pricing Section - MUST have content
 - pricing.title: A compelling pricing section title. Must NOT be empty.
 - pricing.description: A subtitle that explains the pricing approach. Must NOT be empty.
-- pricing.plans: Array of 2-3 pricing plans. Each plan must have: id, name, price, period, description, features (4-6 items), popular (boolean), ctaText, and ctaLink. MUST NOT be empty.
+- pricing.plans: Array of exactly 3 pricing plans. Each plan must have: id, name, price, period, description, features (4-6 items), popular (boolean - MUST set the middle plan - second plan - as popular: true, others as false), ctaText, and ctaLink (leave empty "" to scroll to hero section, or provide external URL to navigate to in same page). MUST NOT be empty.
 
 // Risk Reversal Section - MUST have content
 - guarantees.title: A title that reduces risk.

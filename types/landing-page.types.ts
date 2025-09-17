@@ -12,6 +12,14 @@ export interface Hero {
   backgroundImage?: string;
   heroTag?: string;
   heroTagIcon?: string;
+  media?: {
+    enabled: boolean;
+    type: 'image' | 'video' | 'youtube' | 'vimeo';
+    url?: string;
+    file?: string; // For uploaded files
+    altText?: string;
+    thumbnail?: string; // For video thumbnails
+  };
 }
 
 export interface PainPoint {

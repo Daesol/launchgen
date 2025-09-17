@@ -48,6 +48,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     handleEdit(page);
   };
 
+
   // If it's an edit page, render the edit layout
   if (isEditPage) {
     return (
@@ -66,6 +67,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         onTitleSave={handleTitleSave}
         onTitleKeyDown={handleTitleKeyDown}
         onSignOut={handleSignOut}
+        onSidebarMouseLeave={hideSidebarOnHover}
       >
         {children}
       </EditPageLayout>

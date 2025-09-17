@@ -42,7 +42,7 @@ export default function ProblemSection({
                   <h2 className={`font-bold tracking-tighter text-left ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
               isMobilePreview 
                 ? 'text-xl' 
-                : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
+                : 'text-4xl'
             }`}>
               {problemSection.title || "The Problem"}
             </h2>

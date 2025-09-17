@@ -63,7 +63,8 @@ export default function PageCard({
 
   return (
     <Card 
-      className="cursor-pointer group relative overflow-hidden hover:border-neutral-600 transition-all duration-200"
+      className="cursor-pointer group relative overflow-hidden hover:border-neutral-600 transition-all duration-200 border-neutral-800 h-full flex flex-col"
+      style={{ backgroundColor: '#000000' }}
       onClick={handleCardClick}
     >
       <ShineBorder
@@ -72,58 +73,61 @@ export default function PageCard({
         borderWidth={1}
         duration={3}
       />
-      <CardContent className="relative z-10 p-6">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-white mb-1 line-clamp-2">
-              {page.title}
-            </h3>
-            <p className="text-neutral-400 text-sm line-clamp-2 mb-2">
-              {page.description}
-            </p>
-            <div className="flex items-center gap-2">
-              <Badge 
-                variant={page.published ? "default" : "secondary"}
-                className={page.published 
-                  ? "bg-green-500/20 text-green-400 border-green-500/30" 
-                  : "bg-neutral-700 text-neutral-300 border-neutral-600"
-                }
-              >
-                {page.published ? "Published" : "Draft"}
-              </Badge>
+      <CardContent className="relative z-10 p-6 flex flex-col h-full">
+        {/* Main Content - grows to fill space */}
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-white mb-1 line-clamp-2">
+                {page.title}
+              </h3>
+              <p className="text-neutral-400 text-sm line-clamp-2 mb-2">
+                {page.description}
+              </p>
+              <div className="flex items-center gap-2">
+                <Badge 
+                  variant={page.published ? "default" : "secondary"}
+                  className={page.published 
+                    ? "bg-green-500/20 text-green-400 border-green-500/30" 
+                    : "bg-neutral-700 text-neutral-300 border-neutral-600"
+                  }
+                >
+                  {page.published ? "Published" : "Draft"}
+                </Badge>
+              </div>
+            </div>
+            <ArrowUpRight className="w-5 h-5 text-neutral-400 group-hover:text-white transition-colors" />
+          </div>
+
+          {/* Metrics Grid */}
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <Users className="w-4 h-4 text-green-400" />
+                <span className="text-sm font-medium text-white">{pageLeads}</span>
+              </div>
+              <p className="text-xs text-neutral-400">Leads</p>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <Eye className="w-4 h-4 text-blue-400" />
+                <span className="text-sm font-medium text-white">{pageViews}</span>
+              </div>
+              <p className="text-xs text-neutral-400">Views</p>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <Target className="w-4 h-4 text-purple-400" />
+                <span className="text-sm font-medium text-white">{conversionRate.toFixed(1)}%</span>
+              </div>
+              <p className="text-xs text-neutral-400">Conversion</p>
             </div>
           </div>
-          <ArrowUpRight className="w-5 h-5 text-neutral-400 group-hover:text-white transition-colors" />
         </div>
 
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <Users className="w-4 h-4 text-green-400" />
-              <span className="text-sm font-medium text-white">{pageLeads}</span>
-            </div>
-            <p className="text-xs text-neutral-400">Leads</p>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <Eye className="w-4 h-4 text-blue-400" />
-              <span className="text-sm font-medium text-white">{pageViews}</span>
-            </div>
-            <p className="text-xs text-neutral-400">Views</p>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <Target className="w-4 h-4 text-purple-400" />
-              <span className="text-sm font-medium text-white">{conversionRate.toFixed(1)}%</span>
-            </div>
-            <p className="text-xs text-neutral-400">Conversion</p>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="flex items-center justify-between">
+        {/* Footer - sticks to bottom */}
+        <div className="flex items-center justify-between mt-auto">
           <div className="flex items-center gap-1 text-neutral-500 text-xs">
             <Calendar className="w-3 h-3" />
             <span>{formatDate(page.created_at)}</span>

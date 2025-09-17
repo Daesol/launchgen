@@ -1,18 +1,31 @@
 "use client";
 import React from 'react';
+import MobilePreviewQR from '../../widgets/MobilePreviewQR';
 
 interface PreviewHeaderProps {
   previewMode: 'desktop' | 'mobile';
   onPreviewModeChange: (mode: 'desktop' | 'mobile') => void;
   onRegenerate: () => void;
   regenerating: boolean;
+  isFullScreen?: boolean;
+  onToggleFullScreen?: () => void;
+  pageUrl?: string;
+  pageId?: string;
+  previewUrl?: string;
+  isPublished?: boolean;
 }
 
 export default function PreviewHeader({ 
   previewMode, 
   onPreviewModeChange, 
   onRegenerate, 
-  regenerating 
+  regenerating,
+  isFullScreen = false,
+  onToggleFullScreen,
+  pageUrl,
+  pageId,
+  previewUrl,
+  isPublished = false
 }: PreviewHeaderProps) {
   return (
     <div className="border-b border-[#2D2D2D] px-3 py-2 flex items-center justify-between" style={{ backgroundColor: '#0A0A0A' }}>
@@ -50,8 +63,43 @@ export default function PreviewHeader({
         </button>
       </div>
 
-      {/* Right side - Regenerate button */}
+      {/* Right side - Full screen toggle and Regenerate button */}
       <div className="flex items-center space-x-2">
+        {/* Full screen toggle button */}
+        {onToggleFullScreen && (
+          <button
+            onClick={onToggleFullScreen}
+            className={`p-1.5 rounded transition-colors ${
+              isFullScreen
+                ? 'bg-blue-600 text-white'
+                : 'text-neutral-400 hover:text-white hover:bg-neutral-700'
+            }`}
+            title={isFullScreen ? "Exit full screen" : "Enter full screen"}
+          >
+            {isFullScreen ? (
+              // Exit full screen icon
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9V4.5M9 9H4.5M9 9L3.5 3.5M15 9v4.5M15 9h4.5M15 9l5.5-5.5M9 15v4.5M9 15H4.5M9 15l-5.5 5.5M15 15v-4.5M15 15h4.5M15 15l5.5 5.5" />
+              </svg>
+            ) : (
+              // Enter full screen icon
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+              </svg>
+            )}
+          </button>
+        )}
+        
+        {/* QR Code for Mobile Preview */}
+        <div className="mr-3">
+          <MobilePreviewQR 
+            pageUrl={pageUrl || ''}
+            pageId={pageId || ''}
+            previewUrl={previewUrl}
+            isPublished={isPublished}
+          />
+        </div>
+        
         <button
           onClick={onRegenerate}
           disabled={regenerating}

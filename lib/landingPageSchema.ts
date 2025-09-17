@@ -11,7 +11,15 @@ export const landingPageSchema = {
     cta: "",
     heroTag: "",
     heroTagIcon: "",
-    backgroundImage: ""
+    backgroundImage: "",
+    media: {
+      enabled: false,
+      type: "image" as "image" | "video" | "youtube" | "vimeo",
+      url: "",
+      file: "",
+      altText: "",
+      thumbnail: ""
+    }
   },
   // Problem Amplification Section
   problemSection: {

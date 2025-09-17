@@ -22,6 +22,9 @@ interface PageEditorProps {
 }
 
 export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved', lastSaved }: PageEditorProps) {
+  // Full screen preview state
+  const [isFullScreen, setIsFullScreen] = React.useState(false);
+
   // Use our custom hooks for all the logic
   const {
     state: {
@@ -50,6 +53,11 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
 
   // Preview mode management
   const { previewMode, setPreviewMode } = usePreviewMode('desktop');
+  
+  // Full screen toggle function
+  const toggleFullScreen = () => {
+    setIsFullScreen(!isFullScreen);
+  };
   
   // Editor layout management
   const {
@@ -194,47 +202,75 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     };
   }, [setPreviewMode]);
 
+  // Manage full screen mode - hide header when in full screen
+  useEffect(() => {
+    const header = document.querySelector('header');
+    if (header) {
+      if (isFullScreen) {
+        header.style.display = 'none';
+      } else {
+        header.style.display = '';
+      }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      const header = document.querySelector('header');
+      if (header) {
+        header.style.display = '';
+      }
+    };
+  }, [isFullScreen]);
+
   return (
     <div className="flex flex-col lg:flex-row h-full bg-black">
-      {/* Edit Panel - Desktop Sidebar - Now on the left */}
-      <div className={`hidden lg:flex ${
-        sidePanelCollapsed ? 'w-0 overflow-hidden' : 'w-96'
-      } pr-1 pt-0 pb-2 pl-2 transition-all duration-300`}>
-        <div className="rounded-lg border border-[#2D2D2D] overflow-hidden h-full flex flex-col w-full" style={{ backgroundColor: '#0A0A0A' }}>
-          <EditPanel
-            selectedSection={selectedSection}
-            view={editPanelView as any}
-            pageContent={pageContent}
-            pageStyle={pageStyle}
-            sectionState={sectionState}
-            onPageContentChange={handlePageContentChange}
-            onPageStyleChange={handlePageStyleChange}
-            onSectionSelect={(sectionId: string) => {
-              if (sectionId === 'back') {
-                handleBackToMain();
-              } else {
-                handleSectionSelectFromPreview(sectionId);
-              }
-            }}
-            onBackToMain={handleBackToMain}
-            onSectionToggle={sectionManagement.toggleSection}
-            onSectionVisibilityToggle={sectionManagement.toggleSectionVisibility}
-            onSectionOrderUpdate={sectionManagement.updateSectionOrder}
-          />
+      {/* Edit Panel - Desktop Sidebar - Hidden in full screen mode */}
+      {!isFullScreen && (
+        <div className={`hidden lg:flex ${
+          sidePanelCollapsed ? 'w-0 overflow-hidden' : 'w-96'
+        } pr-1 pt-0 pb-2 pl-2 transition-all duration-300`}>
+          <div className="rounded-lg border border-[#2D2D2D] overflow-hidden h-full flex flex-col w-full" style={{ backgroundColor: '#0A0A0A' }}>
+            <EditPanel
+              selectedSection={selectedSection}
+              view={editPanelView as any}
+              pageContent={pageContent}
+              pageStyle={pageStyle}
+              sectionState={sectionState}
+              onPageContentChange={handlePageContentChange}
+              onPageStyleChange={handlePageStyleChange}
+              onSectionSelect={(sectionId: string) => {
+                if (sectionId === 'back') {
+                  handleBackToMain();
+                } else {
+                  handleSectionSelectFromPreview(sectionId);
+                }
+              }}
+              onBackToMain={handleBackToMain}
+              onSectionToggle={sectionManagement.toggleSection}
+              onSectionVisibilityToggle={sectionManagement.toggleSectionVisibility}
+              onSectionOrderUpdate={sectionManagement.updateSectionOrder}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Preview Area */}
       <div className="flex-1 flex flex-col">
         {/* Preview Container with rounded corners */}
-        <div className="flex-1 overflow-auto pl-1 pr-2 pt-0 pb-2">
-          <div className="bg-neutral-900 rounded-lg border border-[#2D2D2D] overflow-hidden h-full flex flex-col">
-            {/* Preview Header */}
+        <div className={`flex-1 overflow-auto ${isFullScreen ? 'px-0 py-0' : 'pl-1 pr-2 pt-0 pb-2'}`}>
+          <div className={`${isFullScreen ? 'h-full' : 'bg-neutral-900 rounded-lg border border-[#2D2D2D]'} overflow-hidden h-full flex flex-col`}>
+            {/* Preview Header - Always visible */}
             <PreviewHeader
               previewMode={previewMode}
               onPreviewModeChange={setPreviewMode}
               onRegenerate={handleRegenerate}
               regenerating={regenerating}
+              isFullScreen={isFullScreen}
+              onToggleFullScreen={toggleFullScreen}
+              pageUrl={publishedUrl}
+              pageId={id || ''}
+              previewUrl={id && initialConfig.slug ? `${window.location.origin}/page/${initialConfig.slug}` : undefined}
+              isPublished={published}
             />
             
             {/* Preview Content */}
@@ -333,22 +369,6 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
         </div>
       )}
 
-      {/* QR Code for Mobile Preview */}
-      {previewMode === 'mobile' && publishedUrl && (
-        <div className="fixed bottom-4 right-4 z-50">
-          <div className="bg-black/80 backdrop-blur-sm rounded-lg p-4 border border-[#2D2D2D]">
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-neutral-300 mb-2">QR Code</label>
-              <div className="flex justify-center">
-                <MobilePreviewQR 
-                  pageUrl={publishedUrl}
-                  pageId={id || ''}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -33,6 +33,11 @@ export default function Header({
   onTitleKeyDown,
   onSignOut
 }: HeaderProps) {
+  const router = useRouter();
+
+  const handleLogoClick = () => {
+    router.push('/dashboard');
+  };
   if (isEditPage) {
     return (
       <header className="sticky top-0 z-20 bg-black/80 backdrop-blur-sm px-6 py-3">
@@ -40,12 +45,16 @@ export default function Header({
           {/* Left side - LaunchGen logo and editable page title */}
           <div className="flex items-center gap-3 flex-1 min-w-0">
             {/* LaunchGen Logo */}
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <button 
+              onClick={handleLogoClick}
+              className="flex items-center gap-2 flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer"
+              title="Go to Dashboard"
+            >
               <div className="w-6 h-6 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-xs">🚀</span>
               </div>
               <span className="text-lg font-bold text-white">LaunchGen</span>
-            </div>
+            </button>
             
             {/* Separator */}
             <span className="text-neutral-400 text-lg font-medium">/</span>

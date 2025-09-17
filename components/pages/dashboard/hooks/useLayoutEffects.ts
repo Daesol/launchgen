@@ -49,28 +49,19 @@ export function useLayoutEffects(
 
   // Handle mouse movement for sidebar overlay on edit pages
   useEffect(() => {
-    if (!isEditPage || !showSidebarOnHover || !hideSidebarOnHover) return;
-
-    let hoverTimeout: NodeJS.Timeout;
+    if (!isEditPage || !showSidebarOnHover) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       if (e.clientX <= 20) {
         // Show sidebar overlay when mouse is near left edge
-        clearTimeout(hoverTimeout);
         showSidebarOnHover();
-      } else {
-        // Hide sidebar overlay when mouse moves away
-        clearTimeout(hoverTimeout);
-        hoverTimeout = setTimeout(() => {
-          hideSidebarOnHover();
-        }, 300); // Small delay to prevent flickering
       }
     };
 
     document.addEventListener('mousemove', handleMouseMove);
+    
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
-      clearTimeout(hoverTimeout);
     };
-  }, [isEditPage, showSidebarOnHover, hideSidebarOnHover]);
+  }, [isEditPage, showSidebarOnHover]);
 }

@@ -62,11 +62,10 @@ export default function LandingPageTemplate({
   const isMobilePreview = previewMode === 'mobile';
 
   return (
-    <div className={`flex flex-col ${themeClasses.background}`} style={{
+    <div className={`${themeClasses.background}`} style={{
       // Force styles as backup if Tailwind classes don't work
       backgroundColor: theme.mode === 'black' ? '#000000' : '#ffffff',
-      color: theme.mode === 'black' ? '#f8fafc' : '#0f172a',
-      minHeight: previewMode === 'mobile' ? '100vh' : 'auto'
+      color: theme.mode === 'black' ? '#f8fafc' : '#0f172a'
     }}>
       {/* Header */}
       <Header
@@ -77,7 +76,7 @@ export default function LandingPageTemplate({
         onSectionSelect={onSectionSelect}
       />
 
-      <main className="flex-1">
+      <main>
         <SectionRenderer
           key={`theme-${theme.mode}-${theme.accentColor}`}
           config={config}
@@ -95,6 +94,22 @@ export default function LandingPageTemplate({
           isMobilePreview ? 'text-xs' : 'text-xs sm:text-sm'
         }`}>
           © 2024 {config.business?.name || 'LaunchGen'} AI. All rights reserved.
+        </p>
+        <p className={`${themeClasses.textSecondary} text-center ${
+          isMobilePreview ? 'text-xs' : 'text-xs sm:text-sm'
+        }`}>
+          Powered by{' '}
+          <a 
+            href="https://launchgen-demo.vercel.app/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={`hover:underline transition-colors ${
+              theme.mode === 'black' ? 'text-white hover:text-gray-300' : 'text-gray-600 hover:text-gray-800'
+            }`}
+            style={{ color: theme.accentColor }}
+          >
+            LaunchGen
+          </a>
         </p>
       </footer>
     </div>

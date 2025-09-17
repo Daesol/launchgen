@@ -34,10 +34,10 @@ export default function GuaranteesSection({
       }`}>
         <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center">
           <div className="space-y-3 sm:space-y-4">
-                  <h2 className={`font-bold tracking-tighter ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${theme.mode === 'black' ? 'text-white' : ''} ${
+                  <h2 className={`font-bold tracking-tighter ${themeClasses.text} ${theme.mode === 'black' ? 'text-white' : ''} ${
               isMobilePreview 
                 ? 'text-xl' 
-                : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
+                : 'text-4xl'
             }`}>
               {guarantees.title || "Our Guarantees"}
             </h2>
