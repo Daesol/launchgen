@@ -4,6 +4,10 @@ import MobilePreviewQR from "../../../widgets/MobilePreviewQR";
 import LandingPageTemplate from "../../landing/LandingPageTemplate";
 import EditPanel from "../../../features/editor/panels/EditPanel";
 import PreviewHeader from "../../../features/editor/PreviewHeader";
+import MobileEditor from "./MobileEditor";
+import MobileSectionEditor from "./MobileSectionEditor";
+import MobilePreviewOptimized from "./MobilePreviewOptimized";
+import MobileDesktopView from "./MobileDesktopView";
 
 // Import our new hooks and components
 import { usePageEditor } from "../../../features/editor/hooks/usePageEditor";
@@ -24,6 +28,11 @@ interface PageEditorProps {
 export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved', lastSaved }: PageEditorProps) {
   // Full screen preview state
   const [isFullScreen, setIsFullScreen] = React.useState(false);
+  
+  // Mobile editor states
+  const [showMobileEditor, setShowMobileEditor] = React.useState(false);
+  const [showMobileSectionEditor, setShowMobileSectionEditor] = React.useState(false);
+  const [isMobileDevice, setIsMobileDevice] = React.useState(false);
 
   // Use our custom hooks for all the logic
   const {
@@ -178,6 +187,10 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   // Handle section selection from preview
   const handleSectionSelectFromPreview = (sectionId: string) => {
     handleSectionSelect(sectionId);
+    // On mobile, show the section editor
+    if (window.innerWidth < 1024) {
+      setShowMobileSectionEditor(true);
+    }
   };
 
   // Handle mobile sidebar toggle
@@ -190,15 +203,36 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     closeSidePanel();
   };
 
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobileDevice(window.innerWidth < 1024);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+
   // Listen for preview mode change events
   useEffect(() => {
     const handlePreviewModeChange = (event: CustomEvent) => {
       setPreviewMode(event.detail);
     };
 
+    const handleOpenMobileEditor = () => {
+      setShowMobileEditor(true);
+    };
+
     window.addEventListener('set-preview-mode', handlePreviewModeChange as EventListener);
+    window.addEventListener('open-mobile-editor', handleOpenMobileEditor);
+    
     return () => {
       window.removeEventListener('set-preview-mode', handlePreviewModeChange as EventListener);
+      window.removeEventListener('open-mobile-editor', handleOpenMobileEditor);
     };
   }, [setPreviewMode]);
 
@@ -223,11 +257,11 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   }, [isFullScreen]);
 
   return (
-    <div className="flex flex-col lg:flex-row h-full bg-black">
+    <div className="flex flex-col lg:flex-row min-h-screen w-full bg-black">
       {/* Edit Panel - Desktop Sidebar - Hidden in full screen mode */}
       {!isFullScreen && (
         <div className={`hidden lg:flex ${
-          sidePanelCollapsed ? 'w-0 overflow-hidden' : 'w-96'
+          sidePanelCollapsed ? 'w-0 overflow-hidden' : 'w-80 lg:w-96 xl:w-[28rem]'
         } pr-1 pt-0 pb-2 pl-2 transition-all duration-300`}>
           <div className="rounded-lg border border-[#2D2D2D] overflow-hidden h-full flex flex-col w-full" style={{ backgroundColor: '#0A0A0A' }}>
             <EditPanel
@@ -255,11 +289,11 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       )}
 
       {/* Main Preview Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Preview Container with rounded corners */}
-        <div className={`flex-1 overflow-auto ${isFullScreen ? 'px-0 py-0' : 'pl-1 pr-2 pt-0 pb-2'}`}>
-          <div className={`${isFullScreen ? 'h-full' : 'bg-neutral-900 rounded-lg border border-[#2D2D2D]'} overflow-hidden h-full flex flex-col`}>
-            {/* Preview Header - Always visible */}
+      <div className="flex-1 flex flex-col w-full">
+        {/* Preview Container with rounded corners and margins */}
+        <div className={`flex-1 w-full ${isFullScreen ? 'px-0 py-0' : 'px-1 pt-0 pb-2'}`}>
+          <div className={`${isFullScreen ? 'h-full' : 'bg-neutral-900 rounded-lg border border-[#2D2D2D]'} flex flex-col w-full`} style={{ height: isFullScreen ? '100vh' : 'calc(100vh - 120px)' }}>
+            {/* Preview Header - Always visible and sticky */}
             <PreviewHeader
               previewMode={previewMode}
               onPreviewModeChange={setPreviewMode}
@@ -274,100 +308,51 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
               slug={initialConfig.slug}
             />
             
-            {/* Preview Content */}
-            <div className="flex-1 overflow-auto" style={{ backgroundColor: '#0A0A0A', height: '100%' }}>
-              {previewMode === 'mobile' ? (
-                <div className="flex justify-center items-center py-4 px-4 h-full">
-                  {/* iPhone Mockup Container */}
-                  <div className="relative w-full max-w-sm">
-                    {/* iPhone Frame - Responsive with iPhone ratio */}
-                    <div className="w-full aspect-[9/19.5] max-w-[320px] mx-auto bg-gradient-to-b from-gray-800 to-gray-900 rounded-[1.75rem] p-1 shadow-2xl">
-                      {/* Screen Bezel */}
-                      <div className="w-full h-full bg-black rounded-[1.5rem] p-1">
-                        {/* iPhone Screen */}
-                        <div className="w-full h-full bg-black rounded-[1.25rem] overflow-hidden relative">
-                          {/* Content Area with Mobile Scrollbar */}
-                          <div className="h-full overflow-auto mobile-scrollbar-overlay">
-                            <div className="mobile-preview-container">
-                              <LandingPageTemplate 
-                                config={{ 
-                                  ...pageContent, 
-                                  theme: pageStyle?.theme,
-                                  sectionOrder: sectionState.sectionOrder 
-                                }} 
-                                pageId="preview"
-                                previewMode="mobile"
-                                visibleSections={sectionState.visibleSections}
-                                onSectionSelect={handleSectionSelectFromPreview}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Home Indicator */}
-                    <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-white rounded-full opacity-80"></div>
-                  </div>
-                </div>
-              ) : (
-                <div className="w-full min-h-full max-w-none">
-                  <LandingPageTemplate 
-                    config={{ 
-                      ...pageContent, 
-                      theme: pageStyle?.theme,
-                      sectionOrder: sectionState.sectionOrder 
-                    }} 
-                    pageId="preview"
-                    previewMode="desktop"
-                    visibleSections={sectionState.visibleSections}
-                    onSectionSelect={handleSectionSelectFromPreview}
-                  />
-                </div>
-              )}
+            {/* Preview Content - Mobile View Only - Scrollable */}
+            <div className="flex-1 overflow-y-auto" style={{ backgroundColor: '#0A0A0A', minHeight: 0 }}>
+              <MobilePreviewOptimized
+                pageContent={pageContent}
+                pageStyle={pageStyle}
+                sectionState={sectionState}
+                onSectionSelect={handleSectionSelectFromPreview}
+              />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile Sidebar Overlay */}
-      {showSidePanel && (
-        <div className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40">
-          <div className="absolute left-0 top-0 h-full w-80 bg-black border-r border-[#2D2D2D] shadow-xl">
-            <EditPanel
-              selectedSection={selectedSection}
-              view={editPanelView as any}
-              pageContent={pageContent}
-              pageStyle={pageStyle}
-              sectionState={sectionState}
-              onPageContentChange={handlePageContentChange}
-              onPageStyleChange={handlePageStyleChange}
-              onSectionSelect={(sectionId: string) => {
-                if (sectionId === 'back') {
-                  handleBackToMain();
-                } else {
-                  handleSectionSelectFromPreview(sectionId);
-                }
-              }}
-              onBackToMain={handleBackToMain}
-              onSectionToggle={sectionManagement.toggleSection}
-              onSectionVisibilityToggle={sectionManagement.toggleSectionVisibility}
-              onSectionOrderUpdate={sectionManagement.updateSectionOrder}
-            />
-          </div>
-        </div>
-      )}
+      {/* Mobile Editor - Bottom Navigation */}
+      <MobileEditor
+        selectedSection={selectedSection}
+        editPanelView={editPanelView}
+        pageContent={pageContent}
+        pageStyle={pageStyle}
+        sectionState={sectionState}
+        onPageContentChange={handlePageContentChange}
+        onPageStyleChange={handlePageStyleChange}
+        onSectionSelect={(sectionId: string) => {
+          if (sectionId === 'back') {
+            handleBackToMain();
+          } else {
+            handleSectionSelectFromPreview(sectionId);
+          }
+        }}
+        onBackToMain={handleBackToMain}
+        onSectionToggle={sectionManagement.toggleSection}
+        onSectionVisibilityToggle={sectionManagement.toggleSectionVisibility}
+        onSectionOrderUpdate={sectionManagement.updateSectionOrder}
+        onClose={() => setShowMobileEditor(false)}
+      />
 
-      {/* Sticky Show Editor Button - Mobile Only */}
-      {!showSidePanel && (
-        <div className="lg:hidden fixed bottom-4 left-4 right-4 z-40">
-          <button
-            onClick={handleMobileSidebarToggle}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
-            Show Editor
-          </button>
-        </div>
+      {/* Mobile Section Editor - Full Screen */}
+      {showMobileSectionEditor && (
+        <MobileSectionEditor
+          selectedSection={selectedSection}
+          pageContent={pageContent}
+          onPageContentChange={handlePageContentChange}
+          onBack={() => setShowMobileSectionEditor(false)}
+          onClose={() => setShowMobileSectionEditor(false)}
+        />
       )}
 
     </div>
