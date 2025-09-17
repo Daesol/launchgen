@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent over-scrolling on mobile */
+@layer base {
+  html, body {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Prevent bounce scrolling on mobile */
+  .mobile-preview-container {
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

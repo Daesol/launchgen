@@ -40,88 +40,159 @@ export default function Header({
   };
   if (isEditPage) {
     return (
-      <header className="sticky top-0 z-20 bg-black/80 backdrop-blur-sm px-3 py-2">
-        <div className="flex items-center justify-between gap-2">
-          {/* Left side - Logo and editable page title */}
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            {/* Logo only - no text */}
-            <button 
-              onClick={handleLogoClick}
-              className="flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer"
-              title="Go to Dashboard"
-            >
-              <div className="w-6 h-6 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xs">🚀</span>
+      <header className="sticky top-0 z-20 bg-black/80 backdrop-blur-sm px-3 lg:px-6 py-2 lg:py-3">
+        <div className="flex items-center justify-between">
+          {/* Desktop Layout */}
+          <div className="hidden lg:flex items-center justify-between w-full">
+            {/* Left side - LaunchGen logo and editable page title */}
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              {/* LaunchGen Logo */}
+              <button 
+                onClick={handleLogoClick}
+                className="flex items-center gap-2 flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer"
+                title="Go to Dashboard"
+              >
+                <div className="w-6 h-6 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-xs">🚀</span>
+                </div>
+                <span className="text-lg font-bold text-white">LaunchGen</span>
+              </button>
+              
+              {/* Separator */}
+              <span className="text-neutral-400 text-lg font-medium">/</span>
+              
+              {/* Editable page title */}
+              <div className="flex-1 min-w-0 title-input-container">
+                {editingTitle ? (
+                  <input
+                    type="text"
+                    value={pageTitle}
+                    onChange={(e) => onUpdatePageTitle(e.target.value)}
+                    onBlur={onTitleSave}
+                    onKeyDown={onTitleKeyDown}
+                    className="w-full text-base font-medium text-white bg-transparent border-b-2 border-[#2D2D2D] focus:border-neutral-400 focus:outline-none px-1 py-1"
+                    autoFocus
+                  />
+                ) : (
+                  <button
+                    onClick={onStartEditingTitle}
+                    className="text-base font-medium text-white hover:text-neutral-300 hover:bg-neutral-800 px-2 py-1 rounded transition-colors text-left w-full truncate"
+                    title="Click to edit title"
+                  >
+                    {pageTitle || 'Untitled'}
+                  </button>
+                )}
               </div>
-            </button>
-            
-            {/* Separator */}
-            <span className="text-neutral-400 text-sm font-medium flex-shrink-0">/</span>
-            
-            {/* Editable page title with truncation */}
-            <div className="flex-1 min-w-0 title-input-container">
-              {editingTitle ? (
-                <input
-                  type="text"
-                  value={pageTitle}
-                  onChange={(e) => onUpdatePageTitle(e.target.value)}
-                  onBlur={onTitleSave}
-                  onKeyDown={onTitleKeyDown}
-                  className="w-full text-sm font-medium text-white bg-transparent border-b-2 border-[#2D2D2D] focus:border-neutral-400 focus:outline-none px-1 py-1"
-                  autoFocus
-                />
-              ) : (
-                <button
-                  onClick={onStartEditingTitle}
-                  className="text-sm font-medium text-white hover:text-neutral-300 hover:bg-neutral-800 px-1 py-1 rounded transition-colors text-left w-full truncate"
-                  title="Click to edit title"
-                >
-                  {pageTitle || 'Untitled'}
-                </button>
-              )}
+            </div>
+
+            {/* Right side - All buttons with consistent spacing */}
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('preview-page'))}
+                className="px-3 py-1.5 text-sm border border-[#2D2D2D] text-white hover:bg-neutral-800 hover:border-neutral-600 rounded transition-colors"
+                style={{ backgroundColor: '#0A0A0A' }}
+                title="Preview page"
+              >
+                Preview
+              </button>
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('publish-page'))}
+                className="px-3 py-1.5 text-sm bg-slate-800 text-white hover:bg-slate-700 rounded transition-colors"
+                title="Publish page"
+              >
+                Publish
+              </button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-2 px-3 py-1.5 bg-neutral-800 border border-[#2D2D2D] rounded-lg font-medium text-neutral-300 hover:bg-neutral-700 hover:border-[#2D2D2D] transition-all duration-200 shadow-sm">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-white to-neutral-300 flex items-center justify-center">
+                      <span className="text-black font-semibold text-xs">U</span>
+                    </div>
+                    <span className="text-sm">Profile</span>
+                    <svg className="w-3 h-3 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </DropdownMenuTrigger>
+              </DropdownMenu>
             </div>
           </div>
 
-          {/* Right side - Action buttons and Profile */}
-          <div className="flex items-center gap-1 flex-shrink-0">
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent('preview-page'))}
-              className="px-2 py-1 text-xs border border-[#2D2D2D] text-white hover:bg-neutral-800 hover:border-neutral-600 rounded transition-colors"
-              style={{ backgroundColor: '#0A0A0A' }}
-              title="Preview page"
-            >
-              Preview
-            </button>
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent('publish-page'))}
-              className="px-2 py-1 text-xs bg-slate-800 text-white hover:bg-slate-700 rounded transition-colors"
-              title="Publish page"
-            >
-              Publish
-            </button>
-            
-            {/* Profile dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 px-2 py-1 bg-neutral-800 border border-[#2D2D2D] rounded font-medium text-neutral-300 hover:bg-neutral-700 hover:border-[#2D2D2D] transition-all duration-200 shadow-sm">
-                  <div className="w-5 h-5 rounded-full bg-gradient-to-r from-white to-neutral-300 flex items-center justify-center">
-                    <span className="text-black font-semibold text-xs">U</span>
-                  </div>
-                  <svg className="w-3 h-3 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-black border-[#2D2D2D]">
-                <DropdownMenuItem
-                  className="text-red-400 hover:bg-red-900/20 cursor-pointer"
-                  onClick={onSignOut}
-                >
-                  <span className="text-sm mr-3">🚪</span>
-                  Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          {/* Mobile Layout - Optimized space allocation */}
+          <div className="lg:hidden flex items-center justify-between w-full">
+            {/* Left side - Logo and page title with fixed width */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* Mobile logo icon */}
+              <button 
+                onClick={handleLogoClick}
+                className="flex items-center flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer"
+                title="Go to Dashboard"
+              >
+                <div className="w-5 h-5 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-xs">🚀</span>
+                </div>
+              </button>
+              
+              {/* Page title with fixed width and truncation */}
+              <div className="w-32 min-w-0">
+                {editingTitle ? (
+                  <input
+                    type="text"
+                    value={pageTitle}
+                    onChange={(e) => onUpdatePageTitle(e.target.value)}
+                    onBlur={onTitleSave}
+                    onKeyDown={onTitleKeyDown}
+                    className="w-full text-sm font-medium text-white bg-transparent border-b-2 border-[#2D2D2D] focus:border-neutral-400 focus:outline-none px-1 py-1"
+                    autoFocus
+                  />
+                ) : (
+                  <button
+                    onClick={onStartEditingTitle}
+                    className="text-sm font-medium text-white hover:text-neutral-300 hover:bg-neutral-800 px-1 py-1 rounded transition-colors text-left w-full truncate"
+                    title="Click to edit title"
+                  >
+                    {pageTitle || 'Untitled'}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Right side - All buttons with consistent spacing */}
+            <div className="flex items-center space-x-1">
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('preview-page'))}
+                className="w-16 px-2 py-1 text-xs border border-[#2D2D2D] text-white hover:bg-neutral-800 hover:border-neutral-600 rounded transition-colors text-center"
+                style={{ backgroundColor: '#0A0A0A' }}
+                title="Preview page"
+              >
+                Preview
+              </button>
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('publish-page'))}
+                className="w-16 px-2 py-1 text-xs bg-slate-800 text-white hover:bg-slate-700 rounded transition-colors text-center"
+                title="Publish page"
+              >
+                Publish
+              </button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="w-8 h-8 flex items-center justify-center bg-neutral-800 border border-[#2D2D2D] rounded-lg font-medium text-neutral-300 hover:bg-neutral-700 hover:border-[#2D2D2D] transition-all duration-200 shadow-sm">
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-r from-white to-neutral-300 flex items-center justify-center">
+                      <span className="text-black font-semibold text-xs">U</span>
+                    </div>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-black border-[#2D2D2D]">
+                  <DropdownMenuItem
+                    className="text-red-400 hover:bg-red-900/20 cursor-pointer"
+                    onClick={onSignOut}
+                  >
+                    <span className="text-sm mr-3">🚪</span>
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </header>
@@ -129,35 +200,35 @@ export default function Header({
   }
 
   return (
-    <header className="sticky top-0 z-20 bg-black/80 backdrop-blur-sm border-b border-[#2D2D2D] flex items-center justify-between px-3 py-2">
-      <div className="flex items-center gap-2">
+    <header className="sticky top-0 z-20 bg-black/80 backdrop-blur-sm border-b border-[#2D2D2D] flex items-center justify-between px-6 py-2">
+      <div className="flex items-center gap-3">
         <button 
-          className="lg:hidden p-1 rounded-lg hover:bg-neutral-800 transition-colors"
+          className="lg:hidden p-1.5 rounded-lg hover:bg-neutral-800 transition-colors"
           onClick={onToggleSidebar}
         >
-          <svg className="w-4 h-4 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
         <div className="hidden lg:flex items-center gap-2">
-          <span className="text-sm font-semibold text-white">Dashboard</span>
+          <span className="text-base font-semibold text-white">Dashboard</span>
         </div>
       </div>
       
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-1 px-2 py-1 bg-neutral-800 border border-[#2D2D2D] rounded font-medium text-neutral-300 hover:bg-neutral-700 hover:border-[#2D2D2D] transition-all duration-200 shadow-sm">
-              <div className="w-5 h-5 rounded-full bg-gradient-to-r from-white to-neutral-300 flex items-center justify-center">
+            <button className="flex items-center gap-2 px-3 py-1.5 bg-neutral-800 border border-[#2D2D2D] rounded-lg font-medium text-neutral-300 hover:bg-neutral-700 hover:border-[#2D2D2D] transition-all duration-200 shadow-sm">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-white to-neutral-300 flex items-center justify-center">
                 <span className="text-black font-semibold text-xs">U</span>
               </div>
-              <span className="hidden sm:inline text-xs">Profile</span>
+              <span className="hidden sm:inline text-sm">Profile</span>
               <svg className="w-3 h-3 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48 bg-black border-[#2D2D2D]">
+          <DropdownMenuContent align="end" className="w-56 bg-black border-[#2D2D2D]">
             <DropdownMenuItem
               className="text-red-400 hover:bg-red-900/20 cursor-pointer"
               onClick={onSignOut}

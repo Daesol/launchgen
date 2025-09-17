@@ -47,7 +47,7 @@ export default function EditPageLayout({
   onSidebarMouseLeave
 }: EditPageLayoutProps) {
   return (
-    <div className="flex min-h-screen w-full bg-black dashboard-layout">
+    <div className="flex h-screen bg-black overflow-hidden dashboard-layout">
       {/* Desktop Sidebar - Hidden on mobile, shown as overlay on edit pages */}
       <div className="hidden lg:block">
         <Sidebar
@@ -70,7 +70,7 @@ export default function EditPageLayout({
       />
 
       {/* Main content area - Full width for edit pages */}
-      <div className="flex-1 flex flex-col min-h-screen w-full">
+      <div className="flex-1 flex flex-col h-full">
         {/* Top navbar - Enhanced with page title and action buttons */}
         <Header
           isEditPage={isEditPage}
@@ -86,7 +86,7 @@ export default function EditPageLayout({
         />
 
         {/* Main content */}
-        <main className="flex-1 w-full">
+        <main className="flex-1 overflow-y-auto dashboard-scroll">
           {children}
         </main>
       </div>

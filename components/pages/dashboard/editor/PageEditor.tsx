@@ -7,7 +7,6 @@ import PreviewHeader from "../../../features/editor/PreviewHeader";
 import MobileEditor from "./MobileEditor";
 import MobileSectionEditor from "./MobileSectionEditor";
 import MobilePreviewOptimized from "./MobilePreviewOptimized";
-import MobileDesktopView from "./MobileDesktopView";
 
 // Import our new hooks and components
 import { usePageEditor } from "../../../features/editor/hooks/usePageEditor";
@@ -32,7 +31,6 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   // Mobile editor states
   const [showMobileEditor, setShowMobileEditor] = React.useState(false);
   const [showMobileSectionEditor, setShowMobileSectionEditor] = React.useState(false);
-  const [isMobileDevice, setIsMobileDevice] = React.useState(false);
 
   // Use our custom hooks for all the logic
   const {
@@ -60,8 +58,24 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     clearError,
   } = usePageEditor(initialConfig, onSave);
 
-  // Preview mode management
+  // Preview mode management - Force mobile view on mobile devices
+  const [isMobile, setIsMobile] = React.useState(false);
   const { previewMode, setPreviewMode } = usePreviewMode('desktop');
+
+  // Detect mobile device and force mobile view
+  React.useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (mobile) {
+        setPreviewMode('mobile');
+      }
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [setPreviewMode]);
   
   // Full screen toggle function
   const toggleFullScreen = () => {
@@ -203,20 +217,6 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     closeSidePanel();
   };
 
-  // Detect mobile device
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobileDevice(window.innerWidth < 1024);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-    };
-  }, []);
-
   // Listen for preview mode change events
   useEffect(() => {
     const handlePreviewModeChange = (event: CustomEvent) => {
@@ -257,11 +257,14 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   }, [isFullScreen]);
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen w-full bg-black">
+    <div 
+      className={`flex flex-col lg:flex-row ${isMobile ? 'h-screen' : 'h-full'} bg-black`}
+      style={isMobile ? { overscrollBehavior: 'none' } : {}}
+    >
       {/* Edit Panel - Desktop Sidebar - Hidden in full screen mode */}
       {!isFullScreen && (
         <div className={`hidden lg:flex ${
-          sidePanelCollapsed ? 'w-0 overflow-hidden' : 'w-80 lg:w-96 xl:w-[28rem]'
+          sidePanelCollapsed ? 'w-0 overflow-hidden' : 'w-96'
         } pr-1 pt-0 pb-2 pl-2 transition-all duration-300`}>
           <div className="rounded-lg border border-[#2D2D2D] overflow-hidden h-full flex flex-col w-full" style={{ backgroundColor: '#0A0A0A' }}>
             <EditPanel
@@ -289,14 +292,14 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       )}
 
       {/* Main Preview Area */}
-      <div className="flex-1 flex flex-col w-full">
-        {/* Preview Container with rounded corners and margins */}
-        <div className={`flex-1 w-full ${isFullScreen ? 'px-0 py-0' : 'px-1 pt-0 pb-2'}`}>
-          <div className={`${isFullScreen ? 'h-full' : 'bg-neutral-900 rounded-lg border border-[#2D2D2D]'} flex flex-col w-full`} style={{ height: isFullScreen ? '100vh' : 'calc(100vh - 120px)' }}>
-            {/* Preview Header - Always visible and sticky */}
+      <div className={`flex-1 flex flex-col ${isMobile ? 'h-screen' : ''}`} style={isMobile ? { paddingBottom: '100px' } : {}}>
+        {/* Preview Container with rounded corners */}
+        <div className={`${isFullScreen ? 'h-full' : isMobile ? 'h-full' : 'bg-neutral-900 rounded-lg border border-[#2D2D2D]'} flex flex-col h-full ${isFullScreen ? 'px-0 py-0' : isMobile ? 'px-1 py-1' : 'pl-1 pr-2 pt-0 pb-2'}`}>
+          {/* Preview Header - Fixed at top */}
+          <div className="flex-shrink-0">
             <PreviewHeader
               previewMode={previewMode}
-              onPreviewModeChange={setPreviewMode}
+              onPreviewModeChange={isMobile ? () => {} : setPreviewMode} // Disable mode change on mobile
               onRegenerate={handleRegenerate}
               regenerating={regenerating}
               isFullScreen={isFullScreen}
@@ -307,16 +310,32 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
               isPublished={published}
               slug={initialConfig.slug}
             />
-            
-            {/* Preview Content - Mobile View Only - Scrollable */}
-            <div className="flex-1 overflow-y-auto" style={{ backgroundColor: '#0A0A0A', minHeight: 0 }}>
-              <MobilePreviewOptimized
-                pageContent={pageContent}
-                pageStyle={pageStyle}
-                sectionState={sectionState}
-                onSectionSelect={handleSectionSelectFromPreview}
-              />
-            </div>
+          </div>
+          
+          {/* Preview Content - Scrollable area */}
+          <div className="flex-1 overflow-auto" style={{ backgroundColor: '#0A0A0A' }}>
+              {previewMode === 'mobile' ? (
+                <MobilePreviewOptimized
+                  pageContent={pageContent}
+                  pageStyle={pageStyle}
+                  sectionState={sectionState}
+                  onSectionSelect={handleSectionSelectFromPreview}
+                />
+              ) : (
+                <div className="w-full min-h-full max-w-none">
+                  <LandingPageTemplate 
+                    config={{ 
+                      ...pageContent, 
+                      theme: pageStyle?.theme,
+                      sectionOrder: sectionState.sectionOrder 
+                    }} 
+                    pageId="preview"
+                    previewMode="desktop"
+                    visibleSections={sectionState.visibleSections}
+                    onSectionSelect={handleSectionSelectFromPreview}
+                  />
+                </div>
+              )}
           </div>
         </div>
       </div>

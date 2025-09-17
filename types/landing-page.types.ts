@@ -146,6 +146,7 @@ export interface LandingPageTemplateProps {
   previewMode?: 'desktop' | 'mobile';
   visibleSections?: Record<string, boolean>;
   onSectionSelect?: (sectionId: string) => void;
+  hideHeader?: boolean;
 }
 
 export type SectionName = 

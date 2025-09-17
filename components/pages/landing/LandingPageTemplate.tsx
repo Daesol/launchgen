@@ -10,7 +10,8 @@ export default function LandingPageTemplate({
   pageId, 
   previewMode = 'desktop', 
   visibleSections, 
-  onSectionSelect 
+  onSectionSelect,
+  hideHeader = false
 }: LandingPageTemplateProps) {
   
   
@@ -68,13 +69,15 @@ export default function LandingPageTemplate({
       color: theme.mode === 'black' ? '#f8fafc' : '#0f172a'
     }}>
       {/* Header */}
-      <Header
-        config={config}
-        theme={theme}
-        themeClasses={themeClasses}
-        previewMode={previewMode}
-        onSectionSelect={onSectionSelect}
-      />
+      {!hideHeader && (
+        <Header
+          config={config}
+          theme={theme}
+          themeClasses={themeClasses}
+          previewMode={previewMode}
+          onSectionSelect={onSectionSelect}
+        />
+      )}
 
       <main>
         <SectionRenderer
