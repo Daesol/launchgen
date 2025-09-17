@@ -11,9 +11,9 @@ interface PageProps {
 
 export default async function PageAnalyticsView({ params }: PageProps) {
   const supabase = createServerComponentClient({ cookies });
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (userError || !user) {
     redirect('/auth/signin');
   }
 
@@ -22,7 +22,7 @@ export default async function PageAnalyticsView({ params }: PageProps) {
     .from('landing_pages')
     .select('*')
     .eq('id', params.id)
-    .eq('owner_id', session.user.id)
+    .eq('owner_id', user.id)
     .single();
 
   if (pageError || !page) {

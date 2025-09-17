@@ -7,9 +7,9 @@ const GenerateClient = dynamic(() => import('../../generate/GenerateClient'), { 
 
 export default async function GeneratePage() {
   const supabase = createServerComponentClient({ cookies });
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (userError || !user) {
     redirect('/auth/signin');
   }
 

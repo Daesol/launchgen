@@ -22,11 +22,13 @@ export default function TrafficSources({ trafficSources }: TrafficSourcesProps) 
       </CardHeader>
       <CardContent>
         {Object.keys(trafficSources).length > 0 ? (
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-48 overflow-y-auto">
             {Object.entries(trafficSources).map(([source, count]: [string, any]) => (
               <div key={source} className="flex items-center justify-between">
-                <span className="text-neutral-300 text-sm">{source}</span>
-                <Badge variant="outline" className="border-[#2D2D2D] text-neutral-400">
+                <span className="text-neutral-300 text-sm truncate mr-2" title={source}>
+                  {source.length > 30 ? `${source.substring(0, 30)}...` : source}
+                </span>
+                <Badge variant="outline" className="border-[#2D2D2D] text-neutral-400 flex-shrink-0">
                   {count} visits
                 </Badge>
               </div>

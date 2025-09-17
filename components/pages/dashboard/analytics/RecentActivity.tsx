@@ -25,11 +25,11 @@ export default function RecentActivity({ recentEvents, formatDate }: RecentActiv
       </CardHeader>
       <CardContent>
         {recentEvents.length > 0 ? (
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-48 overflow-y-auto">
             {recentEvents.slice(0, 10).map((event: any, index: number) => (
               <div key={index} className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                <div className="flex-1">
+                <div className="w-2 h-2 bg-blue-400 rounded-full flex-shrink-0"></div>
+                <div className="flex-1 min-w-0">
                   <p className="text-neutral-300 text-sm">
                     {event.event_type === 'page_view' ? 'Page viewed' : 'Form submitted'}
                   </p>

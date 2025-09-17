@@ -59,8 +59,8 @@ export function usePageManagement() {
     try {
       setError(null);
       
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error('Not authenticated');
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) throw new Error('Not authenticated');
 
       const duplicateData = {
         title: `${page.title} (Copy)`,
@@ -68,7 +68,7 @@ export function usePageManagement() {
         template_id: page.template_id,
         page_content: page.page_content,
         page_style: page.page_style,
-        owner_id: session.user.id
+        owner_id: user.id
       };
 
       const { error } = await supabase

@@ -4,8 +4,8 @@ import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
   }
   try {
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     if (!page_style || typeof page_style !== "object") {
       return NextResponse.json({ error: "page_style is required." }, { status: 400 });
     }
-    const owner_id = session.user.id;
+    const owner_id = user.id;
     const title = page_content.hero?.headline || "Untitled";
     let slug;
     if (id) {
@@ -66,8 +66,8 @@ export async function POST(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
   }
 
@@ -90,7 +90,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Landing page not found." }, { status: 404 });
     }
 
-    if (existingPage.owner_id !== session.user.id) {
+    if (existingPage.owner_id !== user.id) {
       return NextResponse.json({ error: "Not authorized." }, { status: 403 });
     }
 
@@ -173,8 +173,8 @@ export async function PATCH(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
   }
   const { id } = await req.json();
@@ -190,7 +190,7 @@ export async function DELETE(req: NextRequest) {
   if (fetchError || !page) {
     return NextResponse.json({ error: "Landing page not found." }, { status: 404 });
   }
-  if (page.owner_id !== session.user.id) {
+  if (page.owner_id !== user.id) {
     return NextResponse.json({ error: "Not authorized." }, { status: 403 });
   }
   const { error } = await supabase.from("landing_pages").delete().eq("id", id);

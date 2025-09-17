@@ -19,8 +19,8 @@ export function useDashboardData() {
       setLoading(true);
       setError(null);
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
         setData({
           pages: [],
           leadsByPage: {},
@@ -35,7 +35,7 @@ export function useDashboardData() {
       const { data: pages, error: pagesError } = await supabase
         .from('landing_pages')
         .select('id, title, slug, created_at, template_id, page_content, page_style')
-        .eq('owner_id', session.user.id)
+        .eq('owner_id', user.id)
         .order('created_at', { ascending: false });
 
       if (pagesError) throw pagesError;
@@ -111,7 +111,7 @@ export function useDashboardData() {
         pages: pages || [],
         leadsByPage,
         analyticsByPage,
-        user: session.user
+        user: user
       });
     } catch (err) {
       console.error('Error fetching dashboard data:', err);

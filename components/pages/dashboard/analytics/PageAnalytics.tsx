@@ -35,10 +35,17 @@ export default function PageAnalytics({ data }: PageAnalyticsProps) {
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
-    if (diffDays === 0) return "Today";
-    if (diffDays === 1) return "Yesterday";
-    if (diffDays < 7) return `${diffDays} days ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    // Format time as 12-hour format
+    const timeString = date.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit',
+      hour12: true 
+    });
+    
+    if (diffDays === 0) return `Today ${timeString}`;
+    if (diffDays === 1) return `Yesterday ${timeString}`;
+    if (diffDays < 7) return `${diffDays} days ago ${timeString}`;
+    return `${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${timeString}`;
   };
 
   async function handleDelete() {
@@ -70,7 +77,7 @@ export default function PageAnalytics({ data }: PageAnalyticsProps) {
   }
 
   return (
-    <div className="min-h-screen bg-black p-6 space-y-8">
+    <div className="min-h-screen bg-black p-4 lg:p-6 space-y-4 lg:space-y-6">
       {/* Header */}
       <AnalyticsHeader 
         page={page} 
@@ -84,7 +91,8 @@ export default function PageAnalytics({ data }: PageAnalyticsProps) {
         conversionRate={conversionRate}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Grid Layout - Single column on mobile, 2 columns on desktop */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Traffic Sources */}
         <TrafficSources trafficSources={trafficSources} />
 
