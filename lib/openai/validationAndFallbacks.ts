@@ -42,7 +42,15 @@ export function createFallbackConfig(): LandingPageConfig {
       cta: "Get Started",
       heroTag: "AI-Powered",
       heroTagIcon: "sparkles",
-      backgroundImage: ""
+      backgroundImage: "",
+      media: {
+        enabled: false,
+        type: "image" as const,
+        url: "",
+        file: "",
+        altText: "",
+        thumbnail: ""
+      }
     },
     problemSection: {
       title: "The Problem",
