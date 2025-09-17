@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
-const PageEditor = dynamic(() => import("@/components/PageEditor"), { ssr: false });
+const PageEditor = dynamic(() => import("@/components/pages/dashboard/PageEditor"), { ssr: false });
 
 export default function GenerateClient() {
   const [prompt, setPrompt] = useState("");
@@ -42,11 +42,13 @@ export default function GenerateClient() {
           featuresSubtitle: data.config.featuresSubtitle,
           problemSection: data.config.problemSection,
           socialProof: data.config.socialProof,
+          pricing: data.config.pricing, // ✅ ADD PRICING SECTION
           guarantees: data.config.guarantees,
           faq: data.config.faq,
           ctaTitle: data.config.ctaTitle,
           ctaSubtitle: data.config.ctaSubtitle,
           urgency: data.config.urgency,
+          sectionOrder: data.config.sectionOrder, // ✅ ADD SECTION ORDER
         },
         page_style: {
           theme: data.config.theme,

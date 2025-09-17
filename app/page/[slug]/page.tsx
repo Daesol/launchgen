@@ -1,6 +1,6 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import LandingPageTemplate from '@/components/LandingPageTemplate';
+import LandingPageTemplate from '@/components/pages/landing/LandingPageTemplate';
 
 interface PageProps {
   params: { slug: string };

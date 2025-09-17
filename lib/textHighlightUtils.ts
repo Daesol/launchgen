@@ -61,4 +61,12 @@ export function isWordInText(word: string, text: string): boolean {
   const cleanWord = word.replace(/[^\w]/g, '');
   const cleanText = text.replace(/[^\w\s]/g, '');
   return cleanText.toLowerCase().includes(cleanWord.toLowerCase());
+}
+
+/**
+ * Cleans up highlights array to only include words that exist in the text
+ */
+export function cleanupHighlights(highlights: string[], text: string): string[] {
+  const textWords = text.split(' ').map(w => w.replace(/[^\w]/g, ''));
+  return highlights.filter(highlight => textWords.includes(highlight));
 } 

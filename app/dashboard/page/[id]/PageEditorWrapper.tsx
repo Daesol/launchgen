@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import PageEditor from '@/components/PageEditor';
+import PageEditor from '@/components/pages/dashboard/PageEditor';
 
 interface PageEditorWrapperProps {
   initialConfig: any;

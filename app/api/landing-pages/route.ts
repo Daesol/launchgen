@@ -4,8 +4,8 @@ import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
   }
   try {
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     if (!page_style || typeof page_style !== "object") {
       return NextResponse.json({ error: "page_style is required." }, { status: 400 });
     }
-    const owner_id = session.user.id;
+    const owner_id = user.id;
     const title = page_content.hero?.headline || "Untitled";
     let slug;
     if (id) {
@@ -65,14 +65,116 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  // PATCH is identical to POST for upsert, but more RESTful for updates
-  return POST(req);
+  const supabase = createRouteHandlerClient({ cookies });
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
+    return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
+  }
+
+  try {
+    const body = await req.json();
+    const { id, title, page_content, page_style, template_id, original_prompt } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: "Missing landing page id." }, { status: 400 });
+    }
+
+    // Ensure the user owns the page
+    const { data: existingPage, error: fetchError } = await supabase
+      .from("landing_pages")
+      .select("id, owner_id, slug")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !existingPage) {
+      return NextResponse.json({ error: "Landing page not found." }, { status: 404 });
+    }
+
+    if (existingPage.owner_id !== user.id) {
+      return NextResponse.json({ error: "Not authorized." }, { status: 403 });
+    }
+
+    // Prepare update data - only include fields that are provided
+    const updateData: any = {};
+    
+    if (title !== undefined) {
+      updateData.title = title;
+    }
+    
+    if (page_content !== undefined) {
+      // Handle nested field updates (e.g., business.name, hero.headline)
+      if (typeof page_content === 'object' && !Array.isArray(page_content)) {
+        // Get existing page content to merge with
+        const { data: existingContent } = await supabase
+          .from("landing_pages")
+          .select("page_content")
+          .eq("id", id)
+          .single();
+        
+        if (existingContent?.page_content) {
+          // Merge the new field with existing content
+          const mergedContent = { ...existingContent.page_content };
+          Object.keys(page_content).forEach(fieldPath => {
+            const pathParts = fieldPath.split('.');
+            let current = mergedContent;
+            
+            // Navigate to the nested location
+            for (let i = 0; i < pathParts.length - 1; i++) {
+              if (!current[pathParts[i]]) {
+                current[pathParts[i]] = {};
+              }
+              current = current[pathParts[i]];
+            }
+            
+            // Set the final field value
+            current[pathParts[pathParts.length - 1]] = page_content[fieldPath];
+          });
+          
+          updateData.page_content = mergedContent;
+        } else {
+          updateData.page_content = page_content;
+        }
+      } else {
+        updateData.page_content = page_content;
+      }
+    }
+    
+    if (page_style !== undefined) {
+      updateData.page_style = page_style;
+    }
+    
+    if (template_id !== undefined) {
+      updateData.template_id = template_id;
+    }
+    
+    if (original_prompt !== undefined) {
+      updateData.original_prompt = original_prompt;
+    }
+
+    // Update the landing page
+    const { data: page, error: updateError } = await supabase
+      .from("landing_pages")
+      .update(updateData)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (updateError) {
+      console.error('Database update error:', updateError);
+      throw updateError;
+    }
+
+    return NextResponse.json({ page });
+  } catch (e: any) {
+    console.error('PATCH error:', e);
+    return NextResponse.json({ error: e.message || "Failed to update landing page." }, { status: 500 });
+  }
 }
 
 export async function DELETE(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
   }
   const { id } = await req.json();
@@ -88,7 +190,7 @@ export async function DELETE(req: NextRequest) {
   if (fetchError || !page) {
     return NextResponse.json({ error: "Landing page not found." }, { status: 404 });
   }
-  if (page.owner_id !== session.user.id) {
+  if (page.owner_id !== user.id) {
     return NextResponse.json({ error: "Not authorized." }, { status: 403 });
   }
   const { error } = await supabase.from("landing_pages").delete().eq("id", id);

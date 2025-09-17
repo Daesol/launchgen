@@ -11,9 +11,9 @@ interface PageProps {
 
 export default async function LandingPageEditor({ params }: PageProps) {
   const supabase = createServerComponentClient({ cookies });
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (userError || !user) {
     redirect('/auth/signin');
   }
 
@@ -22,12 +22,12 @@ export default async function LandingPageEditor({ params }: PageProps) {
     .from('landing_pages')
     .select('*') // Select all columns for debugging
     .eq('id', params.id)
-    .eq('owner_id', session.user.id) // Ensure user owns the page
+    .eq('owner_id', user.id) // Ensure user owns the page
     .single();
 
   // Debug logging
   console.log('Page ID:', params.id);
-  console.log('User ID:', session.user.id);
+  console.log('User ID:', user.id);
   console.log('Page data:', page);
   console.log('Error:', error);
 

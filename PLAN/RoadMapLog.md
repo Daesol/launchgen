@@ -1,5 +1,292 @@
 # Road Map Log
 
+## 2025-01-20 - Hero Section Media Component Implementation
+
+### What was done:
+- **Added media support to hero section** - Implemented comprehensive media component for images, videos, YouTube, and Vimeo embeds
+- **File upload functionality** - Added Supabase Storage integration with 10MB limit for images and 25MB for videos
+- **Media type detection** - Automatic detection of media types from URLs (YouTube, Vimeo, images, videos)
+- **Editor panel integration** - Added media controls to hero section editor with toggle functionality
+- **Responsive design** - Implemented responsive media display for both desktop and mobile preview modes
+- **AI prompt enhancement** - Updated AI prompts to suggest relevant media URLs and generate creative alt text
+- **Database schema updates** - Extended Hero type definition to include media fields with proper TypeScript types
+- **Accessibility features** - Added alt text support and proper ARIA labels for media content
+- **Toggle functionality** - Users can completely hide/show media section per page
+- **Storage bucket setup** - Created Supabase storage migration for media file uploads
+- **Theme integration** - Media component respects dark/light theme settings
+- **Preview modes** - Full support for both desktop and mobile preview modes
+
+### Technical details:
+- Created `MediaComponent.tsx` with comprehensive upload and URL handling
+- Updated `HeroSection.tsx` to include media display below lead form
+- Enhanced `SectionPanel.tsx` with media editor controls
+- Modified `types/landing-page.types.ts` to include media interface
+- Updated `lib/landingPageSchema.ts` with media defaults
+- Enhanced AI prompts in `lib/openai/promptTemplates.ts` for media suggestions
+- Added storage migration for Supabase file uploads
+
+## 2025-01-11 - Complete Dark Theme Implementation and UI/UX Improvements
+
+### What was done:
+- **Complete dark theme conversion** - Converted entire page editor to dark theme with consistent styling across all components
+- **Custom component dark theme** - Updated all custom components (IconSelector, highlight words, card editors) to use dark theme styling
+- **Text color fixes** - Fixed all text colors using #334155 (slate-700) to proper neutral colors for better contrast
+- **Visual hierarchy improvements** - Implemented darker custom component backgrounds for better visual hierarchy between inputs and containers
+- **Scrollbar styling** - Updated scrollbar styling to match dark theme across all browsers (Webkit and Firefox)
+- **Hero section layout management** - Removed hero section from Page Layout draggable options since it's always fixed at the top
+- **Section order management** - Fixed section order management to properly exclude hero from layout controls while ensuring it renders first
+- **MagicUI integration** - Added MagicUI ShineBorder effect to dashboard page cards for enhanced visual appeal
+- **PageAnalytics optimization** - Optimized PageAnalytics layout, removed unnecessary elements, and improved space efficiency
+- **Cross-browser compatibility** - Ensured scrollbar styling works consistently across all major browsers
+- **Consistent color scheme** - Updated all input fields, buttons, and panels to use consistent dark theme colors (#0A0A0A, #2D2D2D, neutral grays)
+- **Professional appearance** - Achieved cohesive dark theme experience throughout the entire application
+
+## 2024-12-19 - Major Edit Panel Restructuring - Tabbed Interface and Click-to-Edit Functionality
+
+### What was done:
+- **Restructured edit panel** - Completely redesigned from overwhelming single view to focused tabbed interface
+- **Added three main views** - Theme Settings, Business Info, and Page Layout with dedicated editing interfaces
+- **Implemented click-to-edit** - Users can now click on any section in the preview to edit that specific section
+- **Enhanced navigation** - Added back buttons and clear visual hierarchy between different editing modes
+- **Improved user flow** - Separated complex functionality into logical, focused editing experiences
+- **Reduced cognitive load** - Users no longer see all editing options at once, creating less overwhelming experience
+- **Added visual indicators** - Cursor changes to pointer and sections show "Click to edit" hints when in edit mode
+- **Maintained all functionality** - All existing editing capabilities preserved but reorganized for better UX
+- **Enhanced Page Layout view** - Added visibility toggle buttons alongside drag-and-drop reordering for complete section control
+- **Fixed click-to-edit coverage** - All sections (Hero, Problem, Features, Social Proof, Guarantees, FAQ, CTA) now support click-to-edit
+- **Business Info integration** - Business info editing accessible through navigation bar logo/name click, removed duplicate section
+- **Visibility management** - Users can now show/hide sections directly from the Page Layout view with clear visual indicators
+- **Hero section restoration** - Restored hero tag component (with icon and text) and lead capture form that were accidentally removed during cleanup
+- **Scrolling improvements** - Fixed edit panel scrolling issues to ensure all content is accessible
+- **Layout streamlining** - Removed unnecessary containers and headers for cleaner, more focused editing experience
+- **Complete EditorSection removal** - Eliminated all collapsible wrappers and visibility toggles from section editors
+- **Direct content editing** - All section editors now show content directly without unnecessary container overhead
+- **Scrolling optimization** - Fixed scrolling issues by removing complex nested container structures
+- **Functionality restoration** - Restored all missing editing features: icon selection, testimonials, guarantees, FAQ Q&A, and urgency settings
+- **Icon selection fixes** - Fixed icon selection functionality that was defaulting to incorrect values
+- **Space-efficient UI** - Replaced emoji text with compact icon-only dropdowns and delete icons instead of text buttons
+- **Section ordering** - Reordered edit panel sections to match preview layout: Hero, Problem, Features, Social Proof, Guarantees, FAQ, CTA, Urgency
+- **Icon selection dropdowns** - Added compact dropdown selectors for icons instead of space-consuming grid layouts
+- **Complete editing capabilities** - All sections now have full editing functionality while maintaining the clean new design
+
+### Technical details:
+- **State management**: Added `editPanelView` state with 'main', 'theme', 'business', 'layout', and 'section' modes
+- **Section selection**: Implemented `handleSectionSelect` function that switches to section editing mode
+- **Click handlers**: Added `onClick` handlers to all preview sections with conditional cursor styling
+- **Navigation system**: Added back buttons with consistent styling and positioning across all sub-views
+- **Interface integration**: Modified LandingPageTemplate to accept `onSectionSelect` prop for click-to-edit
+- **Responsive design**: Maintained mobile compatibility while adding new desktop editing experience
+- **Auto-scrolling**: Selected sections automatically scroll into view when clicked for better UX
+- **Visibility controls**: Enhanced Page Layout view with toggle buttons for each section's visibility state
+- **Business info access**: Integrated business editing into navigation header for intuitive access
+- **Complete section coverage**: All major sections now support click-to-edit functionality
+- **Streamlined containers**: Removed unnecessary edit panel headers and containers for cleaner interface
+- **Improved scrolling**: Fixed overflow issues to ensure all edit content is accessible
+- **Container transformation**: Replaced all EditorSection wrapper components with direct content rendering
+- **Simplified architecture**: Eliminated collapsible functionality and visibility toggles from section editors
+
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Complete restructure of edit panel with tabbed interface, section editing, and enhanced Page Layout view
+- `components/LandingPageTemplate.tsx` - Added click-to-edit functionality for all sections, integrated business editing into navigation, removed duplicate sections
+
+---
+
+## 2024-12-19 - Sidebar Overlay Optimization - Streamlined Design and Improved Layout
+
+### What was done:
+- **Removed LaunchGen branding** - Eliminated logo and text from the sidebar overlay for cleaner, focused navigation
+- **Reduced overlay height** - Sidebar now starts below the top toolbar (top: 72px) instead of covering it completely
+- **Simplified button design** - Removed emojis from "Dashboard" and "Create Page" buttons, keeping only clean text
+- **Updated button text** - Changed "Create Page" to "New Page" for better clarity and brevity
+- **Enhanced button styling** - Added light background (`bg-slate-50`) with hover effects (`hover:bg-slate-100`)
+- **Improved typography** - Reduced font size to `text-sm` and padding to `px-3 py-2` for more compact, modern appearance
+- **Better visual hierarchy** - Cleaner separation between navigation sections with proper spacing and borders
+- **Fixed positioning issues** - Eliminated gap between sidebar and top toolbar for seamless visual connection
+- **Added scrollability** - Made "Your Pages" list scrollable with `max-h-64 overflow-y-auto` for better UX
+- **Optimized height calculation** - Used `calc(100vh - 64px)` to match exact header height and prevent viewport overflow
+- **Precise positioning** - Fine-tuned top position to 64px for perfect alignment with header bottom edge
+- **Enhanced visual separation** - Added right border (`border-r border-slate-200`) to clearly distinguish sidebar from edit panel
+- **Optimized width** - Reduced sidebar width from `w-72` (288px) to `w-64` (256px) for better space efficiency
+- **Improved button alignment** - Centered "Dashboard" and "New Page" text within buttons using `justify-center` for better visual balance
+
+### Technical details:
+- **Height calculation**: Used `style={{ top: '64px', height: 'calc(100vh - 64px)' }}` to position exactly below toolbar
+- **Button styling**: Applied `bg-slate-50 hover:bg-slate-100` for subtle backgrounds with hover states
+- **Typography optimization**: Changed from larger text to `text-sm font-medium` for better space efficiency
+- **Padding reduction**: Reduced from larger padding to `px-3 py-2` for compact button design
+- **Layout structure**: Maintained proper spacing with `space-y-3` and clear section dividers
+- **Scrollable content**: Added `max-h-64 overflow-y-auto pr-2` to "Your Pages" section for better content management
+- **Positioning precision**: Adjusted top position from 80px to 72px to match exact header height (px-6 py-3 = 72px total)
+
+### Files affected:
+- `components/DashboardLayout.tsx` - Streamlined sidebar overlay design, removed branding, optimized button styling and layout, fixed positioning and scrollability issues
+
+---
+
+## 2024-12-19 - Top Toolbar Enhancement - Added LaunchGen Logo and Improved Page Title Styling
+
+### What was done:
+- **Added LaunchGen logo** - Added the LaunchGen logo (🚀 icon + text) to the left end of the top toolbar for better brand presence
+- **Added visual separator** - Added a gray "/" separator between the LaunchGen logo and page title for clear visual hierarchy
+- **Improved page title styling** - Reduced page title font size from `text-lg` to `text-base` and weight from `font-semibold` to `font-medium` for better balance
+- **Enhanced visual hierarchy** - Created a clear left-to-right flow: Logo → Separator → Page Title → Action Buttons → Profile
+- **Better brand consistency** - Logo now appears in the top toolbar, matching the sidebar branding
+
+### Technical details:
+- **Logo implementation**: Added LaunchGen logo with rocket emoji and text using consistent styling from sidebar
+- **Separator styling**: Used `text-slate-400` for subtle gray color and `text-lg font-medium` for proper sizing
+- **Typography adjustment**: Changed page title from `text-lg font-semibold` to `text-base font-medium`
+- **Layout structure**: Wrapped logo, separator, and title in a flex container with proper spacing
+- **Responsive design**: Logo and separator are `flex-shrink-0` to prevent compression, title remains flexible
+
+### Files affected:
+- `components/DashboardLayout.tsx` - Added LaunchGen logo, separator, and updated page title styling in top toolbar
+
+---
+
+## 2024-12-19 - Edit Panel Layout Optimization - Moved to Left Side
+
+### What was done:
+- **Repositioned edit panel** - Moved the edit panel from the right side to the left side of the page editor
+- **Improved layout flow** - Edit panel now appears on the left, preview panel on the right for more intuitive editing workflow
+- **Enhanced user experience** - Left-to-right reading flow (edit → preview) matches natural user behavior and common design patterns
+- **Better sidebar integration** - Edit panel positioning now works better with the left-side sidebar overlay functionality
+- **Consistent border styling** - Updated border from left to right to properly separate edit panel from preview panel
+
+### Technical details:
+- **Layout reordering**: Changed flex order so edit panel appears before preview panel in the DOM
+- **Border adjustment**: Changed from `border-l` to `border-r` since panel is now on the left
+- **Mobile consistency**: Mobile edit panel remains as overlay for responsive design
+- **Maintained functionality**: All edit panel features and sections remain unchanged, only position changed
+
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Repositioned edit panel from right to left side
+
+---
+
+## 2024-12-19 - Dashboard Scrolling Issue Fix - Eliminated Black Space Overscroll
+
+### What was done:
+- **Fixed dashboard height constraints** - Changed from `min-h-screen` to `h-screen` to ensure exact viewport height
+- **Added overflow prevention** - Added `overflow-hidden` to prevent dashboard content from being scrollable
+- **Prevented body scrolling** - Added CSS classes and body class management to prevent page-level scrolling
+- **Eliminated black space** - Fixed the issue where users could scroll and see black space at top/bottom before snapping back to 100vh
+- **Enhanced layout stability** - Dashboard now maintains fixed height without any scrollable content or bounce effects
+
+### Technical details:
+- **Height constraint changes**: Updated both edit page and regular dashboard layouts from `min-h-screen` to `h-screen`
+- **Overflow control**: Added `overflow-hidden` to main containers and content areas
+- **CSS classes**: Added `dashboard-layout` class for consistent height constraints
+- **Body class management**: Added `dashboard-page` class to body element to prevent global scrolling
+- **Layout stability**: Ensured all dashboard content fits within viewport bounds without overflow
+
+### Files affected:
+- `components/DashboardLayout.tsx` - Updated height constraints and added overflow prevention
+- `app/globals.css` - Added CSS classes for dashboard height and scroll prevention
+
+---
+
+## 2024-12-19 - Manual Save UI Cleanup - Removed Save Button and Status Bar
+
+### What was done:
+- **Removed manual Save button** - Eliminated the Save button from the top toolbar since field-level auto-save now handles all saving automatically
+- **Removed save status bar** - Eliminated the save status indicator bar below the top toolbar that showed "Saving...", "Unsaved changes", and "Saved {time}" messages
+- **Cleaned up event listeners** - Removed save-page event listener and related handler functions that are no longer needed
+- **Simplified interface** - Top toolbar now only contains Preview, Regenerate, and Publish buttons for a cleaner, more focused interface
+- **Enhanced user experience** - Users no longer need to manually save or see save status messages since auto-save happens seamlessly in the background
+
+### Technical details:
+- **Save button removal**: Removed Save button from DashboardLayout top toolbar
+- **Status bar removal**: Removed entire save status bar section from PageEditorRefactored
+- **Event cleanup**: Removed handleSavePage function and save-page event listener
+- **Interface simplification**: Top toolbar now focuses on core actions (Preview, Regenerate, Publish)
+- **Auto-save reliance**: All saving is now handled automatically by the field-level auto-save system
+
+### Files affected:
+- `components/DashboardLayout.tsx` - Removed Save button from top toolbar
+- `components/PageEditorRefactored.tsx` - Removed save status bar and save-page event listener
+
+---
+
+## 2024-12-19 - Field-Level Auto-Save Implementation
+
+### What was done:
+- **Implemented field-level auto-save** - Added intelligent auto-save system that saves individual fields when users exit input fields (onBlur events)
+- **Prevented intermediate saves** - No more saving partial changes like "welcom" → "welco" → "welc" during typing
+- **Smart change detection** - Only saves fields that actually changed, preventing unnecessary database writes
+- **Real-time preview updates** - Content updates immediately for preview while auto-saving happens in background
+- **Enhanced user experience** - Users can now edit freely without worrying about losing work, with automatic saving when they finish editing a field
+- **Cost-effective implementation** - Uses minimal database operations by only saving changed fields and only when users exit input fields
+
+### Technical details:
+- **Field tracking system**: Added `originalValues` state to track initial field values for change detection
+- **Change queue management**: Implemented `fieldChangeQueue` to manage pending field changes
+- **Auto-save triggers**: Fields save on onBlur, Enter key, and when switching between editor sections
+- **Nested field support**: Handles complex field paths like `business.name`, `hero.headline` with proper database merging
+- **API enhancement**: Updated PATCH endpoint to handle partial field updates by merging with existing page_content
+- **Error handling**: Reverts field values to original state if auto-save fails
+- **Component updates**: Added onBlur handlers to BusinessInfoSection and HeroSection components
+
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Added field-level auto-save system with change tracking and auto-save functions
+- `components/editor/BusinessInfoSection.tsx` - Added onBlur events for auto-save functionality
+- `components/editor/HeroSection.tsx` - Added onBlur events for auto-save functionality
+- `app/api/landing-pages/route.ts` - Enhanced PATCH method to handle nested field updates with proper merging
+
+---
+
+## 2024-12-19 - Dashboard Top Bar Enhancement - Consolidated Action Buttons
+
+### What was done:
+- **Removed separate toolbar** - Eliminated the redundant toolbar below the top bar in the page editor for better space efficiency
+- **Consolidated action buttons** - Moved all action buttons (Preview, Regenerate, Save, Publish, Desktop/Mobile view) to the main top bar
+- **Added editable page title** - Implemented inline-editable page title on the left side of the top bar that updates the database
+- **Simplified profile section** - Removed "Profile" text and dropdown arrow, keeping only the profile icon with dropdown functionality
+- **Modern button styling** - Updated button design to use monochrome black/white color scheme with outline and background fill indicators
+- **Icon-based view toggles** - Replaced "Desktop" and "Mobile" text buttons with modern icons for better visual appeal
+- **Enhanced space utilization** - Top bar now serves as a comprehensive control center, eliminating the need for separate toolbar space
+
+### Technical details:
+- **Toolbar removal**: Completely removed the toolbar section from PageEditorRefactored component
+- **Event-driven communication**: Implemented custom event system between DashboardLayout and PageEditorRefactored for button actions
+- **Inline title editing**: Added click-to-edit functionality for page title with Enter/Escape key support and database updates
+- **Button consolidation**: All action buttons now positioned in the center of the top bar with logical grouping
+- **Icon integration**: Used SVG icons for Desktop/Mobile view toggles with proper hover states and tooltips
+- **Responsive design**: Maintained mobile responsiveness while consolidating controls
+- **Database integration**: Page title changes automatically save to database via API calls
+- **Event listeners**: Added comprehensive event handling for all top bar button actions
+
+### Files affected:
+- `components/DashboardLayout.tsx` - Added editable page title, consolidated action buttons, simplified profile section, and implemented custom event system
+- `components/PageEditorRefactored.tsx` - Removed toolbar section, added event listeners for top bar buttons, and simplified save status display
+
+---
+
+## 2024-12-19 - Dashboard Layout Enhancement - Sidebar Overlay on Edit Pages
+
+### What was done:
+- **Implemented sidebar overlay behavior** - Sidebar is now hidden on edit pages (`/dashboard/page/{id}`) and becomes an overlay when hovering near the left edge
+- **Enhanced user experience** - Edit pages now have full-width content area for better editing experience
+- **Smart sidebar detection** - Sidebar automatically detects edit page routes and switches to overlay mode
+- **Smooth transitions** - Sidebar overlay has smooth fade-in/fade-out animations with proper opacity and pointer-events management
+- **Mouse proximity detection** - Sidebar appears when mouse is within 20px of left edge and disappears when mouse moves beyond 280px
+- **Improved navigation** - Users can still access dashboard navigation and page list through the overlay sidebar
+
+### Technical details:
+- **Route detection**: Added `isEditPage` check using `pathname?.includes('/dashboard/page/')`
+- **Overlay state management**: Added `showSidebarOverlay` state to control sidebar visibility
+- **Mouse movement tracking**: Added `mousemove` event listener to detect mouse proximity to left edge
+- **Conditional rendering**: Sidebar renders as overlay on edit pages, normal sidebar on other dashboard pages
+- **Smooth animations**: Used `transition-all duration-300` with opacity and transform changes
+- **Pointer events management**: Overlay sidebar uses `pointer-events-none` when hidden to prevent interaction
+- **Z-index optimization**: Overlay sidebar uses `z-50` for proper layering above content
+- **Responsive design**: Maintained mobile responsiveness while adding overlay functionality
+
+### Files affected:
+- `components/DashboardLayout.tsx` - Added sidebar overlay behavior, mouse proximity detection, and conditional rendering based on route
+
+---
+
 ## 2024-12-19 - Landing Page Mobile Hero Section Enhancement
 
 ### What was done:
@@ -599,3 +886,408 @@
 
 ### Files affected:
 - `components/PageEditorRefactored.tsx`
+
+---
+
+## 2024-12-19 - Global Theme Switching Implementation
+
+### What was done:
+- **Implemented global theme switching system** - Added comprehensive dark/light theme switching functionality
+- **Created theme context and provider** - Built React context for managing theme state across the entire application
+- **Added theme toggle component** - Created reusable theme toggle button with sun/moon icons
+- **Updated root layout** - Integrated theme provider to apply dark class to HTML element
+- **Enhanced dashboard layout** - Added theme toggle to both edit page and regular dashboard headers
+- **Updated landing page template** - Modified to use global theme instead of config-based theme
+- **Fixed theme persistence** - Theme preference is saved to localStorage and restored on page load
+- **Maintained accent color customization** - Users can still customize accent colors while using global theme switching
+
+### Technical details:
+- **Theme context**: Created `ThemeProvider` with `useTheme` hook for global theme management
+- **HTML class management**: Automatically adds/removes `dark` class to HTML element based on theme
+- **LocalStorage persistence**: Theme preference saved and restored across browser sessions
+- **Theme toggle UI**: Clean button with sun/moon icons and optional label display
+- **Global integration**: Theme provider wraps entire application in root layout
+- **Landing page integration**: Template now uses global theme for mode, config theme for accent color
+- **Dashboard integration**: Theme toggle added to both edit page and regular dashboard headers
+- **TypeScript support**: Proper typing for theme context and components
+- **Responsive design**: Theme toggle works on both desktop and mobile devices
+
+### Files affected:
+- `lib/theme-context.tsx` - New theme context and provider with localStorage persistence
+- `components/ThemeToggle.tsx` - New theme toggle component with sun/moon icons
+- `app/layout.tsx` - Updated to use theme provider and suppress hydration warnings
+- `components/DashboardLayout.tsx` - Added theme toggle to both edit page and regular dashboard headers
+- `components/LandingPageTemplate.tsx` - Updated to use global theme context instead of config theme
+
+---
+
+## 2024-12-19 - Theme Settings Panel Integration Fix
+
+### What was done:
+- **Fixed ThemePanel integration** - Updated ThemePanel to properly work with the global theme system
+- **Synchronized theme mode selection** - Theme mode dropdown now correctly reflects and controls the global theme state
+- **Separated global vs page-specific settings** - Theme mode is now global, accent color remains page-specific
+- **Added explanatory text** - Clear labels explaining which settings are global vs page-specific
+- **Fixed theme switching functionality** - Users can now properly switch between light and dark themes from the Theme Settings panel
+
+### Technical details:
+- **Global theme integration**: ThemePanel now uses `useTheme` hook to access and control global theme state
+- **Theme mode synchronization**: Dropdown value now reflects `globalTheme` instead of config-based theme
+- **Accent color preservation**: Accent color changes still update page style via `onThemeChange` callback
+- **User experience improvements**: Added explanatory text to clarify the difference between global and page-specific settings
+- **Proper state management**: Theme mode changes now directly update global theme context instead of page style
+
+### Files affected:
+- `components/editor/panels/ThemePanel.tsx` - Updated to use global theme system, added explanatory text, and fixed theme switching functionality
+
+---
+
+## 2024-12-19 - Missing Editor Functionality Restoration
+
+### What was done:
+- **Restored word highlight functionality** - Added interactive word highlighting feature to Hero Section Editor where users can click on headline words to highlight them
+- **Removed arrow icons from Page Layout** - Cleaned up the Page Layout interface by removing unnecessary expand/collapse arrow icons
+- **Fixed section visibility toggle** - Section visibility buttons now properly show/hide sections in the landing page preview
+- **Fixed drag and drop functionality** - Section reordering now actually moves sections in the landing page preview, not just in the editor panel
+- **Enhanced user experience** - All editor functionality now works as expected with proper state synchronization
+
+### Technical details:
+- **Word highlighting**: Added interactive word selection UI with clickable word buttons and visual feedback for highlighted words
+- **Section visibility**: Connected section visibility state from editor to landing page template via props
+- **Section ordering**: Connected section order state from editor to landing page template via props
+- **State synchronization**: Updated PageEditorRefactored to pass section state to LandingPageTemplate
+- **UI cleanup**: Removed unnecessary expand/collapse arrows from layout panel for cleaner interface
+- **Proper data flow**: Section changes now properly flow from editor state to page content to landing page display
+
+### Files affected:
+- `components/editor/panels/SectionPanel.tsx` - Added word highlight functionality to Hero Section Editor
+- `components/editor/panels/LayoutPanel.tsx` - Removed arrow icons and cleaned up layout interface
+- `components/PageEditorRefactored.tsx` - Fixed section state synchronization and data flow to landing page
+
+---
+
+## 2024-12-19 - Dynamic Navigation System Implementation
+
+### What was done:
+- **Implemented dynamic navigation** - Navigation menu now dynamically shows sections based on `sectionOrder` and `visibleSections` from the editor
+- **Renamed navigation items** - Updated section names in navigation: Problem Section → "Why", Features → "How", Social Proof → "Testimonials"
+- **Hidden CTA from navigation** - CTA section is no longer shown in the navigation menu (only the CTA button remains)
+- **Updated both desktop and mobile navigation** - Both navigation systems now use the same dynamic logic
+- **Added smooth scrolling** - Navigation links now smoothly scroll to sections instead of using anchor links
+
+### Technical details:
+- **Dynamic navigation generation**: Created `getNavigationItems()` function that filters and maps sections based on visibility and order
+- **Section mapping**: Added proper mapping between section IDs and display names/hrefs
+- **Consistent behavior**: Both desktop and mobile navigation use the same data source and logic
+- **Smooth scrolling**: Replaced anchor links with JavaScript smooth scrolling for better UX
+- **CTA handling**: CTA section is filtered out from navigation items but CTA button remains in both desktop and mobile menus
+- **Responsive design**: Mobile navigation automatically closes when a section is selected
+
+### Files affected:
+- `components/LandingPageTemplate.tsx` - Complete navigation system overhaul with dynamic menu generation, renamed section labels, and improved scroll behavior
+
+---
+
+## 2024-12-19 - Navigation Bar Visibility Fix
+
+### What was done:
+- **Fixed navigation bar disappearing** - Navigation bar now stays visible at all times by making it fixed positioned
+- **Added proper content padding** - Main content now has appropriate top padding to account for the fixed header
+- **Updated scroll behavior** - All scroll functions now account for the fixed header height to prevent content from being hidden behind the header
+- **Maintained responsive design** - Different padding values for mobile preview vs desktop to match header heights
+- **Preserved mobile menu functionality** - Mobile menu continues to work correctly with the fixed header
+
+### Technical details:
+- **Fixed positioning**: Header now uses `fixed top-0 left-0 right-0 z-50` to stay at the top of viewport
+- **Content padding**: Added dynamic padding-top to main content (48px for mobile, 56px for desktop)
+- **Z-index management**: Header uses z-50 to ensure it stays above other content
+- **Scroll offset calculation**: All scroll functions now calculate proper offset to account for fixed header height
+- **Responsive heights**: Different header heights maintained for mobile preview vs desktop
+- **TypeScript fixes**: Added proper type casting for HTMLElement to resolve TypeScript errors
+
+### Files affected:
+- `components/LandingPageTemplate.tsx` - Fixed header positioning, added content padding, and updated all scroll functions to account for fixed header
+
+---
+
+## 2024-12-19 - Preview Mode Navigation Containment Fix
+
+### What was done:
+- **Fixed navigation bar containment in preview mode** - Navigation bar now stays within the landing page template when viewed in the editor preview
+- **Made header positioning conditional** - Header uses relative positioning in preview mode, fixed positioning in standalone mode
+- **Updated content padding logic** - Content padding is removed when in preview mode to prevent double spacing
+- **Fixed scroll behavior in preview mode** - Scroll functions no longer apply header offset when header is relative positioned
+- **Maintained standalone functionality** - Fixed positioning and proper scroll behavior still work when landing page is viewed standalone
+
+### Technical details:
+- **Conditional positioning**: Header uses `onSectionSelect` prop to detect preview mode and apply appropriate positioning
+- **Preview mode detection**: When `onSectionSelect` is present, header uses relative positioning; when absent, uses fixed positioning
+- **Content padding adjustment**: Main content padding is set to 0px in preview mode, normal padding in standalone mode
+- **Scroll offset calculation**: All scroll functions check for preview mode and only apply header offset when header is fixed
+- **Consistent behavior**: Both desktop and mobile navigation maintain proper scroll behavior in both modes
+
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Pass previewMode prop to LandingPageTemplate
+- `components/LandingPageTemplate.tsx` - Implement conditional header positioning and scroll behavior based on preview mode
+
+---
+
+## 2024-12-19 - Preview Mode Navigation Scroll Fix
+
+### What was done:
+- **Fixed navigation scroll functionality in preview mode** - Navigation links now properly scroll to sections when clicked in the editor preview
+- **Implemented container-aware scrolling** - Scroll functions now work within the preview container instead of trying to scroll the entire window
+- **Maintained standalone scroll behavior** - Window scrolling still works correctly when landing page is viewed standalone
+- **Updated all scroll functions** - Both desktop and mobile navigation now use appropriate scroll methods based on context
+
+### Technical details:
+- **Preview mode scrolling**: Uses `element.scrollIntoView()` to scroll within the preview container
+- **Standalone mode scrolling**: Uses `window.scrollTo()` with proper header offset calculation
+- **Context detection**: Uses `onSectionSelect` prop presence to determine which scroll method to use
+- **Consistent behavior**: All scroll functions (scrollToCTA, scrollToSection, navigation links) use the same logic
+- **Mobile navigation**: Mobile menu links also use the same conditional scroll behavior
+
+### Files affected:
+- `components/LandingPageTemplate.tsx` - Updated all scroll functions to work correctly in both preview and standalone modes
+
+---
+
+## 2024-12-19 - Mobile Preview Fix
+
+### What was done:
+- **Fixed mobile preview functionality** - Mobile preview now shows the actual landing page instead of a QR code interface
+- **Added preview mode controls** - Desktop/mobile toggle buttons in the dashboard header now work correctly
+- **Implemented event-driven preview switching** - Preview mode changes are handled via custom events from the dashboard layout
+- **Updated hook interface** - Added setPreviewMode to usePageEditor hook and its TypeScript interface
+
+### Technical details:
+- **Mobile preview rendering**: Changed from MobilePreviewQR component to LandingPageTemplate with mobile preview mode
+- **Event listener**: Added event listener for 'set-preview-mode' custom events from dashboard layout
+- **Hook enhancement**: Exported setPreviewMode function from usePageEditor hook
+- **Type safety**: Updated UsePageEditorReturn interface to include setPreviewMode function
+- **Responsive container**: Mobile preview uses max-w-sm container with proper padding
+
+### Files affected:
+- `components/PageEditorRefactored.tsx` - Fixed mobile preview rendering and added event listener for preview mode changes
+- `components/editor/hooks/usePageEditor.ts` - Exported setPreviewMode function
+- `components/editor/types/editor.types.ts` - Added setPreviewMode to UsePageEditorReturn interface
+
+---
+
+## 2024-12-19 - Mobile Preview Navigation and Background Fix
+
+### What was done:
+- **Fixed mobile navigation in preview mode** - Mobile navigation menu now shows when in mobile preview mode instead of only on actual mobile devices
+- **Fixed transparent background issue** - Features and FAQ sections now have proper background colors in mobile preview
+- **Enhanced mobile preview container** - Added proper styling to mobile preview container for better visual presentation
+
+### Technical details:
+- **Conditional navigation display**: Desktop navigation hidden when `previewMode === 'mobile'`, mobile menu button shown instead
+- **Mobile menu visibility**: Mobile menu overlay now shows when in mobile preview mode regardless of screen size
+- **Container styling**: Added `bg-white rounded-lg shadow-lg` to mobile preview container for proper section background visibility
+- **Responsive behavior**: Navigation properly switches between desktop and mobile styles based on preview mode
+
+### Files affected:
+- `components/LandingPageTemplate.tsx` - Updated navigation visibility logic to work with preview mode
+- `components/PageEditorRefactored.tsx` - Enhanced mobile preview container styling
+
+---
+
+## 2024-12-19 - Mobile Menu Containment Fix
+
+### What was done:
+- **Fixed mobile menu positioning** - Mobile menu now opens within the mobile preview container instead of covering the entire screen
+- **Added relative positioning** - Mobile preview container now has relative positioning to contain the absolutely positioned mobile menu
+
+### Technical details:
+- **Conditional positioning**: Mobile menu uses `absolute inset-0` when in mobile preview mode, `fixed inset-0` for standalone mode
+- **Container positioning**: Mobile preview container now has `relative` positioning to properly contain the mobile menu
+- **Proper containment**: Mobile menu overlay is now contained within the mobile preview phone-like container
+
+### Files affected:
+- `components/LandingPageTemplate.tsx` - Updated mobile menu positioning logic
+- `components/PageEditorRefactored.tsx` - Added relative positioning to mobile preview container
+
+---
+
+## 2024-12-19 - Mobile Menu Animation Enhancement
+
+### What was done:
+- **Added smooth animations** - Mobile navigation menu now has smooth opening and closing animations
+- **Enhanced visual feedback** - Background overlay fades in/out smoothly
+- **Improved user experience** - Menu slides down from top with easing transitions
+
+### Technical details:
+- **Fade-in animation**: Background overlay uses `animate-in fade-in duration-300` for smooth opacity transition
+- **Slide-down animation**: Menu content uses `animate-in slide-in-from-top-2` for smooth slide-down effect
+- **Transition timing**: 300ms duration with `ease-in-out` timing function for natural feel
+- **Preview mode compatibility**: Animations work in both standalone and mobile preview modes
+
+### Files affected:
+- `components/LandingPageTemplate.tsx` - Added CSS animation classes to mobile menu components
+
+---
+
+## 2024-12-19 - Editor Panel Card Layout Optimization
+
+### What was done:
+- **Converted horizontal card layouts to vertical stacking** - Updated editor panel card components to use vertical layout instead of horizontal to prevent overflow issues
+- **Enhanced visual organization** - Added proper spacing, labels, and card-like containers for better user experience
+- **Improved form usability** - Each card component now has clear labels and better visual separation
+
+### Technical details:
+- **Features section**: Converted from horizontal `flex items-center gap-2` to vertical stacked layout with individual field labels
+- **Pain Points section**: Updated to use vertical stacking with proper spacing and visual hierarchy
+- **Card styling**: Added `space-y-3 p-3 border border-slate-200 rounded-md bg-slate-50` for better visual separation
+- **Field labels**: Added individual labels for each input field with `text-xs font-medium text-slate-600`
+- **Remove buttons**: Moved to header area with smaller, more appropriate sizing
+- **Full-width inputs**: Changed from `flex-1` to `w-full` for better mobile responsiveness
+
+### Files affected:
+- `components/features/editor/panels/SectionPanel.tsx` - Updated Features and Pain Points sections to use vertical card layout
+
+---
+
+## 2024-12-19 - IconSelector Duplicate Key Fix and Unified Icon Selection
+
+### What was done:
+- **Fixed duplicate key error** - Resolved React warning about duplicate keys in PainPointIconSelector
+- **Created unified icon selector** - Implemented UnifiedIconSelector that all sections can use
+- **Simplified icon management** - All specialized selectors now use the same comprehensive icon set
+- **Eliminated duplicate entries** - Removed duplicate 'angry' entries that were causing React key conflicts
+- **Enhanced icon variety** - Added more icons to the unified selector for better user choice
+
+### Technical details:
+- **Duplicate key fix**: Changed duplicate 'angry' entries to unique values ('angry' and 'sad')
+- **Unified approach**: Created UnifiedIconSelector with comprehensive icon set (40+ icons)
+- **Backward compatibility**: All existing specialized selectors now use UnifiedIconSelector internally
+- **Icon organization**: Organized icons into logical groups (Core, Technology, Problem/Alert, Additional)
+- **React key uniqueness**: All icon values are now unique, eliminating React warnings
+
+### Files affected:
+- `components/features/editor/common/IconSelector.tsx` - Created UnifiedIconSelector and fixed duplicate key issues
+- `lib/iconUtils.ts` - Added missing icon mappings (AlertCircle, Sad)
+
+---
+
+## 2024-12-19 - IconSelector Icon Library Fix
+
+### What was done:
+- **Fixed icon naming in IconSelector** - Updated all icon values to use correct Lucide React icon names
+- **Identified icon library** - Confirmed project uses Lucide React v0.292.0 as the icon library
+- **Updated icon mappings** - Added missing icon imports and mappings in iconUtils.ts
+- **Fixed placeholder icons** - Replaced incorrect icon names with proper Lucide React equivalents
+- **Enhanced icon consistency** - All specialized icon selectors now use correct icon names
+
+### Technical details:
+- **Icon library**: Project uses Lucide React (v0.292.0) for all icons
+- **Fixed icon names**: Updated incorrect names like 'lightning' → 'zap', 'fire' → 'flame', 'mobile' → 'smartphone'
+- **Added missing imports**: Added Lightbulb, Helicopter, Wrench, Smartphone, Monitor, HeartCrack, Frown, Angry, Moon, AlertTriangle
+- **Updated icon mappings**: Added proper mappings for all new icons in iconMap
+- **Specialized selectors**: Fixed HeroIconSelector, FeatureIconSelector, GuaranteeIconSelector, and PainPointIconSelector
+
+### Files affected:
+- `components/features/editor/common/IconSelector.tsx` - Updated all icon values to use correct Lucide React names
+- `lib/iconUtils.ts` - Added missing icon imports and mappings for proper icon rendering
+
+---
+
+## 2024-12-19 - Black Theme Background Color Update
+
+### What was done:
+- **Updated black theme background color** - Changed from `#0f172a` to pure black `#000000` for maximum contrast and modern appearance
+- **Updated all theme utilities** - Modified theme classes and CSS generation to use pure black background
+- **Enhanced visual consistency** - Applied the pure black background across all landing page components and theme systems
+- **Maintained accessibility** - Preserved proper contrast ratios with the pure black background
+
+### Technical details:
+- **Background color change**: Updated from `#0f172a` (slate-950) to `#000000` (pure black)
+- **Theme utilities update**: Modified `getThemeClasses` function in `utils/theme.ts` to use `bg-black`
+- **CSS generation update**: Updated `themeDefaults` in `lib/themeUtils.ts` to use pure black background
+- **Inline styles update**: Updated LandingPageTemplate inline styles to use pure black background
+- **Accent foreground update**: Updated accent foreground color to match pure black background for proper contrast
+
+### Files affected:
+- `components/pages/landing/LandingPageTemplate.tsx` - Updated inline background color style
+- `utils/theme.ts` - Updated getThemeClasses function to use pure black background
+- `lib/themeUtils.ts` - Updated themeDefaults and CSS generation with pure black background
+
+---
+
+## 2024-12-19 - Theme Mode Dropdown Enhancement
+
+### What was done:
+- **Enhanced theme mode selection UI** - Replaced basic select dropdown with modern shadcn dropdown menu featuring sun/moon icons
+- **Added visual theme indicators** - Theme mode dropdown now shows sun icon for light theme and moon icon for dark theme
+- **Implemented modern dropdown design** - Used shadcn DropdownMenu components with proper styling and animations
+- **Added active state indicators** - Selected theme mode shows a blue dot indicator for clear visual feedback
+- **Created reusable toggle component** - Built shadcn-compatible toggle component for future use
+- **Enhanced user experience** - More intuitive and visually appealing theme selection interface
+
+### Technical details:
+- **Shadcn dropdown integration**: Used DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, and DropdownMenuItem components
+- **Icon integration**: Added Sun, Moon, and ChevronDown icons from lucide-react for visual clarity
+- **Active state styling**: Added blue dot indicator (h-2 w-2 rounded-full bg-blue-500) for selected theme
+- **Button styling**: Used outline variant button with proper spacing and icon alignment
+- **Responsive design**: Dropdown works on both desktop and mobile devices
+- **Accessibility**: Proper ARIA attributes and keyboard navigation support
+
+### Files affected:
+- `components/ui/toggle.tsx` - New shadcn-compatible toggle component
+- `components/features/editor/panels/ThemePanel.tsx` - Enhanced theme mode selection with modern dropdown UI
+
+---
+
+## 2024-12-19 - Major Code Architecture Refactoring
+
+### What was done:
+- **Completely restructured codebase** - Implemented comprehensive refactoring from monolithic structure to clean, scalable architecture
+- **Decomposed LandingPageTemplate.tsx** - Broke down 1,167-line monolith into modular, maintainable components
+  - Created individual section components (Hero, Problem, Features, SocialProof, Guarantees, FAQ, CTA)
+  - Implemented SectionRenderer for dynamic section orchestration
+  - Reduced main component from 1,167 lines to 200 lines (83% reduction)
+- **Implemented domain-driven folder structure** - Organized components by feature domains for better maintainability
+  - `src/components/features/landing-page/` - Landing page domain components
+  - `src/components/features/dashboard/` - Dashboard domain components
+  - `src/components/features/editor/` - Page editor domain components
+  - `src/components/shared/` - Reusable business components
+  - `src/types/` - Centralized TypeScript definitions
+  - `src/utils/` - Shared utility functions
+- **Created comprehensive type system** - Eliminated duplicate type definitions and improved type safety
+  - `src/types/landing-page.types.ts` - Landing page domain types
+  - `src/types/dashboard.types.ts` - Dashboard domain types
+  - `src/types/common.types.ts` - Shared types across application
+- **Extracted shared utilities** - Created reusable utility functions for theme management and common operations
+  - `src/utils/theme.ts` - Theme management utilities
+  - Centralized utility exports for clean imports
+
+### Technical details:
+- **Component decomposition**: Split LandingPageTemplate into 7 individual section components plus SectionRenderer
+- **Type consolidation**: Moved all type definitions to centralized type files with proper domain separation
+- **Utility extraction**: Created shared theme utilities to eliminate code duplication across components
+- **Import optimization**: Created index files for clean, organized imports across the application
+- **Code quality metrics**: Achieved significant improvements in maintainability and scalability
+  - No component exceeds 300 lines (down from 1,167)
+  - Eliminated code duplication in section rendering
+  - 100% TypeScript coverage with centralized types
+  - Clear separation of concerns throughout codebase
+- **Migration strategy**: Implemented incremental refactoring approach to minimize breaking changes
+- **Documentation**: Created comprehensive migration guide and updated roadmap documents
+
+### Files affected:
+- `src/components/features/landing-page/LandingPageTemplate.tsx` - New refactored main template (200 lines)
+- `src/components/features/landing-page/SectionRenderer.tsx` - New section orchestration component
+- `src/components/features/landing-page/sections/` - 7 new individual section components
+- `src/types/` - New centralized type definitions
+- `src/utils/` - New shared utility functions
+- `REFACTORING_STRATEGY.md` - Comprehensive refactoring strategy document
+- `MIGRATION_GUIDE.md` - Detailed migration guide and implementation steps
+- `PLAN/RoadMap.md` - Updated with refactoring progress
+- `PLAN/RoadMapLog.md` - This entry documenting the refactoring
+
+### Impact:
+- **Developer Experience**: 83% reduction in component size, clear domain organization, easier maintenance
+- **Code Quality**: Eliminated duplication, improved type safety, better separation of concerns
+- **Scalability**: New features can be added without conflicts, supports team expansion
+- **Maintainability**: Smaller, focused components are easier to test and modify
+- **Performance**: Better code splitting potential and optimization opportunities

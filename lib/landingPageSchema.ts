@@ -6,12 +6,20 @@ export const landingPageSchema = {
   },
   hero: {
     headline: "",
-    headlineHighlights: [], // Array of words/phrases to highlight
+    headlineHighlights: [] as string[], // Array of words/phrases to highlight
     subheadline: "",
     cta: "",
     heroTag: "",
     heroTagIcon: "",
-    backgroundImage: ""
+    backgroundImage: "",
+    media: {
+      enabled: false,
+      type: "image" as "image" | "video" | "youtube" | "vimeo",
+      url: "",
+      file: "",
+      altText: "",
+      thumbnail: ""
+    }
   },
   // Problem Amplification Section
   problemSection: {
@@ -60,6 +68,24 @@ export const landingPageSchema = {
       { question: "", answer: "" }
     ]
   },
+  // Pricing Section
+  pricing: {
+    title: "",
+    description: "",
+    plans: [
+      {
+        id: "",
+        name: "",
+        price: "",
+        period: "",
+        description: "",
+        features: [""],
+        popular: false,
+        ctaText: "",
+        ctaLink: ""
+      }
+    ]
+  },
   ctaTitle: "",
   ctaSubtitle: "",
   // Urgency/Scarcity elements
@@ -77,6 +103,7 @@ export const landingPageSchema = {
     "problemSection",
     "features", 
     "socialProof",
+    "pricing",
     "guarantees",
     "faq",
     "cta"

@@ -17,13 +17,13 @@ export const themeDefaults = {
     mutedForeground: "#64748b",
   },
   black: {
-    background: "#0f172a",
-    surface: "#1e293b",
-    text: "#f8fafc",
-    textSecondary: "#cbd5e1",
-    border: "#334155",
-    muted: "#1e293b",
-    mutedForeground: "#94a3b8",
+    background: "#000000",
+    surface: "#1f2937",
+    text: "#f9fafb",
+    textSecondary: "#d1d5db",
+    border: "#374151",
+    muted: "#000000",
+    mutedForeground: "#9ca3af",
   }
 };
 
@@ -41,7 +41,7 @@ export function generateThemeCSS(theme: ThemeConfig): string {
     --muted: ${baseColors.muted};
     --muted-foreground: ${baseColors.mutedForeground};
     --accent: ${accentColor};
-    --accent-foreground: ${theme.mode === 'white' ? '#ffffff' : '#0f172a'};
+    --accent-foreground: ${theme.mode === 'white' ? '#ffffff' : '#000000'};
     --accent-10: ${accentColor}1a;
     --accent-20: ${accentColor}33;
     --accent-30: ${accentColor}4d;
@@ -59,13 +59,13 @@ export function applyTheme(element: HTMLElement, theme: ThemeConfig) {
 // Get theme-aware class names
 export function getThemeClasses(theme: ThemeConfig) {
   return {
-    background: theme.mode === 'white' ? 'bg-white' : 'bg-slate-950',
-    surface: theme.mode === 'white' ? 'bg-slate-50' : 'bg-slate-900',
-    text: theme.mode === 'white' ? 'text-slate-900' : 'text-slate-50',
-    textSecondary: theme.mode === 'white' ? 'text-slate-600' : 'text-slate-400',
-    border: theme.mode === 'white' ? 'border-slate-200' : 'border-slate-700',
-    muted: theme.mode === 'white' ? 'bg-slate-100' : 'bg-slate-800',
-    mutedText: theme.mode === 'white' ? 'text-slate-500' : 'text-slate-400',
+    background: theme.mode === 'white' ? 'bg-white' : 'bg-black',
+    surface: theme.mode === 'white' ? 'bg-slate-50' : 'bg-gray-900',
+    text: theme.mode === 'white' ? 'text-slate-900' : 'text-gray-50',
+    textSecondary: theme.mode === 'white' ? 'text-slate-600' : 'text-gray-400',
+    border: theme.mode === 'white' ? 'border-slate-200' : 'border-gray-600',
+    muted: theme.mode === 'white' ? 'bg-white' : 'bg-black',
+    mutedText: theme.mode === 'white' ? 'text-slate-500' : 'text-gray-400',
   };
 }
 
