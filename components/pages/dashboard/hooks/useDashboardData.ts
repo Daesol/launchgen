@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { DashboardData, DashboardPage } from "../types/dashboard.types";
 
@@ -12,7 +12,7 @@ export function useDashboardData() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const supabase = createPagesBrowserClient();
+  const supabaseRef = useRef(createPagesBrowserClient());
 
   const fetchDashboardData = useCallback(async () => {
     try {
@@ -20,7 +20,7 @@ export function useDashboardData() {
       setLoading(true);
       setError(null);
 
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      const { data: { user }, error: userError } = await supabaseRef.current.auth.getUser();
       console.log('👤 User auth result:', { user: !!user, error: userError });
       
       if (userError || !user) {
@@ -36,7 +36,7 @@ export function useDashboardData() {
       }
 
       // Fetch landing pages
-      const { data: pages, error: pagesError } = await supabase
+      const { data: pages, error: pagesError } = await supabaseRef.current
         .from('landing_pages')
         .select('id, title, slug, created_at, template_id, page_content, page_style')
         .eq('owner_id', user.id)
@@ -48,7 +48,7 @@ export function useDashboardData() {
       let leadsByPage: Record<string, any[]> = {};
       if (pages && pages.length > 0) {
         const pageIds = pages.map((p: DashboardPage) => p.id);
-        const { data: leads } = await supabase
+        const { data: leads } = await supabaseRef.current
           .from('leads')
           .select('id, page_id, name, email, created_at')
           .in('page_id', pageIds);
@@ -77,7 +77,7 @@ export function useDashboardData() {
         const allAnalytics = [];
         for (const batch of batches) {
           try {
-            const { data: analytics, error } = await supabase
+            const { data: analytics, error } = await supabaseRef.current
               .from('analytics_events')
               .select('landing_page_id, event_type')
               .in('landing_page_id', batch);
@@ -130,11 +130,11 @@ export function useDashboardData() {
       console.log('🏁 Dashboard data fetch complete');
       setLoading(false);
     }
-  }, []); // Remove supabase dependency to prevent infinite re-renders
+  }, []); // No dependencies to prevent re-creation
 
   useEffect(() => {
     fetchDashboardData();
-  }, [fetchDashboardData]);
+  }, []); // Only run once on mount
 
   return {
     data,

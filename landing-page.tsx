@@ -81,7 +81,7 @@ export default function LandingPage() {
       mounted = false
       listener?.subscription.unsubscribe()
     }
-  }, [router, supabase])
+  }, [router]) // Remove supabase dependency to prevent infinite re-renders
 
   const handleGenerateLandingPage = () => {
     if (session) {
