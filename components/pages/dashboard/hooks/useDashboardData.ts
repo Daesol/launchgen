@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { DashboardData, DashboardPage } from "../types/dashboard.types";
 
@@ -14,7 +14,7 @@ export function useDashboardData() {
   const [error, setError] = useState<string | null>(null);
   const supabase = createPagesBrowserClient();
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -119,11 +119,11 @@ export function useDashboardData() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase]);
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [fetchDashboardData]);
 
   return {
     data,

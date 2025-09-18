@@ -93,6 +93,10 @@ LaunchGen is a platform to generate AI-powered landing pages, capture leads, and
 - System is robust for all login flows and ready for further features.
 - Implemented comprehensive global theme switching system with dark/light mode support.
 - Added theme persistence and responsive theme toggle components throughout the application.
+- Fixed infinite loading animation bug when navigating back from /generate to dashboard.
+- Centralized dashboard data management and optimized event listener handling.
+- Fixed lead capture RLS policy violation allowing public visitors to submit leads.
+- Enhanced lead capture security with proper RLS policies for data access control.
 
 ### 5. Code Architecture Refactoring ✅ COMPLETED
 - **Major Refactoring Initiative**: Completely restructured codebase for scalability and maintainability

@@ -1,5 +1,53 @@
 # Road Map Log
 
+## 2025-01-20 - Lead Capture RLS Policy Fix
+
+### What was done:
+- **Fixed RLS policy violation for leads table** - Resolved "new row violates row-level security policy for table 'leads'" error when submitting lead forms
+- **Updated capture-lead API to use service role** - Changed from authenticated client to service role client to bypass RLS for public lead capture
+- **Created RLS policies for leads table** - Added proper RLS policies to allow public lead insertion while maintaining security for data access
+- **Enhanced lead capture security** - Implemented policies that allow anyone to insert leads but restrict viewing/updating to page owners only
+
+### Technical details:
+- **Root cause**: The capture-lead API was using `createRouteHandlerClient` which requires authentication, but lead capture needs to work for anonymous public visitors
+- **Service role solution**: Updated API to use `createClient` with `SUPABASE_SERVICE_ROLE_KEY` to bypass RLS for lead insertion
+- **RLS policy implementation**: Created comprehensive policies for leads table:
+  - "Anyone can insert leads" - Allows public lead capture
+  - "Users can view leads for their own pages" - Restricts lead viewing to page owners
+  - "Users can update/delete leads for their own pages" - Restricts modifications to page owners
+- **Security maintained**: Page owners can only see leads for their own pages, while public users can submit leads
+
+### Files affected:
+- `app/api/capture-lead/route.ts` - Updated to use service role client for public lead capture
+- `supabase/migrations/20250120000004_fix_leads_rls.sql` - New migration with RLS policies for leads table
+- `fix_leads_rls_manual.sql` - Manual SQL script for applying RLS policies
+
+---
+
+## 2025-01-20 - Dashboard Infinite Loading Bug Fix
+
+### What was done:
+- **Fixed infinite loading animation** - Resolved issue where dashboard showed infinite "Loading dashboard" animation when navigating back from /generate page
+- **Eliminated data fetching conflicts** - Fixed conflict between DashboardSessionGate and useDashboardData hook both trying to manage dashboard data
+- **Centralized data management** - Updated DashboardSessionGate to use centralized useDashboardData hook instead of duplicating data fetching logic
+- **Optimized event listener management** - Fixed useDashboardData hook to use useCallback for refetch function to prevent infinite re-registration of event listeners
+- **Improved error handling** - Added proper error state handling in DashboardSessionGate with retry functionality
+- **Enhanced loading state management** - Combined authentication loading and data loading states for better user experience
+
+### Technical details:
+- **Root cause**: DashboardSessionGate and useDashboardData were both fetching data independently, causing conflicts and infinite loading states
+- **Event listener fix**: useDashboardData refetch function was being recreated on every render, causing useLayoutEffects to constantly re-register refresh-pages event listener
+- **Data fetching consolidation**: DashboardSessionGate now only handles authentication, while useDashboardData handles all data fetching
+- **useCallback optimization**: Wrapped fetchDashboardData in useCallback with proper dependencies to prevent unnecessary re-renders
+- **State management**: Combined loading states from both authentication and data fetching for unified loading experience
+- **Error recovery**: Added error state with retry button for better user experience when data fetching fails
+
+### Files affected:
+- `components/pages/dashboard/DashboardSessionGate.tsx` - Updated to use centralized data hook and improved error handling
+- `components/pages/dashboard/hooks/useDashboardData.ts` - Added useCallback optimization and proper dependency management
+
+---
+
 ## 2025-01-20 - Hero Section Media Component Implementation
 
 ### What was done:
