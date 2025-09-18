@@ -70,19 +70,56 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     clearError,
   } = usePageEditor(initialConfig, onSave);
 
-  // Create a wrapper for handlePublish that manages external publishing state
+  // Section management - pass initial values from saved data
+  const initialVisibleSections = pageContent?.visibleSections;
+  const initialSectionOrder = pageContent?.sectionOrder;
+  const sectionManagement = useSectionManagement(initialVisibleSections, initialSectionOrder);
+  const sectionState = sectionManagement.sectionState;
+
+  // Create a wrapper for handlePublish that manages external publishing state and includes section state
   const handlePublish = React.useCallback(async () => {
     if (onPublishingChange) {
       onPublishingChange(true);
     }
     try {
-      await originalHandlePublish();
+      // Create config with section state for publishing
+      const config = {
+        page_content: pageContent,
+        page_style: pageStyle,
+        template_id: templateId,
+        id: id,
+        original_prompt: originalPrompt,
+        published: true,
+        visibleSections: sectionState.visibleSections,
+        sectionOrder: sectionState.sectionOrder,
+      };
+      
+      if (onSave) {
+        await onSave(config);
+      }
     } finally {
       if (onPublishingChange) {
         onPublishingChange(false);
       }
     }
-  }, [originalHandlePublish, onPublishingChange]);
+  }, [pageContent, pageStyle, templateId, id, originalPrompt, sectionState, onSave, onPublishingChange]);
+
+  // Create a wrapper for handleSave that includes section state
+  const handleSaveWithSectionState = React.useCallback(async () => {
+    const config = {
+      page_content: pageContent,
+      page_style: pageStyle,
+      template_id: templateId,
+      id: id,
+      original_prompt: originalPrompt,
+      visibleSections: sectionState.visibleSections,
+      sectionOrder: sectionState.sectionOrder,
+    };
+    
+    if (onSave) {
+      await onSave(config);
+    }
+  }, [pageContent, pageStyle, templateId, id, originalPrompt, sectionState, onSave]);
 
   // Preview mode management - Force mobile view on mobile devices
   const [isMobile, setIsMobile] = React.useState(false);
@@ -119,9 +156,41 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     closeSidePanel
   } = useEditorLayout();
 
-  // Section management
-  const sectionManagement = useSectionManagement();
-  const sectionState = sectionManagement.sectionState;
+  // Auto-save when section visibility or order changes
+  const currentVisibleSections = sectionState.visibleSections;
+  const currentSectionOrder = sectionState.sectionOrder;
+  
+  React.useEffect(() => {
+    const autoSaveSectionChanges = async () => {
+      if (!id || !onSave) return;
+    
+      // Only save if we have actual changes (not initial load)
+      if (initialVisibleSections && initialSectionOrder) {
+        const hasVisibilityChanges = JSON.stringify(currentVisibleSections) !== JSON.stringify(initialVisibleSections);
+        const hasOrderChanges = JSON.stringify(currentSectionOrder) !== JSON.stringify(initialSectionOrder);
+        
+        if (hasVisibilityChanges || hasOrderChanges) {
+          const config = {
+            page_content: pageContent,
+            page_style: pageStyle,
+            template_id: templateId,
+            id: id,
+            original_prompt: originalPrompt,
+            visibleSections: currentVisibleSections,
+            sectionOrder: currentSectionOrder,
+          };
+          
+          try {
+            await onSave(config);
+          } catch (error) {
+            console.error('Error auto-saving section changes:', error);
+          }
+        }
+      }
+    };
+
+    autoSaveSectionChanges();
+  }, [currentVisibleSections, currentSectionOrder, id, onSave, pageContent, pageStyle, templateId, originalPrompt, initialVisibleSections, initialSectionOrder]);
 
   // Field auto-save
   useFieldAutoSave(
@@ -133,7 +202,9 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
           page_content: pageContent,
           page_style: pageStyle,
           template_id: templateId,
-          id: id
+          id: id,
+          visibleSections: sectionState.visibleSections,
+          sectionOrder: sectionState.sectionOrder,
         };
 
         // Update the specific field

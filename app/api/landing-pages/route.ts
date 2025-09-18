@@ -74,7 +74,7 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { id, title, page_content, page_style, template_id, original_prompt, published } = body;
+    const { id, title, page_content, page_style, template_id, original_prompt, published, visibleSections, sectionOrder } = body;
 
     if (!id) {
       return NextResponse.json({ error: "Missing landing page id." }, { status: 400 });
@@ -131,9 +131,24 @@ export async function PATCH(req: NextRequest) {
             current[pathParts[pathParts.length - 1]] = page_content[fieldPath];
           });
           
+          // Add section visibility and order to page content
+          if (visibleSections !== undefined) {
+            mergedContent.visibleSections = visibleSections;
+          }
+          if (sectionOrder !== undefined) {
+            mergedContent.sectionOrder = sectionOrder;
+          }
+          
           updateData.page_content = mergedContent;
         } else {
-          updateData.page_content = page_content;
+          const newPageContent = { ...page_content };
+          if (visibleSections !== undefined) {
+            newPageContent.visibleSections = visibleSections;
+          }
+          if (sectionOrder !== undefined) {
+            newPageContent.sectionOrder = sectionOrder;
+          }
+          updateData.page_content = newPageContent;
         }
       } else {
         updateData.page_content = page_content;
@@ -154,6 +169,36 @@ export async function PATCH(req: NextRequest) {
     
     if (published !== undefined) {
       updateData.published = published;
+    }
+
+    // Handle section visibility and order updates even when page_content is not provided
+    if ((visibleSections !== undefined || sectionOrder !== undefined) && page_content === undefined) {
+      // Get existing page content to merge with
+      const { data: existingContent } = await supabase
+        .from("landing_pages")
+        .select("page_content")
+        .eq("id", id)
+        .single();
+      
+      if (existingContent?.page_content) {
+        const mergedContent = { ...existingContent.page_content };
+        if (visibleSections !== undefined) {
+          mergedContent.visibleSections = visibleSections;
+        }
+        if (sectionOrder !== undefined) {
+          mergedContent.sectionOrder = sectionOrder;
+        }
+        updateData.page_content = mergedContent;
+      } else {
+        const newPageContent: any = {};
+        if (visibleSections !== undefined) {
+          newPageContent.visibleSections = visibleSections;
+        }
+        if (sectionOrder !== undefined) {
+          newPageContent.sectionOrder = sectionOrder;
+        }
+        updateData.page_content = newPageContent;
+      }
     }
 
     // Update the landing page

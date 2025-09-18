@@ -81,6 +81,7 @@ export interface PageContent {
     deadline: string;
   };
   sectionOrder: string[];
+  visibleSections?: Record<string, boolean>;
 }
 
 export interface PageStyle {

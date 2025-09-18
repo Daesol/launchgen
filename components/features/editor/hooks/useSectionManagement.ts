@@ -8,7 +8,7 @@ import {
   SectionSelectHandler 
 } from '../types/editor.types';
 
-export function useSectionManagement(): UseSectionManagementReturn {
+export function useSectionManagement(initialVisibleSections?: Record<string, boolean>, initialSectionOrder?: string[]): UseSectionManagementReturn {
   // Section expansion state - default: all sections expanded for better visibility
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     business: true,
@@ -24,27 +24,31 @@ export function useSectionManagement(): UseSectionManagementReturn {
     theme: true,
   });
 
-  // Section visibility state - default: all sections visible
-  const [visibleSections, setVisibleSections] = useState<Record<string, boolean>>({
-    features: true,
-    cta: true,
-    problemSection: true,
-    socialProof: true,
-    pricing: true,
-    guarantees: true,
-    faq: true,
-  });
+  // Section visibility state - use initial values if provided, otherwise default to all visible
+  const [visibleSections, setVisibleSections] = useState<Record<string, boolean>>(
+    initialVisibleSections || {
+      features: true,
+      cta: true,
+      problemSection: true,
+      socialProof: true,
+      pricing: true,
+      guarantees: true,
+      faq: true,
+    }
+  );
 
-  // Section order state for drag-and-drop
-  const [sectionOrder, setSectionOrder] = useState<string[]>([
-    'problemSection',
-    'features',
-    'socialProof',
-    'pricing',
-    'guarantees',
-    'faq',
-    'cta'
-  ]);
+  // Section order state for drag-and-drop - use initial values if provided
+  const [sectionOrder, setSectionOrder] = useState<string[]>(
+    initialSectionOrder || [
+      'problemSection',
+      'features',
+      'socialProof',
+      'pricing',
+      'guarantees',
+      'faq',
+      'cta'
+    ]
+  );
 
   // Edit panel view state
   const [editPanelView, setEditPanelView] = useState<EditPanelState['editPanelView']>('main');
