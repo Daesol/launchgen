@@ -1,8 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Edit3, ExternalLink, Trash2, Globe, EyeOff } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Edit3, ExternalLink, Trash2, Globe, EyeOff, Copy, Check, Edit2 } from "lucide-react";
 
 interface AnalyticsHeaderProps {
   page: {
@@ -12,9 +13,68 @@ interface AnalyticsHeaderProps {
     published: boolean;
   };
   onDelete: () => void;
+  onUrlUpdate?: (newSlug: string) => void;
 }
 
-export default function AnalyticsHeader({ page, onDelete }: AnalyticsHeaderProps) {
+export default function AnalyticsHeader({ page, onDelete, onUrlUpdate }: AnalyticsHeaderProps) {
+  const [isEditingUrl, setIsEditingUrl] = useState(false);
+  const [editedSlug, setEditedSlug] = useState(page.slug);
+  const [isUpdatingUrl, setIsUpdatingUrl] = useState(false);
+  const [urlError, setUrlError] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const fullUrl = `${window.location.origin}/page/${page.slug}`;
+
+  const handleCopyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(fullUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy URL:', err);
+    }
+  };
+
+  const handleUrlSave = async () => {
+    if (editedSlug === page.slug) {
+      setIsEditingUrl(false);
+      return;
+    }
+
+    setIsUpdatingUrl(true);
+    setUrlError("");
+
+    try {
+      const response = await fetch('/api/landing-pages/update-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pageId: page.id,
+          newSlug: editedSlug
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to update URL');
+      }
+
+      // Update the page slug in parent component
+      onUrlUpdate?.(editedSlug);
+      setIsEditingUrl(false);
+    } catch (error: any) {
+      setUrlError(error.message);
+    } finally {
+      setIsUpdatingUrl(false);
+    }
+  };
+
+  const handleUrlCancel = () => {
+    setEditedSlug(page.slug);
+    setIsEditingUrl(false);
+    setUrlError("");
+  };
   return (
     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
       <div>
@@ -40,6 +100,86 @@ export default function AnalyticsHeader({ page, onDelete }: AnalyticsHeaderProps
           </div>
         </div>
         <p className="text-neutral-400 text-sm">Analytics & Performance</p>
+        
+        {/* Published URL Section */}
+        {page.published && (
+          <div className="mt-3 p-3 bg-neutral-900/50 border border-neutral-800 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
+                Published URL
+              </label>
+              {!isEditingUrl && (
+                <Button
+                  onClick={() => setIsEditingUrl(true)}
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 text-xs text-neutral-400 hover:text-white"
+                >
+                  <Edit2 className="w-3 h-3 mr-1" />
+                  Edit
+                </Button>
+              )}
+            </div>
+            
+            {isEditingUrl ? (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-neutral-400 flex-shrink-0">
+                    {window.location.origin}/page/
+                  </span>
+                  <Input
+                    value={editedSlug}
+                    onChange={(e) => setEditedSlug(e.target.value)}
+                    className="flex-1 h-8 text-sm bg-neutral-800 border-neutral-700 text-white"
+                    placeholder="your-page-url"
+                    disabled={isUpdatingUrl}
+                  />
+                </div>
+                {urlError && (
+                  <p className="text-xs text-red-400">{urlError}</p>
+                )}
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={handleUrlSave}
+                    size="sm"
+                    disabled={isUpdatingUrl || !editedSlug.trim()}
+                    className="h-7 px-3 text-xs bg-green-600 hover:bg-green-700"
+                  >
+                    {isUpdatingUrl ? "Saving..." : "Save"}
+                  </Button>
+                  <Button
+                    onClick={handleUrlCancel}
+                    variant="outline"
+                    size="sm"
+                    disabled={isUpdatingUrl}
+                    className="h-7 px-3 text-xs border-neutral-700 text-neutral-400 hover:text-white"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <code className="flex-1 text-sm text-green-400 bg-neutral-800/50 px-2 py-1 rounded font-mono">
+                  {fullUrl}
+                </code>
+                <Button
+                  onClick={handleCopyUrl}
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-neutral-400 hover:text-white"
+                  title="Copy URL"
+                >
+                  {copied ? (
+                    <Check className="w-3 h-3 text-green-400" />
+                  ) : (
+                    <Copy className="w-3 h-3" />
+                  )}
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
       
       {/* Desktop: Horizontal button layout */}
