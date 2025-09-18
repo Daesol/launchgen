@@ -68,6 +68,9 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
   const { data: { user }, error: userError } = await supabase.auth.getUser();
+  
+  console.log('API Auth check:', { user: user?.id, userError });
+  
   if (userError || !user) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
   }
@@ -83,13 +86,18 @@ export async function PATCH(req: NextRequest) {
     }
 
     // Ensure the user owns the page and get existing content
+    console.log('Fetching page with ID:', id, 'for user:', user.id);
+    
     const { data: existingPage, error: fetchError } = await supabase
       .from("landing_pages")
       .select("id, owner_id, slug, page_content")
       .eq("id", id)
       .single();
 
-    console.log('Database fetch result:', { existingPage, fetchError });
+    console.log('Database fetch result:', { 
+      existingPage: existingPage ? { id: existingPage.id, owner_id: existingPage.owner_id } : null, 
+      fetchError: fetchError ? { message: fetchError.message, code: fetchError.code, details: fetchError.details } : null 
+    });
 
     if (fetchError || !existingPage) {
       return NextResponse.json({ error: "Landing page not found." }, { status: 404 });

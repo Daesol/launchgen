@@ -167,6 +167,8 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   const prevSectionOrderRef = React.useRef<string[] | null>(initialSectionOrder || null);
   const isSavingSectionsRef = React.useRef(false);
   const isInitializedRef = React.useRef(false);
+  const saveErrorCountRef = React.useRef(0);
+  const maxRetries = 3;
   
   // Only auto-save when there's an actual user-initiated change
   React.useEffect(() => {
@@ -199,10 +201,17 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
         currentVisibleSections,
         prevVisibleSections: prevVisibleSectionsRef.current,
         currentSectionOrder,
-        prevSectionOrder: prevSectionOrderRef.current
+        prevSectionOrder: prevSectionOrderRef.current,
+        errorCount: saveErrorCountRef.current
       });
       
       if (hasVisibilityChanges || hasOrderChanges) {
+        // Circuit breaker: stop trying after max retries
+        if (saveErrorCountRef.current >= maxRetries) {
+          console.warn('Auto-save disabled due to repeated errors. Please refresh the page.');
+          return;
+        }
+        
         isSavingSectionsRef.current = true;
         
         // For section visibility updates, don't pass page_content to avoid conflicts
@@ -217,11 +226,15 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
           await onSave(config);
           console.log('Section visibility/order saved:', { currentVisibleSections, currentSectionOrder });
           
+          // Reset error count on successful save
+          saveErrorCountRef.current = 0;
+          
           // Update the previous values after successful save
           prevVisibleSectionsRef.current = currentVisibleSections;
           prevSectionOrderRef.current = currentSectionOrder;
         } catch (error) {
           console.error('Error auto-saving section changes:', error);
+          saveErrorCountRef.current += 1;
         } finally {
           isSavingSectionsRef.current = false;
         }
