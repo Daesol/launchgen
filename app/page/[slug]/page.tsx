@@ -33,9 +33,16 @@ export default async function PublicLandingPage({ params }: PageProps) {
       return <div className="text-center text-red-500 mt-16">Landing page not found.</div>;
     }
 
+    // Extract section visibility from page content
+    const visibleSections = page.page_content?.visibleSections;
+
     return (
       <div className="min-h-screen bg-white text-black">
-        <LandingPageTemplate config={{ ...page.page_content, theme: page.page_style?.theme }} pageId={page.id} />
+        <LandingPageTemplate 
+          config={{ ...page.page_content, theme: page.page_style?.theme }} 
+          pageId={page.id}
+          visibleSections={visibleSections}
+        />
       </div>
     );
   } catch (err) {

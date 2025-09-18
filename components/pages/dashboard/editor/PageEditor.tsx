@@ -164,27 +164,29 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     const autoSaveSectionChanges = async () => {
       if (!id || !onSave) return;
     
-      // Only save if we have actual changes (not initial load)
-      if (initialVisibleSections && initialSectionOrder) {
-        const hasVisibilityChanges = JSON.stringify(currentVisibleSections) !== JSON.stringify(initialVisibleSections);
-        const hasOrderChanges = JSON.stringify(currentSectionOrder) !== JSON.stringify(initialSectionOrder);
+      // Always save section changes, even if there are no initial values
+      // This ensures section visibility is saved for new pages or pages without saved section data
+      const hasVisibilityChanges = !initialVisibleSections || 
+        JSON.stringify(currentVisibleSections) !== JSON.stringify(initialVisibleSections);
+      const hasOrderChanges = !initialSectionOrder || 
+        JSON.stringify(currentSectionOrder) !== JSON.stringify(initialSectionOrder);
+      
+      if (hasVisibilityChanges || hasOrderChanges) {
+        const config = {
+          page_content: pageContent,
+          page_style: pageStyle,
+          template_id: templateId,
+          id: id,
+          original_prompt: originalPrompt,
+          visibleSections: currentVisibleSections,
+          sectionOrder: currentSectionOrder,
+        };
         
-        if (hasVisibilityChanges || hasOrderChanges) {
-          const config = {
-            page_content: pageContent,
-            page_style: pageStyle,
-            template_id: templateId,
-            id: id,
-            original_prompt: originalPrompt,
-            visibleSections: currentVisibleSections,
-            sectionOrder: currentSectionOrder,
-          };
-          
-          try {
-            await onSave(config);
-          } catch (error) {
-            console.error('Error auto-saving section changes:', error);
-          }
+        try {
+          await onSave(config);
+          console.log('Section visibility/order saved:', { currentVisibleSections, currentSectionOrder });
+        } catch (error) {
+          console.error('Error auto-saving section changes:', error);
         }
       }
     };
