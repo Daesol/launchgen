@@ -214,13 +214,15 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
         
         isSavingSectionsRef.current = true;
         
-        // For section visibility updates, don't pass page_content to avoid conflicts
-        // This ensures the API uses the dedicated section visibility update path
-        const config = {
-          id: id,
-          visibleSections: currentVisibleSections,
-          sectionOrder: currentSectionOrder,
-        };
+             // For section visibility updates, don't pass page_content to avoid conflicts
+             // This ensures the API uses the dedicated section visibility update path
+             const config = {
+               id: id,
+               visibleSections: currentVisibleSections,
+               sectionOrder: currentSectionOrder,
+             };
+
+             console.log('Auto-save config:', config);
         
         try {
           await onSave(config);
