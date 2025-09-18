@@ -162,31 +162,32 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     closeSidePanel
   } = useEditorLayout();
 
-  // Auto-save when section visibility or order changes
-  const currentVisibleSections = sectionState.visibleSections;
-  const currentSectionOrder = sectionState.sectionOrder;
-  
-  // Track if we're currently saving to prevent loops
+  // Track previous values to detect actual changes
+  const prevVisibleSectionsRef = React.useRef(initialVisibleSections);
+  const prevSectionOrderRef = React.useRef(initialSectionOrder);
   const isSavingSectionsRef = React.useRef(false);
   
+  // Only auto-save when there's an actual user-initiated change
   React.useEffect(() => {
+    const currentVisibleSections = sectionState.visibleSections;
+    const currentSectionOrder = sectionState.sectionOrder;
+    
     const autoSaveSectionChanges = async () => {
       if (!id || !onSave || isSavingSectionsRef.current) return;
     
-      // Always save section changes, even if there are no initial values
-      // This ensures section visibility is saved for new pages or pages without saved section data
-      const hasVisibilityChanges = !initialVisibleSections || 
-        JSON.stringify(currentVisibleSections) !== JSON.stringify(initialVisibleSections);
-      const hasOrderChanges = !initialSectionOrder || 
-        JSON.stringify(currentSectionOrder) !== JSON.stringify(initialSectionOrder);
+      // Check if there are actual changes from the previous state
+      const hasVisibilityChanges = prevVisibleSectionsRef.current && 
+        JSON.stringify(currentVisibleSections) !== JSON.stringify(prevVisibleSectionsRef.current);
+      const hasOrderChanges = prevSectionOrderRef.current && 
+        JSON.stringify(currentSectionOrder) !== JSON.stringify(prevSectionOrderRef.current);
       
       console.log('Auto-save check:', {
         hasVisibilityChanges,
         hasOrderChanges,
         currentVisibleSections,
-        initialVisibleSections,
+        prevVisibleSections: prevVisibleSectionsRef.current,
         currentSectionOrder,
-        initialSectionOrder
+        prevSectionOrder: prevSectionOrderRef.current
       });
       
       if (hasVisibilityChanges || hasOrderChanges) {
@@ -203,6 +204,10 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
         try {
           await onSave(config);
           console.log('Section visibility/order saved:', { currentVisibleSections, currentSectionOrder });
+          
+          // Update the previous values after successful save
+          prevVisibleSectionsRef.current = currentVisibleSections;
+          prevSectionOrderRef.current = currentSectionOrder;
         } catch (error) {
           console.error('Error auto-saving section changes:', error);
         } finally {
@@ -212,7 +217,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     };
 
     autoSaveSectionChanges();
-  }, [currentVisibleSections, currentSectionOrder, id, onSave, pageContent, pageStyle, templateId, originalPrompt, initialVisibleSections, initialSectionOrder]);
+  }, [sectionState.visibleSections, sectionState.sectionOrder, id, onSave]);
 
   // Field auto-save
   useFieldAutoSave(
