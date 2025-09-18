@@ -73,6 +73,12 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   // Section management - pass initial values from saved data
   const initialVisibleSections = pageContent?.visibleSections;
   const initialSectionOrder = pageContent?.sectionOrder;
+  
+  // Debug logging
+  console.log('PageEditor - initialVisibleSections:', initialVisibleSections);
+  console.log('PageEditor - initialSectionOrder:', initialSectionOrder);
+  console.log('PageEditor - pageContent:', pageContent);
+  
   const sectionManagement = useSectionManagement(initialVisibleSections, initialSectionOrder);
   const sectionState = sectionManagement.sectionState;
 
@@ -167,11 +173,21 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     const autoSaveSectionChanges = async () => {
       if (!id || !onSave || isSavingSectionsRef.current) return;
     
-      // Only save if we have actual changes (not initial load)
-      const hasVisibilityChanges = initialVisibleSections && 
+      // Always save section changes, even if there are no initial values
+      // This ensures section visibility is saved for new pages or pages without saved section data
+      const hasVisibilityChanges = !initialVisibleSections || 
         JSON.stringify(currentVisibleSections) !== JSON.stringify(initialVisibleSections);
-      const hasOrderChanges = initialSectionOrder && 
+      const hasOrderChanges = !initialSectionOrder || 
         JSON.stringify(currentSectionOrder) !== JSON.stringify(initialSectionOrder);
+      
+      console.log('Auto-save check:', {
+        hasVisibilityChanges,
+        hasOrderChanges,
+        currentVisibleSections,
+        initialVisibleSections,
+        currentSectionOrder,
+        initialSectionOrder
+      });
       
       if (hasVisibilityChanges || hasOrderChanges) {
         isSavingSectionsRef.current = true;
