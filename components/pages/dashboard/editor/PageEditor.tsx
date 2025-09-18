@@ -160,18 +160,22 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   const currentVisibleSections = sectionState.visibleSections;
   const currentSectionOrder = sectionState.sectionOrder;
   
+  // Track if we're currently saving to prevent loops
+  const isSavingSectionsRef = React.useRef(false);
+  
   React.useEffect(() => {
     const autoSaveSectionChanges = async () => {
-      if (!id || !onSave) return;
+      if (!id || !onSave || isSavingSectionsRef.current) return;
     
-      // Always save section changes, even if there are no initial values
-      // This ensures section visibility is saved for new pages or pages without saved section data
-      const hasVisibilityChanges = !initialVisibleSections || 
+      // Only save if we have actual changes (not initial load)
+      const hasVisibilityChanges = initialVisibleSections && 
         JSON.stringify(currentVisibleSections) !== JSON.stringify(initialVisibleSections);
-      const hasOrderChanges = !initialSectionOrder || 
+      const hasOrderChanges = initialSectionOrder && 
         JSON.stringify(currentSectionOrder) !== JSON.stringify(initialSectionOrder);
       
       if (hasVisibilityChanges || hasOrderChanges) {
+        isSavingSectionsRef.current = true;
+        
         const config = {
           page_content: pageContent,
           page_style: pageStyle,
@@ -187,6 +191,8 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
           console.log('Section visibility/order saved:', { currentVisibleSections, currentSectionOrder });
         } catch (error) {
           console.error('Error auto-saving section changes:', error);
+        } finally {
+          isSavingSectionsRef.current = false;
         }
       }
     };
