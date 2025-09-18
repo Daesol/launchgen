@@ -176,10 +176,12 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       if (!id || !onSave || isSavingSectionsRef.current) return;
     
       // Check if there are actual changes from the previous state
-      const hasVisibilityChanges = prevVisibleSectionsRef.current && 
-        JSON.stringify(currentVisibleSections) !== JSON.stringify(prevVisibleSectionsRef.current);
-      const hasOrderChanges = prevSectionOrderRef.current && 
-        JSON.stringify(currentSectionOrder) !== JSON.stringify(prevSectionOrderRef.current);
+      const hasVisibilityChanges = prevVisibleSectionsRef.current ? 
+        JSON.stringify(currentVisibleSections) !== JSON.stringify(prevVisibleSectionsRef.current) : 
+        true; // If no previous state, consider it a change
+      const hasOrderChanges = prevSectionOrderRef.current ? 
+        JSON.stringify(currentSectionOrder) !== JSON.stringify(prevSectionOrderRef.current) : 
+        true; // If no previous state, consider it a change
       
       console.log('Auto-save check:', {
         hasVisibilityChanges,
