@@ -163,8 +163,8 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   } = useEditorLayout();
 
   // Track previous values to detect actual changes
-  const prevVisibleSectionsRef = React.useRef(initialVisibleSections);
-  const prevSectionOrderRef = React.useRef(initialSectionOrder);
+  const prevVisibleSectionsRef = React.useRef<Record<string, boolean> | null>(initialVisibleSections || null);
+  const prevSectionOrderRef = React.useRef<string[] | null>(initialSectionOrder || null);
   const isSavingSectionsRef = React.useRef(false);
   const isInitializedRef = React.useRef(false);
   
@@ -175,7 +175,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     
     const autoSaveSectionChanges = async () => {
       if (!id || !onSave || isSavingSectionsRef.current) return;
-      
+    
       // Skip auto-save on initial load
       if (!isInitializedRef.current) {
         isInitializedRef.current = true;
