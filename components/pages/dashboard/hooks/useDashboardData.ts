@@ -38,7 +38,7 @@ export function useDashboardData() {
       // Fetch landing pages
       const { data: pages, error: pagesError } = await supabaseRef.current
         .from('landing_pages')
-        .select('id, title, slug, created_at, template_id, page_content, page_style')
+        .select('id, title, slug, created_at, template_id, page_content, page_style, published')
         .eq('owner_id', user.id)
         .order('created_at', { ascending: false });
 

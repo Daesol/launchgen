@@ -6,6 +6,7 @@ export interface DashboardPage {
   template_id?: string;
   page_content?: any;
   page_style?: any;
+  published: boolean;
 }
 
 export interface DashboardUser {

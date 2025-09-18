@@ -1,5 +1,74 @@
 # Road Map Log
 
+## 2025-01-20 - Edit Page Publish Loading State and Success Message
+
+### What was done:
+- **Added publish loading state to edit page** - Implemented loading animation and disabled state for publish button during publish operations
+- **Created success toast component** - Built reusable SuccessToast component for displaying success messages
+- **Integrated publish feedback system** - Connected loading state and success message with existing publish flow using event system
+- **Enhanced user experience** - Users now see clear visual feedback when publishing pages with loading animation and success confirmation
+
+### Technical details:
+- **Loading state implementation**: Added loading spinner and disabled state to publish button in Header component for both desktop and mobile views
+- **Success toast component**: Created reusable SuccessToast component with auto-dismiss functionality and smooth animations
+- **Event-driven communication**: Used custom events to communicate publishing state between PageEditorWrapper and DashboardLayout
+- **State management**: Added publishing state tracking in PageEditorWrapper with proper error handling
+- **API integration**: Modified handleSave function to detect publish operations and handle loading/success states appropriately
+- **Responsive design**: Loading states work correctly on both desktop and mobile layouts
+
+### Files affected:
+- `components/pages/dashboard/layout/Header.tsx` - Added loading state to publish button
+- `components/pages/dashboard/layouts/EditPageLayout.tsx` - Added isPublishing prop support
+- `components/pages/dashboard/editor/PageEditor.tsx` - Added publishing state management
+- `app/dashboard/page/[id]/PageEditorWrapper.tsx` - Added publish state handling and success message
+- `components/pages/dashboard/layouts/DashboardLayout.tsx` - Added event listener for publishing state
+- `components/ui/success-toast.tsx` - Created success toast component
+
+---
+
+## 2025-01-20 - Dashboard Published Status Fix
+
+### What was done:
+- **Fixed dashboard page cards showing incorrect published status** - Resolved issue where all page cards displayed "Draft" status regardless of actual published state
+- **Updated dashboard data query** - Added missing `published` field to the Supabase query in `useDashboardData.ts`
+- **Enhanced TypeScript interfaces** - Updated `DashboardPage` interface to include `published` boolean field
+- **Verified component compatibility** - Confirmed that both regular and optimized page card components already had correct published status display logic
+
+### Technical details:
+- **Root cause**: The `useDashboardData` hook was using a specific select statement that excluded the `published` field from the database query
+- **Query fix**: Updated the select statement from `'id, title, slug, created_at, template_id, page_content, page_style'` to include `published`
+- **Type safety**: Added `published: boolean` to the `DashboardPage` interface in `components/pages/dashboard/types/dashboard.types.ts`
+- **Data flow**: The fix ensures published status flows correctly from database → useDashboardData → DashboardSessionGate → DashboardClient → PageGrid → PageCard
+- **Component verification**: Both `PageCard` and `OptimizedPageCard` components already had proper published status display logic with green badges for published and gray badges for draft
+
+### Files affected:
+- `components/pages/dashboard/hooks/useDashboardData.ts` - Added published field to database query
+- `components/pages/dashboard/types/dashboard.types.ts` - Added published field to DashboardPage interface
+
+---
+
+## 2025-01-20 - Analytics Page Published Status Display
+
+### What was done:
+- **Added published status indicator to analytics page** - Implemented visual status badge showing whether a page is published or in draft mode
+- **Enhanced AnalyticsHeader component** - Added published status badge with appropriate icons and styling
+- **Updated TypeScript interfaces** - Added published field to page interfaces across analytics components
+- **Improved user experience** - Users can now quickly see the publication status of their pages in the analytics view
+
+### Technical details:
+- **Status badge design**: Created a responsive badge with green styling for published pages and orange styling for draft pages
+- **Icon integration**: Used Globe icon for published status and EyeOff icon for draft status
+- **TypeScript updates**: Updated interfaces in AnalyticsHeader, PageAnalytics components to include published boolean field
+- **Database integration**: Leveraged existing published field in landing_pages table (added in previous migration)
+- **Responsive design**: Badge adapts to different screen sizes and maintains visual hierarchy
+
+### Files affected:
+- `components/pages/dashboard/analytics/AnalyticsHeader.tsx` - Added published status badge with conditional styling
+- `components/pages/dashboard/analytics/PageAnalytics.tsx` - Updated interface to include published field
+- `app/dashboard/analytics/[id]/PageAnalytics.tsx` - Updated interface to include published field
+
+---
+
 ## 2025-01-20 - Lead Capture RLS Policy Fix
 
 ### What was done:

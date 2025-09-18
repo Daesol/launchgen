@@ -22,15 +22,27 @@ interface PageEditorProps {
   onSave?: (config: any) => void;
   saveStatus?: 'saved' | 'saving' | 'error' | 'unsaved';
   lastSaved?: Date | null;
+  isPublishing?: boolean;
+  onPublishingChange?: (isPublishing: boolean) => void;
 }
 
-export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved', lastSaved }: PageEditorProps) {
+export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved', lastSaved, isPublishing = false, onPublishingChange }: PageEditorProps) {
   // Full screen preview state
   const [isFullScreen, setIsFullScreen] = React.useState(false);
   
   // Mobile editor states
   const [showMobileEditor, setShowMobileEditor] = React.useState(false);
   const [showMobileSectionEditor, setShowMobileSectionEditor] = React.useState(false);
+  
+  // Success message state
+  const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
+
+  // Notify parent components about publishing state changes
+  React.useEffect(() => {
+    if (onPublishingChange) {
+      onPublishingChange(isPublishing);
+    }
+  }, [isPublishing, onPublishingChange]);
 
   // Use our custom hooks for all the logic
   const {
@@ -52,11 +64,25 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     setPageContent,
     setPageStyle,
     handleSave,
-    handlePublish,
+    handlePublish: originalHandlePublish,
     handleRegenerate,
     setError,
     clearError,
   } = usePageEditor(initialConfig, onSave);
+
+  // Create a wrapper for handlePublish that manages external publishing state
+  const handlePublish = React.useCallback(async () => {
+    if (onPublishingChange) {
+      onPublishingChange(true);
+    }
+    try {
+      await originalHandlePublish();
+    } finally {
+      if (onPublishingChange) {
+        onPublishingChange(false);
+      }
+    }
+  }, [originalHandlePublish, onPublishingChange]);
 
   // Preview mode management - Force mobile view on mobile devices
   const [isMobile, setIsMobile] = React.useState(false);

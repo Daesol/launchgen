@@ -24,6 +24,7 @@ interface EditPageLayoutProps {
   onTitleKeyDown: (e: React.KeyboardEvent) => void;
   onSignOut: () => void;
   onSidebarMouseLeave?: () => void;
+  isPublishing?: boolean;
 }
 
 export default function EditPageLayout({
@@ -44,7 +45,8 @@ export default function EditPageLayout({
   onTitleSave,
   onTitleKeyDown,
   onSignOut,
-  onSidebarMouseLeave
+  onSidebarMouseLeave,
+  isPublishing = false
 }: EditPageLayoutProps) {
   return (
     <div className="flex h-screen bg-black overflow-hidden dashboard-layout">
@@ -83,6 +85,7 @@ export default function EditPageLayout({
           onTitleSave={onTitleSave}
           onTitleKeyDown={onTitleKeyDown}
           onSignOut={onSignOut}
+          isPublishing={isPublishing}
         />
 
         {/* Main content */}

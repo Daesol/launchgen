@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PageEditor from '@/components/pages/dashboard/PageEditor';
+import SuccessToast from '@/components/ui/success-toast';
 
 interface PageEditorWrapperProps {
   initialConfig: any;
@@ -11,10 +12,22 @@ interface PageEditorWrapperProps {
 export default function PageEditorWrapper({ initialConfig }: PageEditorWrapperProps) {
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error' | 'unsaved'>('saved');
   const [lastSaved, setLastSaved] = useState<Date | null>(new Date());
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const router = useRouter();
 
   const handleSave = async (config: any) => {
-    setSaveStatus('saving');
+    const isPublishOperation = config.published === true;
+    
+    if (isPublishOperation) {
+      setIsPublishing(true);
+      // Dispatch event to notify layout about publishing state
+      window.dispatchEvent(new CustomEvent('publishing-state-changed', { 
+        detail: { isPublishing: true } 
+      }));
+    } else {
+      setSaveStatus('saving');
+    }
     
     try {
       const response = await fetch('/api/landing-pages', {
@@ -28,6 +41,7 @@ export default function PageEditorWrapper({ initialConfig }: PageEditorWrapperPr
           page_content: config.page_content,
           page_style: config.page_style,
           original_prompt: config.original_prompt,
+          published: config.published,
         }),
       });
 
@@ -37,8 +51,20 @@ export default function PageEditorWrapper({ initialConfig }: PageEditorWrapperPr
       }
 
       const data = await response.json();
-      setSaveStatus('saved');
-      setLastSaved(new Date());
+      
+      if (isPublishOperation) {
+        setIsPublishing(false);
+        setShowSuccessMessage(true);
+        // Dispatch event to notify layout about publishing state
+        window.dispatchEvent(new CustomEvent('publishing-state-changed', { 
+          detail: { isPublishing: false } 
+        }));
+        // Auto-hide success message after 4 seconds
+        setTimeout(() => setShowSuccessMessage(false), 4000);
+      } else {
+        setSaveStatus('saved');
+        setLastSaved(new Date());
+      }
       
       // Update the URL if the slug changed
       if (data.page?.slug && data.page.slug !== initialConfig.slug) {
@@ -48,17 +74,35 @@ export default function PageEditorWrapper({ initialConfig }: PageEditorWrapperPr
       return data;
     } catch (error: any) {
       console.error('Save error:', error);
-      setSaveStatus('error');
+      if (isPublishOperation) {
+        setIsPublishing(false);
+        // Dispatch event to notify layout about publishing state
+        window.dispatchEvent(new CustomEvent('publishing-state-changed', { 
+          detail: { isPublishing: false } 
+        }));
+      } else {
+        setSaveStatus('error');
+      }
       throw error;
     }
   };
 
   return (
-    <PageEditor 
-      initialConfig={initialConfig} 
-      onSave={handleSave}
-      saveStatus={saveStatus}
-      lastSaved={lastSaved}
-    />
+    <>
+      <PageEditor 
+        initialConfig={initialConfig} 
+        onSave={handleSave}
+        saveStatus={saveStatus}
+        lastSaved={lastSaved}
+        isPublishing={isPublishing}
+        onPublishingChange={setIsPublishing}
+      />
+      <SuccessToast
+        isVisible={showSuccessMessage}
+        message="Page published successfully!"
+        onClose={() => setShowSuccessMessage(false)}
+        duration={4000}
+      />
+    </>
   );
 } 

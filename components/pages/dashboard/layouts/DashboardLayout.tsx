@@ -13,6 +13,9 @@ import { useAuthActions } from "../hooks/useAuthActions";
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   
+  // Publishing state for edit pages
+  const [isPublishing, setIsPublishing] = React.useState(false);
+  
   // Custom hooks
   const { data, loading, error, refetch } = useDashboardData();
   const { 
@@ -43,6 +46,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // Layout effects
   useLayoutEffects(isEditPage, editingTitle, handleTitleSave, refetch, showSidebarOnHover, hideSidebarOnHover);
 
+  // Listen for publishing state changes from PageEditor
+  React.useEffect(() => {
+    const handlePublishingStateChange = (event: CustomEvent) => {
+      setIsPublishing(event.detail.isPublishing);
+    };
+
+    window.addEventListener('publishing-state-changed', handlePublishingStateChange as EventListener);
+    
+    return () => {
+      window.removeEventListener('publishing-state-changed', handlePublishingStateChange as EventListener);
+    };
+  }, []);
+
   // Handle page click
   const handlePageClick = (page: any) => {
     handleEdit(page);
@@ -70,6 +86,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         onTitleKeyDown={handleTitleKeyDown}
         onSignOut={handleSignOut}
         onSidebarMouseLeave={hideSidebarOnHover}
+        isPublishing={isPublishing}
       >
         {children}
       </EditPageLayout>
