@@ -166,6 +166,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   const prevVisibleSectionsRef = React.useRef(initialVisibleSections);
   const prevSectionOrderRef = React.useRef(initialSectionOrder);
   const isSavingSectionsRef = React.useRef(false);
+  const isInitializedRef = React.useRef(false);
   
   // Only auto-save when there's an actual user-initiated change
   React.useEffect(() => {
@@ -174,14 +175,23 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     
     const autoSaveSectionChanges = async () => {
       if (!id || !onSave || isSavingSectionsRef.current) return;
+      
+      // Skip auto-save on initial load
+      if (!isInitializedRef.current) {
+        isInitializedRef.current = true;
+        // Set initial values to current values to prevent false changes
+        prevVisibleSectionsRef.current = currentVisibleSections;
+        prevSectionOrderRef.current = currentSectionOrder;
+        return;
+      }
     
       // Check if there are actual changes from the previous state
       const hasVisibilityChanges = prevVisibleSectionsRef.current ? 
         JSON.stringify(currentVisibleSections) !== JSON.stringify(prevVisibleSectionsRef.current) : 
-        true; // If no previous state, consider it a change
+        false; // If no previous state, don't consider it a change
       const hasOrderChanges = prevSectionOrderRef.current ? 
         JSON.stringify(currentSectionOrder) !== JSON.stringify(prevSectionOrderRef.current) : 
-        true; // If no previous state, consider it a change
+        false; // If no previous state, don't consider it a change
       
       console.log('Auto-save check:', {
         hasVisibilityChanges,
