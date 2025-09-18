@@ -88,10 +88,12 @@ export async function PATCH(req: NextRequest) {
     // Ensure the user owns the page and get existing content
     console.log('Fetching page with ID:', id, 'for user:', user.id);
     
+    // Try to get the page with explicit RLS context
     const { data: existingPage, error: fetchError } = await supabase
       .from("landing_pages")
       .select("id, owner_id, slug, page_content")
       .eq("id", id)
+      .eq("owner_id", user.id) // Add explicit owner check
       .single();
 
     console.log('Database fetch result:', { 
