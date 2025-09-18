@@ -203,7 +203,9 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
         prevVisibleSections: prevVisibleSectionsRef.current,
         currentSectionOrder,
         prevSectionOrder: prevSectionOrderRef.current,
-        errorCount: saveErrorCountRef.current
+        errorCount: saveErrorCountRef.current,
+        initialVisibleSections,
+        initialSectionOrder
       });
       
       if (hasVisibilityChanges || hasOrderChanges) {

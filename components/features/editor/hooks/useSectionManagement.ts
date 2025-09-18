@@ -64,10 +64,15 @@ export function useSectionManagement(initialVisibleSections?: Record<string, boo
 
   // Toggle section visibility
   const toggleSectionVisibility = useCallback<SectionVisibilityHandler>((sectionName: string) => {
-    setVisibleSections(prev => ({
-      ...prev,
-      [sectionName]: !prev[sectionName]
-    }));
+    console.log('toggleSectionVisibility called for:', sectionName);
+    setVisibleSections(prev => {
+      const newState = {
+        ...prev,
+        [sectionName]: !prev[sectionName]
+      };
+      console.log('Section visibility state updated:', { sectionName, newState });
+      return newState;
+    });
   }, []);
 
   // Handle section selection from preview
