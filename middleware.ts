@@ -6,18 +6,37 @@ export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
   const supabase = createMiddlewareClient({ req, res })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  try {
+    const {
+      data: { user },
+      error
+    } = await supabase.auth.getUser()
 
-  // If user is authenticated and trying to access the home page, redirect to dashboard
-  if (user && req.nextUrl.pathname === '/') {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
-  }
+    // If there's an error getting the user, let the request continue
+    if (error) {
+      console.log('Middleware auth error:', error.message)
+      return res
+    }
 
-  // If user is not authenticated and trying to access protected routes, redirect to signin
-  if (!user && req.nextUrl.pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/auth/signin', req.url))
+    // If user is authenticated and trying to access the home page, redirect to dashboard
+    if (user && req.nextUrl.pathname === '/') {
+      return NextResponse.redirect(new URL('/dashboard', req.url))
+    }
+
+    // If user is not authenticated and trying to access protected routes, redirect to signin
+    if (!user && req.nextUrl.pathname.startsWith('/dashboard')) {
+      return NextResponse.redirect(new URL('/auth/signin', req.url))
+    }
+
+    // Allow auth pages to be accessed by anyone
+    if (req.nextUrl.pathname.startsWith('/auth/')) {
+      return res
+    }
+
+  } catch (error) {
+    console.log('Middleware error:', error)
+    // If there's any error, let the request continue
+    return res
   }
 
   return res

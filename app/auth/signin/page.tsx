@@ -28,7 +28,28 @@ export default function SignInPage() {
       setMode("signup");
     }
     setModeReady(true);
-  }, []);
+
+    // Check if user is already authenticated
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        router.push("/dashboard");
+        router.refresh();
+      }
+    };
+
+    checkAuth();
+
+    // Listen for auth state changes and redirect if user is already signed in
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        router.push("/dashboard");
+        router.refresh();
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,9 +63,16 @@ export default function SignInPage() {
     }
     try {
       if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        router.push("/dashboard");
+        
+        // Wait a moment for the auth state to update, then redirect
+        if (data.user) {
+          setTimeout(() => {
+            router.push("/dashboard");
+            router.refresh(); // Force a refresh to ensure middleware runs
+          }, 100);
+        }
         return;
       } else {
         const { error } = await supabase.auth.signUp({ email, password });
