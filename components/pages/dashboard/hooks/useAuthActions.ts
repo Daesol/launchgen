@@ -7,7 +7,7 @@ export function useAuthActions() {
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setTimeout(() => {
-      window.location.href = '/';
+      window.location.href = '/auth/signin';
     }, 100);
   };
 

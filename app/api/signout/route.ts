@@ -19,5 +19,6 @@ export async function POST(req: NextRequest) {
     path: "/",
     maxAge: 0,
   });
-  return response;
+  // Redirect to signin page
+  return NextResponse.redirect(new URL('/auth/signin', req.url));
 } 
