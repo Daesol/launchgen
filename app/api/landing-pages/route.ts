@@ -203,7 +203,7 @@ export async function PATCH(req: NextRequest) {
       }
     }
 
-    // If no update data was prepared, don't attempt the update
+    // If no update data was prepared, skip the database update
     if (Object.keys(updateData).length === 0) {
       console.log('No update data prepared, skipping database update');
       return NextResponse.json({ page: existingPage });

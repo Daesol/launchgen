@@ -78,6 +78,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   console.log('PageEditor - initialVisibleSections:', initialVisibleSections);
   console.log('PageEditor - initialSectionOrder:', initialSectionOrder);
   console.log('PageEditor - pageContent:', pageContent);
+  console.log('PageEditor - pageContent keys:', pageContent ? Object.keys(pageContent) : 'no pageContent');
   
   const sectionManagement = useSectionManagement(initialVisibleSections, initialSectionOrder);
   const sectionState = sectionManagement.sectionState;
@@ -223,6 +224,12 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
              };
 
              console.log('Auto-save config:', config);
+
+             // Skip if both visibleSections and sectionOrder are undefined
+             if (currentVisibleSections === undefined && currentSectionOrder === undefined) {
+               console.log('Skipping auto-save: both visibleSections and sectionOrder are undefined');
+               return;
+             }
         
         try {
           await onSave(config);
