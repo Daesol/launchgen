@@ -1,9 +1,9 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Image, Video, Youtube, Play, X, Link } from "lucide-react";
+import { Upload, Image, Video, Youtube, Play, X, Link, FolderOpen, Trash2 } from "lucide-react";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { getAccentColor } from "@/utils/theme";
 import { Theme } from "@/types/landing-page.types";
@@ -24,6 +24,14 @@ interface MediaComponentProps {
   userId?: string; // Add userId prop for uploads
 }
 
+interface MediaFile {
+  name: string;
+  url: string;
+  type: 'image' | 'video';
+  size: number;
+  created_at: string;
+}
+
 export default function MediaComponent({ 
   media, 
   theme, 
@@ -35,6 +43,9 @@ export default function MediaComponent({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [urlInput, setUrlInput] = useState(media?.url || "");
+  const [showGallery, setShowGallery] = useState(false);
+  const [userFiles, setUserFiles] = useState<MediaFile[]>([]);
+  const [loadingFiles, setLoadingFiles] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createPagesBrowserClient();
   
@@ -44,13 +55,92 @@ export default function MediaComponent({
   // Don't render if media is disabled
   if (!media?.enabled) return null;
 
+  // Load user's uploaded files
+  const loadUserFiles = async () => {
+    setLoadingFiles(true);
+    try {
+      // Get current user
+      let currentUserId = userId;
+      if (!currentUserId) {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) {
+          console.error("Auth error:", userError);
+          return;
+        }
+        currentUserId = user.id;
+      }
+
+      // List files from user's folder
+      const { data, error } = await supabase.storage
+        .from('media')
+        .list(currentUserId, {
+          limit: 50,
+          sortBy: { column: 'created_at', order: 'desc' }
+        });
+
+      if (error) throw error;
+
+      // Transform file data
+      const files: MediaFile[] = data.map(file => {
+        const { data: { publicUrl } } = supabase.storage
+          .from('media')
+          .getPublicUrl(`${currentUserId}/${file.name}`);
+
+        return {
+          name: file.name,
+          url: publicUrl,
+          type: file.metadata?.mimetype?.startsWith('image/') ? 'image' : 'video',
+          size: file.metadata?.size || 0,
+          created_at: file.created_at
+        };
+      });
+
+      setUserFiles(files);
+    } catch (error) {
+      console.error('Error loading files:', error);
+    } finally {
+      setLoadingFiles(false);
+    }
+  };
+
+  // Load files when gallery is opened
+  useEffect(() => {
+    if (showGallery && userFiles.length === 0) {
+      loadUserFiles();
+    }
+  }, [showGallery]);
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   const handleFileUpload = async (file: File) => {
     if (!file) return;
 
-    // Validate file size
-    const maxSize = file.type.startsWith('image/') ? 10 * 1024 * 1024 : 25 * 1024 * 1024; // 10MB for images, 25MB for videos
+    // Validate file type
+    const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    const validVideoTypes = ['video/mp4', 'video/webm', 'video/mov', 'video/avi'];
+    const isValidType = [...validImageTypes, ...validVideoTypes].includes(file.type);
+    
+    if (!isValidType) {
+      setUploadError('Invalid file type. Please upload images (JPEG, PNG, GIF, WebP) or videos (MP4, WebM, MOV, AVI).');
+      return;
+    }
+
+    // Validate file size with better error messages
+    const maxImageSize = 10 * 1024 * 1024; // 10MB
+    const maxVideoSize = 25 * 1024 * 1024; // 25MB
+    const isImage = file.type.startsWith('image/');
+    const maxSize = isImage ? maxImageSize : maxVideoSize;
+    
     if (file.size > maxSize) {
-      setUploadError(`File size too large. Max size: ${file.type.startsWith('image/') ? '10MB' : '25MB'}`);
+      const maxSizeFormatted = formatFileSize(maxSize);
+      const fileSizeFormatted = formatFileSize(file.size);
+      setUploadError(`File size too large (${fileSizeFormatted}). Maximum allowed: ${maxSizeFormatted} for ${isImage ? 'images' : 'videos'}.`);
       return;
     }
 
@@ -96,10 +186,55 @@ export default function MediaComponent({
       };
 
       onMediaChange?.(newMedia);
+      
+      // Refresh the gallery to show the new file
+      if (showGallery) {
+        loadUserFiles();
+      }
     } catch (error: any) {
       setUploadError(error.message || "Upload failed");
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleFileSelect = (file: MediaFile) => {
+    const newMedia = {
+      ...media,
+      type: file.type,
+      file: file.url,
+      url: file.url,
+      altText: media.altText || file.name.split('.')[0]
+    };
+    onMediaChange?.(newMedia);
+    setShowGallery(false); // Close gallery after selection
+  };
+
+  const handleFileDelete = async (fileName: string) => {
+    try {
+      // Get current user
+      let currentUserId = userId;
+      if (!currentUserId) {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) {
+          console.error("Auth error:", userError);
+          return;
+        }
+        currentUserId = user.id;
+      }
+
+      // Delete file from storage
+      const { error } = await supabase.storage
+        .from('media')
+        .remove([`${currentUserId}/${fileName}`]);
+
+      if (error) throw error;
+
+      // Refresh the gallery
+      loadUserFiles();
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      setUploadError('Failed to delete file');
     }
   };
 
@@ -321,7 +456,7 @@ export default function MediaComponent({
         {/* File Upload */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-neutral-300">
-            Or Upload File
+            Upload New File
           </label>
           <div className="flex gap-2">
             <Button
@@ -335,25 +470,116 @@ export default function MediaComponent({
               ) : (
                 <>
                   <Upload className="w-4 h-4 mr-2" />
-                  Choose File
+                  Upload File
                 </>
               )}
+            </Button>
+            <Button
+              onClick={() => setShowGallery(!showGallery)}
+              variant="outline"
+              className="px-3"
+            >
+              <FolderOpen className="w-4 h-4" />
             </Button>
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*,video/*"
+              accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,video/mp4,video/webm,video/mov,video/avi"
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (file) handleFileUpload(file);
+                if (file) {
+                  handleFileUpload(file);
+                  // Clear the input so the same file can be selected again
+                  e.target.value = '';
+                }
               }}
               className="hidden"
             />
           </div>
           <p className="text-xs text-neutral-400">
-            Images: max 10MB, Videos: max 25MB
+            Images: max 10MB (JPEG, PNG, GIF, WebP) | Videos: max 25MB (MP4, WebM, MOV, AVI)
           </p>
         </div>
+
+        {/* Media Gallery */}
+        {showGallery && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-medium text-neutral-300">
+                Your Uploaded Files
+              </label>
+              <Button
+                onClick={() => loadUserFiles()}
+                size="sm"
+                variant="ghost"
+                disabled={loadingFiles}
+              >
+                {loadingFiles ? "Loading..." : "Refresh"}
+              </Button>
+            </div>
+            <div className="max-h-60 overflow-y-auto border border-neutral-700 rounded-lg p-2 bg-neutral-900/50">
+              {loadingFiles ? (
+                <div className="flex items-center justify-center p-4">
+                  <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              ) : userFiles.length === 0 ? (
+                <div className="text-center p-4 text-neutral-400 text-sm">
+                  No files uploaded yet
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  {userFiles.map((file, index) => (
+                    <div
+                      key={index}
+                      className="relative group border border-neutral-600 rounded-lg overflow-hidden hover:border-purple-500 transition-colors"
+                    >
+                      <div className="aspect-video bg-neutral-800 flex items-center justify-center">
+                        {file.type === 'image' ? (
+                          <img
+                            src={file.url}
+                            alt={file.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>';
+                            }}
+                          />
+                        ) : (
+                          <Video className="w-8 h-8 text-neutral-400" />
+                        )}
+                      </div>
+                      <div className="p-2">
+                        <p className="text-xs text-neutral-300 truncate" title={file.name}>
+                          {file.name}
+                        </p>
+                        <p className="text-xs text-neutral-500">
+                          {formatFileSize(file.size)}
+                        </p>
+                      </div>
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                        <Button
+                          onClick={() => handleFileSelect(file)}
+                          size="sm"
+                          className="h-8 px-3"
+                        >
+                          Select
+                        </Button>
+                        <Button
+                          onClick={() => handleFileDelete(file.name)}
+                          size="sm"
+                          variant="destructive"
+                          className="h-8 px-2"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Alt Text */}
         <div className="space-y-2">
