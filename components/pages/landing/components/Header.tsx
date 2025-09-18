@@ -11,6 +11,7 @@ interface HeaderProps {
   theme: Theme;
   themeClasses: ReturnType<typeof getThemeClasses>;
   previewMode: 'desktop' | 'mobile';
+  visibleSections?: Record<string, boolean>;
   onSectionSelect?: (section: string) => void;
 }
 
@@ -19,6 +20,7 @@ export default function Header({
   theme, 
   themeClasses, 
   previewMode, 
+  visibleSections,
   onSectionSelect 
 }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -56,6 +58,12 @@ export default function Header({
       case 'pricing': return 'pricing';
       default: return section;
     }
+  };
+
+  // Helper function to check if a section should be visible in navigation
+  const isSectionVisible = (sectionName: string): boolean => {
+    if (!visibleSections) return true; // Default to visible if no visibility config
+    return visibleSections[sectionName] !== false; // Show if not explicitly hidden
   };
 
   return (
@@ -104,7 +112,7 @@ export default function Header({
         <nav className={`ml-auto ${previewMode === 'mobile' ? 'hidden' : 'hidden md:flex'} items-center gap-4 lg:gap-6`}>
           {config.sectionOrder?.map((sectionName: string, index: number) => {
             const label = getSectionLabel(sectionName);
-            if (!label) return null;
+            if (!label || !isSectionVisible(sectionName)) return null;
             
             const sectionId = getSectionId(sectionName);
             
@@ -118,17 +126,19 @@ export default function Header({
               </button>
             );
           })}
-          <button
-            onClick={() => scrollToSection('cta-section')}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-md px-3 py-2"
-            style={{ 
-              backgroundColor: theme.accentColor,
-              borderColor: theme.accentColor,
-              color: 'white'
-            }}
-          >
-            {hero.cta}
-          </button>
+          {isSectionVisible('cta') && (
+            <button
+              onClick={() => scrollToSection('cta-section')}
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-md px-3 py-2"
+              style={{ 
+                backgroundColor: theme.accentColor,
+                borderColor: theme.accentColor,
+                color: 'white'
+              }}
+            >
+              {hero.cta}
+            </button>
+          )}
         </nav>
         
         {/* Mobile Menu Button */}
@@ -160,7 +170,7 @@ export default function Header({
             <nav className="p-4 space-y-4 mobile-menu">
               {config.sectionOrder?.map((sectionName: string, index: number) => {
                 const label = getSectionLabel(sectionName);
-                if (!label) return null;
+                if (!label || !isSectionVisible(sectionName)) return null;
                 
                 const sectionId = getSectionId(sectionName);
                 
@@ -184,19 +194,21 @@ export default function Header({
                   </button>
                 );
               })}
-              <button
-                onClick={() => {
-                  scrollToSection('cta-section');
-                  setIsMobileMenuOpen(false);
-                }}
-                className={`block w-full text-left py-2 px-3 rounded-lg transition-colors font-medium`}
-                style={{ 
-                  backgroundColor: theme.accentColor,
-                  color: 'white'
-                }}
-              >
-                {hero.cta}
-              </button>
+              {isSectionVisible('cta') && (
+                <button
+                  onClick={() => {
+                    scrollToSection('cta-section');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`block w-full text-left py-2 px-3 rounded-lg transition-colors font-medium`}
+                  style={{ 
+                    backgroundColor: theme.accentColor,
+                    color: 'white'
+                  }}
+                >
+                  {hero.cta}
+                </button>
+              )}
             </nav>
           </div>
         </div>
