@@ -42,3 +42,4 @@ ALTER TABLE landing_pages ALTER COLUMN published SET DEFAULT false;
 
 -- Update any existing pages to be published by default (optional - remove if you want to manually publish)
 -- UPDATE landing_pages SET published = true WHERE published IS NULL;
+

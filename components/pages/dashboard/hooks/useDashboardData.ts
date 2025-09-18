@@ -16,11 +16,15 @@ export function useDashboardData() {
 
   const fetchDashboardData = useCallback(async () => {
     try {
+      console.log('🔄 Fetching dashboard data...');
       setLoading(true);
       setError(null);
 
       const { data: { user }, error: userError } = await supabase.auth.getUser();
+      console.log('👤 User auth result:', { user: !!user, error: userError });
+      
       if (userError || !user) {
+        console.log('❌ No user found, clearing data');
         setData({
           pages: [],
           leadsByPage: {},
@@ -107,6 +111,12 @@ export function useDashboardData() {
         }
       }
 
+      console.log('✅ Dashboard data fetched successfully:', { 
+        pagesCount: pages?.length || 0, 
+        leadsCount: Object.keys(leadsByPage).length,
+        analyticsCount: Object.keys(analyticsByPage).length 
+      });
+      
       setData({
         pages: pages || [],
         leadsByPage,
@@ -114,12 +124,13 @@ export function useDashboardData() {
         user: user
       });
     } catch (err) {
-      console.error('Error fetching dashboard data:', err);
+      console.error('❌ Error fetching dashboard data:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
     } finally {
+      console.log('🏁 Dashboard data fetch complete');
       setLoading(false);
     }
-  }, [supabase]);
+  }, []); // Remove supabase dependency to prevent infinite re-renders
 
   useEffect(() => {
     fetchDashboardData();

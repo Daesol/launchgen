@@ -1,52 +1,34 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 import { useDashboardData } from "./hooks/useDashboardData";
 import DashboardClient from "./dashboard/DashboardClient";
 
 export default function DashboardSessionGate() {
   const [loading, setLoading] = useState(true);
-  const [session, setSession] = useState<any>(null);
   const router = useRouter();
-  const supabase = createPagesBrowserClient();
   
-  // Use the centralized dashboard data hook
+  // Use the centralized dashboard data hook - it handles auth internally
   const { data, loading: dataLoading, error } = useDashboardData();
 
   useEffect(() => {
-    let mounted = true;
-    
-    // Initial auth check
-    supabase.auth.getUser().then(async ({ data: { user }, error: userError }) => {
-      if (mounted) {
-        setLoading(false);
-        if (userError || !user) {
-          setSession(null);
-          router.replace("/auth/signin");
-        } else {
-          setSession({ user });
-        }
-      }
-    });
+    console.log('🔄 DashboardSessionGate: dataLoading changed:', dataLoading);
+    // Set loading to false when data loading is complete
+    if (!dataLoading) {
+      console.log('✅ DashboardSessionGate: Setting loading to false');
+      setLoading(false);
+    }
+  }, [dataLoading]);
 
-    // Listen for auth state changes
-    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (mounted) {
-        setSession(session);
-        setLoading(false);
-        if (!session) {
-          router.replace("/auth/signin");
-        }
-      }
-    });
-
-    return () => {
-      mounted = false;
-      listener?.subscription.unsubscribe();
-    };
-  }, [router, supabase]);
+  // Redirect to signin if no user in data (handled by useDashboardData)
+  useEffect(() => {
+    console.log('🔍 DashboardSessionGate: Checking user auth:', { dataLoading, hasUser: !!data.user });
+    if (!dataLoading && data.user === null) {
+      console.log('🚪 DashboardSessionGate: Redirecting to signin');
+      router.replace("/auth/signin");
+    }
+  }, [dataLoading, data.user, router]);
 
   if (loading || dataLoading) {
     return (
@@ -59,7 +41,7 @@ export default function DashboardSessionGate() {
     );
   }
 
-  if (!session) {
+  if (!dataLoading && !data.user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-950">
         <div className="text-center">

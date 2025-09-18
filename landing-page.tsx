@@ -51,11 +51,8 @@ export default function LandingPage() {
         setSession(session)
         setLoading(false)
         
-        // If user is signed in, redirect to dashboard
-        if (session) {
-          router.replace('/dashboard')
-        } else {
-          // Check for OAuth callback
+        // Check for OAuth callback (only if not already authenticated)
+        if (!session) {
           handleOAuthCallback()
         }
       }
@@ -67,9 +64,15 @@ export default function LandingPage() {
         setSession(session)
         setLoading(false)
         
-        // If user signs in, redirect to dashboard
-        if (session) {
-          router.replace('/dashboard')
+        // Only redirect to dashboard if this is an OAuth callback
+        if (session && _event === 'SIGNED_IN') {
+          const urlParams = new URLSearchParams(window.location.search)
+          const code = urlParams.get('code')
+          if (code) {
+            // This is an OAuth callback, redirect to dashboard
+            window.history.replaceState({}, '', '/dashboard')
+            router.replace('/dashboard')
+          }
         }
       }
     })
@@ -81,7 +84,13 @@ export default function LandingPage() {
   }, [router, supabase])
 
   const handleGenerateLandingPage = () => {
-    router.push('/auth/signin')
+    if (session) {
+      // User is already signed in, go directly to dashboard
+      router.push('/dashboard')
+    } else {
+      // User is not signed in, redirect to sign in
+      router.push('/auth/signin')
+    }
   }
 
   // Show loading spinner while checking authentication
@@ -93,10 +102,7 @@ export default function LandingPage() {
     )
   }
 
-  // If user is signed in, don't render the landing page (they'll be redirected)
-  if (session) {
-    return null
-  }
+  // Always render the landing page for both authenticated and unauthenticated users
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
