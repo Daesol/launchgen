@@ -192,12 +192,10 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       if (hasVisibilityChanges || hasOrderChanges) {
         isSavingSectionsRef.current = true;
         
+        // For section visibility updates, don't pass page_content to avoid conflicts
+        // This ensures the API uses the dedicated section visibility update path
         const config = {
-          page_content: pageContent,
-          page_style: pageStyle,
-          template_id: templateId,
           id: id,
-          original_prompt: originalPrompt,
           visibleSections: currentVisibleSections,
           sectionOrder: currentSectionOrder,
         };
