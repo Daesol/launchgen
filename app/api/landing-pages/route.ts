@@ -76,6 +76,8 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const { id, title, page_content, page_style, template_id, original_prompt, published, visibleSections, sectionOrder } = body;
 
+    console.log('PATCH request:', { id, visibleSections, sectionOrder, userId: user.id });
+
     if (!id) {
       return NextResponse.json({ error: "Missing landing page id." }, { status: 400 });
     }
@@ -86,6 +88,8 @@ export async function PATCH(req: NextRequest) {
       .select("id, owner_id, slug, page_content")
       .eq("id", id)
       .single();
+
+    console.log('Database fetch result:', { existingPage, fetchError });
 
     if (fetchError || !existingPage) {
       return NextResponse.json({ error: "Landing page not found." }, { status: 404 });
@@ -189,6 +193,8 @@ export async function PATCH(req: NextRequest) {
       }
     }
 
+    console.log('Update data:', updateData);
+
     // Update the landing page
     const { data: page, error: updateError } = await supabase
       .from("landing_pages")
@@ -196,6 +202,8 @@ export async function PATCH(req: NextRequest) {
       .eq("id", id)
       .select()
       .single();
+
+    console.log('Update result:', { page, updateError });
 
     if (updateError) {
       console.error('Database update error:', updateError);
