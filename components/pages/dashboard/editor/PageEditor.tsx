@@ -163,13 +163,13 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     closeSidePanel
   } = useEditorLayout();
 
-  // Track previous values to detect actual changes
-  const prevVisibleSectionsRef = React.useRef<Record<string, boolean> | null>(initialVisibleSections || null);
-  const prevSectionOrderRef = React.useRef<string[] | null>(initialSectionOrder || null);
-  const isSavingSectionsRef = React.useRef(false);
-  const isInitializedRef = React.useRef(false);
-  const saveErrorCountRef = React.useRef(0);
-  const maxRetries = 3;
+         // Track previous values to detect actual changes
+         const prevVisibleSectionsRef = React.useRef<Record<string, boolean> | null>(null);
+         const prevSectionOrderRef = React.useRef<string[] | null>(null);
+         const isSavingSectionsRef = React.useRef(false);
+         const isInitializedRef = React.useRef(false);
+         const saveErrorCountRef = React.useRef(0);
+         const maxRetries = 3;
   
   // Only auto-save when there's an actual user-initiated change
   React.useEffect(() => {
@@ -179,20 +179,20 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     const autoSaveSectionChanges = async () => {
       if (!id || !onSave || isSavingSectionsRef.current) return;
     
-      // Skip auto-save on initial load
-      if (!isInitializedRef.current) {
-        isInitializedRef.current = true;
-        // Set initial values to current values to prevent false changes
-        prevVisibleSectionsRef.current = currentVisibleSections;
-        prevSectionOrderRef.current = currentSectionOrder;
-        return;
-      }
+         // Skip auto-save on initial load
+         if (!isInitializedRef.current) {
+           isInitializedRef.current = true;
+           // Set initial values to the loaded data from database, not current state
+           prevVisibleSectionsRef.current = initialVisibleSections || null;
+           prevSectionOrderRef.current = initialSectionOrder || null;
+           return;
+         }
     
       // Check if there are actual changes from the previous state
-      const hasVisibilityChanges = prevVisibleSectionsRef.current ? 
+      const hasVisibilityChanges = prevVisibleSectionsRef.current !== null ? 
         JSON.stringify(currentVisibleSections) !== JSON.stringify(prevVisibleSectionsRef.current) : 
         false; // If no previous state, don't consider it a change
-      const hasOrderChanges = prevSectionOrderRef.current ? 
+      const hasOrderChanges = prevSectionOrderRef.current !== null ? 
         JSON.stringify(currentSectionOrder) !== JSON.stringify(prevSectionOrderRef.current) : 
         false; // If no previous state, don't consider it a change
       
