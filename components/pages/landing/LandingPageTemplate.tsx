@@ -75,6 +75,7 @@ export default function LandingPageTemplate({
           theme={theme}
           themeClasses={themeClasses}
           previewMode={previewMode}
+          visibleSections={visibleSections}
           onSectionSelect={onSectionSelect}
         />
       )}

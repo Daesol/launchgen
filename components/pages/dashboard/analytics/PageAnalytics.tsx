@@ -31,8 +31,13 @@ export default function PageAnalytics({ data }: PageAnalyticsProps) {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(data.page);
 
-  const { page, leads, views, submits, conversionRate, chartData, trafficSources, recentEvents } = data;
+  const { leads, views, submits, conversionRate, chartData, trafficSources, recentEvents } = data;
+
+  const handleUrlUpdate = (newSlug: string) => {
+    setCurrentPage(prev => ({ ...prev, slug: newSlug }));
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -85,8 +90,9 @@ export default function PageAnalytics({ data }: PageAnalyticsProps) {
     <div className="min-h-screen bg-black p-4 lg:p-6 space-y-4 lg:space-y-6">
       {/* Header */}
       <AnalyticsHeader 
-        page={page} 
-        onDelete={() => setDeleteId(page.id)} 
+        page={currentPage} 
+        onDelete={() => setDeleteId(currentPage.id)}
+        onUrlUpdate={handleUrlUpdate}
       />
 
       {/* Key Metrics */}
