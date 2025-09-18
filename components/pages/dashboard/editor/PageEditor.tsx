@@ -318,27 +318,41 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
 
   // Handle page content changes
   const handlePageContentChange = (path: string, value: any) => {
+    // Build the new content object
+    const pathParts = path.split('.');
+    const updateObject: any = {};
+    let current = updateObject;
+    
+    for (let i = 0; i < pathParts.length - 1; i++) {
+      current[pathParts[i]] = {};
+      current = current[pathParts[i]];
+    }
+    
+    current[pathParts[pathParts.length - 1]] = value;
+    
+    // Use setPageContent from usePageEditor hook which triggers auto-save
     setPageContent((prevContent: any) => {
       const newContent = { ...prevContent };
-      const pathParts = path.split('.');
-      let current = newContent;
+      let target = newContent;
       
       for (let i = 0; i < pathParts.length - 1; i++) {
-        if (!current[pathParts[i]]) {
-          current[pathParts[i]] = {};
+        if (!target[pathParts[i]]) {
+          target[pathParts[i]] = {};
         }
-        current = current[pathParts[i]];
+        target = target[pathParts[i]];
       }
       
-      current[pathParts[pathParts.length - 1]] = value;
+      target[pathParts[pathParts.length - 1]] = value;
       
       console.log('PageEditor - New pageContent after change:', newContent);
+      console.log('PageEditor - This will trigger auto-save via usePageEditor hook');
       return newContent;
     });
   };
 
   // Handle page style changes
   const handlePageStyleChange = (path: string, value: any) => {
+    // Use setPageStyle from usePageEditor hook which triggers auto-save
     setPageStyle((prevStyle: any) => {
       const newStyle = { ...prevStyle };
       const pathParts = path.split('.');
@@ -354,6 +368,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       current[pathParts[pathParts.length - 1]] = value;
       
       console.log('PageEditor - New pageStyle after change:', newStyle);
+      console.log('PageEditor - This will trigger auto-save via usePageEditor hook');
       return newStyle;
     });
   };

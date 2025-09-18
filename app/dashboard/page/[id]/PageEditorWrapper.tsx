@@ -42,6 +42,9 @@ export default function PageEditorWrapper({ initialConfig }: PageEditorWrapperPr
           page_style: config.page_style,
           original_prompt: config.original_prompt,
           published: config.published,
+          // Add section visibility fields if they exist
+          visibleSections: config.visibleSections,
+          sectionOrder: config.sectionOrder,
         }),
       });
 
