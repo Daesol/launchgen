@@ -100,6 +100,8 @@ export function usePageEditor(
     guarantees: { ...defaultContent.guarantees, ...initialConfig.page_content.guarantees },
     faq: { ...defaultContent.faq, ...initialConfig.page_content.faq },
     urgency: { ...defaultContent.urgency, ...initialConfig.page_content.urgency },
+    // Preserve visibleSections and sectionOrder from initial config
+    visibleSections: initialConfig.page_content.visibleSections,
     // Filter out 'hero' from sectionOrder since it's always fixed at the top
     sectionOrder: (initialConfig.page_content.sectionOrder || defaultContent.sectionOrder).filter((section: string) => section !== 'hero'),
   } : defaultContent;

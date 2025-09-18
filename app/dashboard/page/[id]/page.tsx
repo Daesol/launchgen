@@ -61,6 +61,16 @@ export default async function LandingPageEditor({ params }: PageProps) {
   // Handle both old and new schema formats
   let processedPage = { ...page };
   
+  // Debug logging
+  console.log('Page loaded from database:', {
+    id: page.id,
+    hasPageContent: !!page.page_content,
+    hasVisibleSections: !!page.page_content?.visibleSections,
+    hasSectionOrder: !!page.page_content?.sectionOrder,
+    visibleSections: page.page_content?.visibleSections,
+    sectionOrder: page.page_content?.sectionOrder
+  });
+  
   // If page_content doesn't exist but config_json does, migrate the data
   if (!page.page_content && page.config_json) {
     console.log('Migrating from config_json to page_content');
