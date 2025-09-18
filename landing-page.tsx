@@ -20,6 +20,31 @@ export default function LandingPage() {
   useEffect(() => {
     let mounted = true
     
+    // Handle OAuth callback with code parameter
+    const handleOAuthCallback = async () => {
+      const urlParams = new URLSearchParams(window.location.search)
+      const code = urlParams.get('code')
+      
+      if (code) {
+        // This is an OAuth callback, exchange code for session
+        try {
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+          if (error) {
+            console.error('OAuth callback error:', error)
+            return
+          }
+          if (data.session) {
+            // Clear the URL parameters and redirect to dashboard
+            window.history.replaceState({}, '', '/dashboard')
+            router.replace('/dashboard')
+            return
+          }
+        } catch (err) {
+          console.error('OAuth callback error:', err)
+        }
+      }
+    }
+
     // Check if user is already signed in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (mounted) {
@@ -29,6 +54,9 @@ export default function LandingPage() {
         // If user is signed in, redirect to dashboard
         if (session) {
           router.replace('/dashboard')
+        } else {
+          // Check for OAuth callback
+          handleOAuthCallback()
         }
       }
     })

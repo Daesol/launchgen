@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
       page_style,
       original_prompt: original_prompt || null,
       slug,
+      published: true, // Auto-publish pages by default
     };
     if (id) upsertData["id"] = id;
     const { data: page, error: dbError } = await supabase
@@ -73,7 +74,7 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { id, title, page_content, page_style, template_id, original_prompt } = body;
+    const { id, title, page_content, page_style, template_id, original_prompt, published } = body;
 
     if (!id) {
       return NextResponse.json({ error: "Missing landing page id." }, { status: 400 });
@@ -149,6 +150,10 @@ export async function PATCH(req: NextRequest) {
     
     if (original_prompt !== undefined) {
       updateData.original_prompt = original_prompt;
+    }
+    
+    if (published !== undefined) {
+      updateData.published = published;
     }
 
     // Update the landing page

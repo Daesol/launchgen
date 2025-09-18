@@ -90,13 +90,14 @@ export default function GenerateClient() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-700 via-indigo-900 to-slate-950 p-4">
-      <div className="bg-white/90 rounded-xl shadow-xl p-8 w-full max-w-lg mt-16 animate-fade-in-up">
-        <h1 className="text-3xl font-bold text-center text-slate-900 mb-2">Generate Your Landing Page</h1>
-        <p className="text-slate-500 text-center mb-6">Describe your product or idea and let AI create a landing page config for you.</p>
+    <div className="h-screen flex flex-col items-center justify-center overflow-hidden" style={{ backgroundColor: '#000000' }}>
+      <div className="rounded-xl shadow-2xl p-8 w-full max-w-lg animate-fade-in-up" style={{ backgroundColor: '#000000', border: '1px solid #374151' }}>
+        <h1 className="text-3xl font-bold text-center text-white mb-2">Generate Your Landing Page</h1>
+        <p className="text-slate-400 text-center mb-6">Describe your product or idea and let AI create a landing page config for you.</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <textarea
-            className="w-full min-h-[80px] max-h-40 px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-900 bg-white shadow-sm resize-none transition"
+            className="w-full min-h-[80px] max-h-40 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white shadow-sm resize-none transition placeholder-slate-400"
+            style={{ backgroundColor: '#000000', border: '1px solid #374151' }}
             placeholder="e.g. AI-powered meal planning app for busy professionals"
             value={prompt}
             onChange={e => setPrompt(e.target.value)}
@@ -105,17 +106,18 @@ export default function GenerateClient() {
           />
           {error && (
             error.includes("There was an error generating the landing page") ? (
-              <div className="text-red-500 text-sm animate-fade-in-up delay-200">
+              <div className="text-red-400 text-sm animate-fade-in-up delay-200">
                 There was an error generating the landing page. This sometimes happens with the AI, but it can usually be fixed if you press the <b>Generate</b> button 2-3 more times.<br/>
                 <span className="text-xs text-slate-500">{error.replace("There was an error generating the landing page. This sometimes happens with the AI, but it can usually be fixed if you press the 'Generate' button 2-3 more times. (Technical details: ", "").replace(")", "")}</span>
               </div>
             ) : (
-              <div className="text-red-500 text-sm animate-fade-in-up delay-200">{error}</div>
+              <div className="text-red-400 text-sm animate-fade-in-up delay-200">{error}</div>
             )
           )}
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold shadow-lg hover:from-purple-700 hover:to-indigo-700 transition text-lg animate-fade-in-up delay-300 disabled:opacity-60"
+            className="w-full text-white py-3 rounded-lg font-semibold shadow-lg transition text-lg animate-fade-in-up delay-300 disabled:opacity-60 disabled:cursor-not-allowed hover:bg-gray-900"
+            style={{ backgroundColor: '#000000', border: '1px solid #6B7280' }}
             disabled={loading || !prompt.trim()}
           >
             {loading ? (
@@ -135,21 +137,21 @@ export default function GenerateClient() {
       
       {/* Success Message */}
       {config && !loading && (
-        <div className="w-full max-w-lg mt-6 animate-fade-in-up">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-            <div className="flex items-center justify-center gap-2 text-green-600 mb-2">
+        <div className="w-full max-w-lg mt-4 animate-fade-in-up">
+          <div className="rounded-lg p-4 text-center" style={{ backgroundColor: '#000000', border: '1px solid #10B981' }}>
+            <div className="flex items-center justify-center gap-2 text-green-400 mb-2">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
               <span className="font-semibold">Page Generated Successfully!</span>
             </div>
-            <p className="text-green-700 text-sm">Redirecting to editor...</p>
+            <p className="text-green-300 text-sm">Redirecting to editor...</p>
           </div>
         </div>
       )}
       
       {config && (
-        <div className="w-full max-w-5xl mt-10 animate-fade-in-up">
+        <div className="w-full max-w-5xl mt-6 animate-fade-in-up overflow-hidden">
           <PageEditor initialConfig={config} />
         </div>
       )}
