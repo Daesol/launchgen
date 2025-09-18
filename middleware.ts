@@ -7,6 +7,15 @@ export async function middleware(req: NextRequest) {
   const supabase = createMiddlewareClient({ req, res })
 
   try {
+    // Check if this is an OAuth callback (has code parameter)
+    const url = req.nextUrl
+    const code = url.searchParams.get('code')
+    
+    // If this is an OAuth callback, let it proceed without auth checks
+    if (code && url.pathname === '/') {
+      return res
+    }
+
     const {
       data: { user },
       error

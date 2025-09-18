@@ -90,12 +90,15 @@ export default function SignInPage() {
     setGoogleLoading(true);
     setError("");
     try {
-      await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: typeof window !== "undefined" ? window.location.origin + "/dashboard" : undefined,
+          redirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
         },
       });
+      if (error) {
+        throw error;
+      }
     } catch (e: any) {
       setError(e.message || "Google sign-in failed");
       setGoogleLoading(false);

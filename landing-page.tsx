@@ -26,21 +26,30 @@ export default function LandingPage() {
       const code = urlParams.get('code')
       
       if (code) {
+        console.log('Processing OAuth callback with code:', code)
         // This is an OAuth callback, exchange code for session
         try {
           const { data, error } = await supabase.auth.exchangeCodeForSession(code)
           if (error) {
             console.error('OAuth callback error:', error)
+            // Clear the URL parameters even if there's an error
+            window.history.replaceState({}, '', '/')
             return
           }
           if (data.session) {
+            console.log('OAuth session established, redirecting to dashboard')
             // Clear the URL parameters and redirect to dashboard
-            window.history.replaceState({}, '', '/dashboard')
-            router.replace('/dashboard')
+            window.history.replaceState({}, '', '/')
+            // Use a small delay to ensure session is fully established
+            setTimeout(() => {
+              router.push('/dashboard')
+            }, 100)
             return
           }
         } catch (err) {
           console.error('OAuth callback error:', err)
+          // Clear the URL parameters even if there's an error
+          window.history.replaceState({}, '', '/')
         }
       }
     }
@@ -51,28 +60,25 @@ export default function LandingPage() {
         setSession(session)
         setLoading(false)
         
-        // Check for OAuth callback (only if not already authenticated)
-        if (!session) {
-          handleOAuthCallback()
-        }
+        // Always check for OAuth callback first
+        handleOAuthCallback()
       }
     })
 
     // Listen for auth state changes
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (mounted) {
+        console.log('Auth state change:', _event, !!session)
         setSession(session)
         setLoading(false)
         
-        // Only redirect to dashboard if this is an OAuth callback
+        // Redirect to dashboard on successful sign in
         if (session && _event === 'SIGNED_IN') {
-          const urlParams = new URLSearchParams(window.location.search)
-          const code = urlParams.get('code')
-          if (code) {
-            // This is an OAuth callback, redirect to dashboard
-            window.history.replaceState({}, '', '/dashboard')
-            router.replace('/dashboard')
-          }
+          console.log('User signed in, redirecting to dashboard')
+          // Use a small delay to ensure session is fully established
+          setTimeout(() => {
+            router.push('/dashboard')
+          }, 100)
         }
       }
     })
@@ -81,7 +87,7 @@ export default function LandingPage() {
       mounted = false
       listener?.subscription.unsubscribe()
     }
-  }, [router]) // Remove supabase dependency to prevent infinite re-renders
+  }, [router, supabase]) // Include supabase in deps since we need it for the callback
 
   const handleGenerateLandingPage = () => {
     if (session) {
