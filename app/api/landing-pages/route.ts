@@ -80,10 +80,10 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Missing landing page id." }, { status: 400 });
     }
 
-    // Ensure the user owns the page
+    // Ensure the user owns the page and get existing content
     const { data: existingPage, error: fetchError } = await supabase
       .from("landing_pages")
-      .select("id, owner_id, slug")
+      .select("id, owner_id, slug, page_content")
       .eq("id", id)
       .single();
 
@@ -105,16 +105,10 @@ export async function PATCH(req: NextRequest) {
     if (page_content !== undefined) {
       // Handle nested field updates (e.g., business.name, hero.headline)
       if (typeof page_content === 'object' && !Array.isArray(page_content)) {
-        // Get existing page content to merge with
-        const { data: existingContent } = await supabase
-          .from("landing_pages")
-          .select("page_content")
-          .eq("id", id)
-          .single();
-        
-        if (existingContent?.page_content) {
+        // Use existing page content that was already fetched
+        if (existingPage.page_content) {
           // Merge the new field with existing content
-          const mergedContent = { ...existingContent.page_content };
+          const mergedContent = { ...existingPage.page_content };
           Object.keys(page_content).forEach(fieldPath => {
             const pathParts = fieldPath.split('.');
             let current = mergedContent;
@@ -173,15 +167,9 @@ export async function PATCH(req: NextRequest) {
 
     // Handle section visibility and order updates even when page_content is not provided
     if ((visibleSections !== undefined || sectionOrder !== undefined) && page_content === undefined) {
-      // Get existing page content to merge with
-      const { data: existingContent } = await supabase
-        .from("landing_pages")
-        .select("page_content")
-        .eq("id", id)
-        .single();
-      
-      if (existingContent?.page_content) {
-        const mergedContent = { ...existingContent.page_content };
+      // Use existing page content that was already fetched
+      if (existingPage.page_content) {
+        const mergedContent = { ...existingPage.page_content };
         if (visibleSections !== undefined) {
           mergedContent.visibleSections = visibleSections;
         }
