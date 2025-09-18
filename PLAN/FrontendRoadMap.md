@@ -50,6 +50,8 @@ This document outlines the high-level plan for building the LaunchGen frontend, 
 - Page views/events chart
 - Conversion rate display
 - Filter by date/page
+- Published status indicator
+- Page status badge (Published/Draft)
 
 ### 8. Dynamic Landing Page Renderer
 - Rendered from AI config
@@ -89,7 +91,7 @@ graph TD;
 - [x] Page editor (inline, theme, image)
 - [x] Dynamic landing page renderer
 - [x] Leads list & export (list complete, export next)
-- [x] Analytics UI (views, submits, conversion rate)
+- [x] Analytics UI (views, submits, conversion rate, published status)
 - [x] Conversion tracking (form submits)
 - [x] Delete landing page with confirmation modal
 - [x] Sticky sidebar navigation with user's generated pages list

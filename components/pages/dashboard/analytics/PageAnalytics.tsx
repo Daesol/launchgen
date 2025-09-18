@@ -10,7 +10,12 @@ import PerformanceChart from "./PerformanceChart";
 
 interface PageAnalyticsProps {
   data: {
-    page: any;
+    page: {
+      id: string;
+      title: string;
+      slug: string;
+      published: boolean;
+    };
     leads: any[];
     views: number;
     submits: number;

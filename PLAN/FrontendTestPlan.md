@@ -38,6 +38,9 @@ This document tracks tests for API endpoints, backend logic, and critical fronte
 - [x] Editor saves changes
 - [x] Analytics API records page views and form submits
 - [x] Dashboard analytics UI displays correct counts and conversion rate
+- [x] Analytics page shows published status badge (Published/Draft)
+- [x] Dashboard page cards display correct published status (Published/Draft)
+- [x] Edit page publish button shows loading state and success message
 - [x] Landing page delete removes page and associated leads/analytics
 - [x] Sidebar navigation is sticky and remains visible when scrolling
 - [x] User's generated pages list loads and displays correctly in sidebar

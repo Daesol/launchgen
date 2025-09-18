@@ -2,13 +2,14 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Edit3, ExternalLink, Trash2 } from "lucide-react";
+import { Edit3, ExternalLink, Trash2, Globe, EyeOff } from "lucide-react";
 
 interface AnalyticsHeaderProps {
   page: {
     id: string;
     title: string;
     slug: string;
+    published: boolean;
   };
   onDelete: () => void;
 }
@@ -17,7 +18,27 @@ export default function AnalyticsHeader({ page, onDelete }: AnalyticsHeaderProps
   return (
     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
       <div>
-        <h1 className="text-xl lg:text-2xl font-bold text-white">{page.title}</h1>
+        <div className="flex items-center gap-3 mb-1">
+          <h1 className="text-xl lg:text-2xl font-bold text-white">{page.title}</h1>
+          {/* Published Status Badge */}
+          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
+            page.published 
+              ? 'bg-green-900/20 text-green-400 border border-green-500/30' 
+              : 'bg-orange-900/20 text-orange-400 border border-orange-500/30'
+          }`}>
+            {page.published ? (
+              <>
+                <Globe className="w-3 h-3" />
+                <span>Published</span>
+              </>
+            ) : (
+              <>
+                <EyeOff className="w-3 h-3" />
+                <span>Draft</span>
+              </>
+            )}
+          </div>
+        </div>
         <p className="text-neutral-400 text-sm">Analytics & Performance</p>
       </div>
       

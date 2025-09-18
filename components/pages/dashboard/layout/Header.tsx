@@ -19,6 +19,7 @@ interface HeaderProps {
   onTitleSave: () => void;
   onTitleKeyDown: (e: React.KeyboardEvent) => void;
   onSignOut: () => void;
+  isPublishing?: boolean;
 }
 
 export default function Header({
@@ -31,7 +32,8 @@ export default function Header({
   onUpdatePageTitle,
   onTitleSave,
   onTitleKeyDown,
-  onSignOut
+  onSignOut,
+  isPublishing = false
 }: HeaderProps) {
   const router = useRouter();
 
@@ -97,10 +99,18 @@ export default function Header({
               </button>
               <button
                 onClick={() => window.dispatchEvent(new CustomEvent('publish-page'))}
-                className="px-3 py-1.5 text-sm bg-slate-800 text-white hover:bg-slate-700 rounded transition-colors"
+                disabled={isPublishing}
+                className="px-3 py-1.5 text-sm bg-slate-800 text-white hover:bg-slate-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Publish page"
               >
-                Publish
+                {isPublishing ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Publishing...</span>
+                  </div>
+                ) : (
+                  "Publish"
+                )}
               </button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -169,10 +179,18 @@ export default function Header({
               </button>
               <button
                 onClick={() => window.dispatchEvent(new CustomEvent('publish-page'))}
-                className="w-16 px-2 py-1 text-xs bg-slate-800 text-white hover:bg-slate-700 rounded transition-colors text-center"
+                disabled={isPublishing}
+                className="w-16 px-2 py-1 text-xs bg-slate-800 text-white hover:bg-slate-700 rounded transition-colors text-center disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Publish page"
               >
-                Publish
+                {isPublishing ? (
+                  <div className="flex items-center justify-center gap-1">
+                    <div className="w-2 h-2 border border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-xs">...</span>
+                  </div>
+                ) : (
+                  "Publish"
+                )}
               </button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
