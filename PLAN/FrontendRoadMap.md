@@ -120,6 +120,8 @@ graph TD;
 - [x] Updated black theme background color to pure black (#000000) for maximum contrast and modern appearance
 - [x] Fixed IconSelector icon library integration with correct Lucide React icon names
 - [x] Fixed IconSelector duplicate key errors and created unified icon selection system
+- [x] Updated AI prompt templates to use comprehensive icon names from iconUtils.ts for better icon variety in generated pages
+- [x] Enhanced AI theme selection with business analysis and comprehensive color guidelines for 15+ business categories
 
 ---
 

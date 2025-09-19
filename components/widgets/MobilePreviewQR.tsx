@@ -9,9 +9,10 @@ interface MobilePreviewQRProps {
   previewUrl?: string;
   isPublished?: boolean;
   slug?: string;
+  autoOpen?: boolean;
 }
 
-export default function MobilePreviewQR({ pageUrl, pageId, previewUrl, isPublished = false, slug }: MobilePreviewQRProps) {
+export default function MobilePreviewQR({ pageUrl, pageId, previewUrl, isPublished = false, slug, autoOpen = false }: MobilePreviewQRProps) {
   const [copied, setCopied] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeTab, setActiveTab] = useState<'preview' | 'published'>('preview');
@@ -30,6 +31,23 @@ export default function MobilePreviewQR({ pageUrl, pageId, previewUrl, isPublish
   const hasPreviewUrl = clientPreviewUrl && clientPreviewUrl.trim() !== '';
   const hasPublishedUrl = pageUrl && pageUrl.trim() !== '';
   const hasAnyUrl = hasPreviewUrl || hasPublishedUrl;
+
+  // Handle auto-open functionality
+  React.useEffect(() => {
+    if (autoOpen && hasAnyUrl) {
+      setShowDropdown(true);
+      // Set default tab based on what's available
+      if (hasPreviewUrl && !hasPublishedUrl) {
+        setActiveTab('preview');
+      } else if (hasPublishedUrl && !hasPreviewUrl) {
+        setActiveTab('published');
+      } else if (hasPublishedUrl) {
+        setActiveTab('published'); // Default to published if both available
+      } else {
+        setActiveTab('preview');
+      }
+    }
+  }, [autoOpen, hasAnyUrl, hasPreviewUrl, hasPublishedUrl]);
 
   // Get current URL based on active tab
   const currentUrl = activeTab === 'preview' ? clientPreviewUrl : pageUrl;

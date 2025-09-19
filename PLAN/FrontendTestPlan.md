@@ -122,4 +122,6 @@ This document tracks tests for API endpoints, backend logic, and critical fronte
 - [x] **IconSelector Icon Accuracy**: All icons in IconSelector display correct Lucide React icons instead of placeholders
 - [x] **Icon Library Integration**: IconSelector properly uses Lucide React v0.292.0 icon names and mappings
 - [x] **IconSelector Duplicate Key Fix**: Resolved React warnings about duplicate keys in icon selectors
-- [x] **Unified Icon Selection**: All icon selectors now use the same comprehensive icon set 
+- [x] **Unified Icon Selection**: All icon selectors now use the same comprehensive icon set
+- [x] **AI Prompt Icon Integration**: AI prompt templates now use comprehensive icon names from iconUtils.ts for better icon variety in generated pages
+- [x] **AI Theme Selection Enhancement**: AI now analyzes business type and chooses appropriate theme and accent colors based on industry-specific guidelines 

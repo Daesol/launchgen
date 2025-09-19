@@ -15,6 +15,8 @@
 export function createNewGenerationPrompt(schemaString: string, userPrompt: string): string {
   return `You are an expert SaaS landing page copywriter and designer. You must respond with ONLY a valid JSON object that follows this exact schema structure. Do not include any explanations, markdown formatting, or text outside the JSON object.
 
+CRITICAL: Before generating any content, analyze the business type, industry, and target audience from the user's prompt. Choose the most appropriate theme (light/dark) and accent color that will create the right emotional response and professional appearance for this specific business type.
+
 SCHEMA:
 ${schemaString}
 
@@ -24,7 +26,7 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 - hero.headline: Create a compelling, conversion-focused headline that clearly communicates the main value proposition.
 - hero.headlineHighlights: Array of 1-3 key words from the headline that should be highlighted with accent color. Choose words that are most impactful (e.g., "AI", "Smart", "Fast", "Best", "Revolutionary", "Advanced"). Must be an array, even if empty.
 - hero.heroTag: A short, catchy tag/badge text (e.g., "AI-Powered", "Enterprise Ready", "Trusted by 10K+") and it must NOT be empty.
-- hero.heroTagIcon: MUST be one of these exact values: "zap", "star", "shield", "rocket", "target", "trendingUp", "award", "sparkles" and it must NOT be empty.
+- hero.heroTagIcon: MUST be one of these exact values: "zap", "star", "shield", "rocket", "target", "trendingUp", "award", "sparkles", "heart", "check", "arrow-up", "trophy", "gem", "crown", "fire", "flame", "bolt", "diamond", "medal", "lightning", "clock", "book", "wallet", "users", "chart", "globe", "exclamation", "question", "minus", "x", "alert", "warning", "info", "brain", "cart", "lock", "key", "safety", "guarantee", "certificate", "badge", "lightbulb", "wrench", "smartphone", "monitor", "heart-crack", "frown", "angry", "moon", "alert-triangle", "alert-circle", "sad" and it must NOT be empty.
 - hero.subheadline: A compelling subheadline that expands on the value proposition and creates intrigue.
 - hero.cta: A clear call-to-action button text (e.g., "Get Started", "Start Free Trial", "Learn More").
 - hero.media: Media content for the hero section. Include:
@@ -83,9 +85,27 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 - urgency.message: Urgency message (e.g., "Limited Time Offer").
 - urgency.deadline: Specific deadline (e.g., "Ends in 24 hours").
 
-// Theme
+// Theme Selection - CRITICAL: Analyze the business type and choose the most appropriate theme
 - theme.mode: MUST be either "white" (light theme) or "black" (dark theme) and it must NOT be empty.
-- theme.accentColor: A valid, non-empty CSS color string (e.g., "#6366f1" or "#ff6b6b") that will be used for buttons, icons, and highlights
+  * Choose "white" for: Professional services, healthcare, finance, education, traditional businesses, B2B SaaS, corporate tools
+  * Choose "black" for: Creative agencies, gaming, entertainment, luxury brands, tech startups, modern apps, nightlife, fashion, music, art
+  * Consider the target audience: Corporate/enterprise = white, Creative/young = black
+- theme.accentColor: A valid, non-empty CSS color string that perfectly matches the business type and creates the right emotional response:
+  * Professional/Corporate: Blues (#2563eb, #1d4ed8, #1e40af), Grays (#6b7280, #4b5563), Greens (#059669, #047857)
+  * Tech/Startup: Purples (#7c3aed, #8b5cf6, #a855f7), Blues (#3b82f6, #2563eb), Teals (#0d9488, #14b8a6)
+  * Creative/Art: Oranges (#ea580c, #f97316), Pinks (#db2777, #ec4899), Purples (#a855f7, #8b5cf6), Reds (#dc2626, #ef4444)
+  * Health/Wellness: Greens (#059669, #10b981, #34d399), Blues (#0ea5e9, #06b6d4), Teals (#14b8a6, #0d9488)
+  * Finance/Trust: Blues (#1e40af, #1d4ed8), Dark Blues (#1e3a8a, #1e40af), Grays (#374151, #4b5563)
+  * Luxury/Premium: Golds (#d97706, #f59e0b), Deep Purples (#7c2d12, #6b21a8), Rich Blues (#1e3a8a, #1e40af)
+  * Gaming/Entertainment: Bright colors (#ef4444, #f97316, #eab308, #22c55e, #3b82f6, #a855f7)
+  * Food/Restaurant: Warm colors (#dc2626, #ea580c, #d97706, #f59e0b, #eab308)
+  * Fashion/Beauty: Pinks (#db2777, #ec4899), Purples (#a855f7, #8b5cf6), Blacks (#000000), Elegant colors
+  * Education/Learning: Blues (#2563eb, #1d4ed8), Greens (#059669, #10b981), Purples (#7c3aed, #8b5cf6)
+  * Travel/Tourism: Blues (#0ea5e9, #06b6d4), Greens (#10b981, #059669), Oranges (#f97316, #ea580c)
+  * Automotive: Grays (#374151, #4b5563), Blues (#1e40af, #2563eb), Reds (#dc2626, #ef4444)
+  * Real Estate: Blues (#1e40af, #2563eb), Grays (#374151, #4b5563), Greens (#059669, #10b981)
+  * E-commerce: Blues (#2563eb, #1d4ed8), Oranges (#ea580c, #f97316), Greens (#059669, #10b981)
+  * Choose colors that evoke the right emotions for the business and target audience
 
 IMPORTANT: All required fields above MUST be present and must NOT be empty. Do not use empty strings. If you are unsure, use a sensible default value.
 
@@ -105,6 +125,8 @@ Respond with ONLY the JSON object, no markdown formatting.`;
  */
 export function createRegenerationPrompt(schemaString: string, userPrompt: string, existingConfig: any): string {
   return `You are an expert SaaS landing page copywriter and designer. You are REGENERATING an existing landing page to improve its content based on the user's ORIGINAL PROMPT. You must respond with ONLY a valid JSON object that follows this exact schema structure. Do not include any explanations, markdown formatting, or text outside the JSON object.
+
+CRITICAL: Before regenerating any content, analyze the business type, industry, and target audience from the ORIGINAL USER PROMPT. Choose the most appropriate theme (light/dark) and accent color that will create the right emotional response and professional appearance for this specific business type. Consider if the current theme and colors are appropriate for the business type described in the original prompt.
 
 SCHEMA:
 ${schemaString}
@@ -132,7 +154,7 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 - hero.headline: Improve the existing headline or create a compelling, conversion-focused one that better matches the original prompt.
 - hero.headlineHighlights: Array of 1-3 key words from the headline that should be highlighted. If the headline is similar to the existing one, preserve the existing highlights. If the headline changes significantly, generate new highlights based on the most impactful words in the new headline.
 - hero.heroTag: A short, catchy tag/badge text. Must NOT be empty.
-- hero.heroTagIcon: MUST be one of these exact values: "zap", "star", "shield", "rocket", "target", "trendingUp", "award", "sparkles".
+- hero.heroTagIcon: MUST be one of these exact values: "zap", "star", "shield", "rocket", "target", "trendingUp", "award", "sparkles", "heart", "check", "arrow-up", "trophy", "gem", "crown", "fire", "flame", "bolt", "diamond", "medal", "lightning", "clock", "book", "wallet", "users", "chart", "globe", "exclamation", "question", "minus", "x", "alert", "warning", "info", "brain", "cart", "lock", "key", "safety", "guarantee", "certificate", "badge", "lightbulb", "wrench", "smartphone", "monitor", "heart-crack", "frown", "angry", "moon", "alert-triangle", "alert-circle", "sad".
 - hero.subheadline: A compelling subheadline that expands on the value proposition and aligns with the original prompt.
 - hero.cta: A clear call-to-action button text.
 - hero.media: Media content for the hero section. Include:
@@ -182,9 +204,27 @@ CRITICAL REQUIREMENTS - ALWAYS INCLUDE THESE FIELDS:
 - urgency.message: Urgency message.
 - urgency.deadline: Specific deadline.
 
-// Theme
-- theme.mode: MUST be either "white" or "black".
-- theme.accentColor: A valid CSS color string.
+// Theme Selection - CRITICAL: Analyze the business type and choose the most appropriate theme
+- theme.mode: MUST be either "white" (light theme) or "black" (dark theme) and it must NOT be empty.
+  * Choose "white" for: Professional services, healthcare, finance, education, traditional businesses, B2B SaaS, corporate tools
+  * Choose "black" for: Creative agencies, gaming, entertainment, luxury brands, tech startups, modern apps, nightlife, fashion, music, art
+  * Consider the target audience: Corporate/enterprise = white, Creative/young = black
+- theme.accentColor: A valid, non-empty CSS color string that perfectly matches the business type and creates the right emotional response:
+  * Professional/Corporate: Blues (#2563eb, #1d4ed8, #1e40af), Grays (#6b7280, #4b5563), Greens (#059669, #047857)
+  * Tech/Startup: Purples (#7c3aed, #8b5cf6, #a855f7), Blues (#3b82f6, #2563eb), Teals (#0d9488, #14b8a6)
+  * Creative/Art: Oranges (#ea580c, #f97316), Pinks (#db2777, #ec4899), Purples (#a855f7, #8b5cf6), Reds (#dc2626, #ef4444)
+  * Health/Wellness: Greens (#059669, #10b981, #34d399), Blues (#0ea5e9, #06b6d4), Teals (#14b8a6, #0d9488)
+  * Finance/Trust: Blues (#1e40af, #1d4ed8), Dark Blues (#1e3a8a, #1e40af), Grays (#374151, #4b5563)
+  * Luxury/Premium: Golds (#d97706, #f59e0b), Deep Purples (#7c2d12, #6b21a8), Rich Blues (#1e3a8a, #1e40af)
+  * Gaming/Entertainment: Bright colors (#ef4444, #f97316, #eab308, #22c55e, #3b82f6, #a855f7)
+  * Food/Restaurant: Warm colors (#dc2626, #ea580c, #d97706, #f59e0b, #eab308)
+  * Fashion/Beauty: Pinks (#db2777, #ec4899), Purples (#a855f7, #8b5cf6), Blacks (#000000), Elegant colors
+  * Education/Learning: Blues (#2563eb, #1d4ed8), Greens (#059669, #10b981), Purples (#7c3aed, #8b5cf6)
+  * Travel/Tourism: Blues (#0ea5e9, #06b6d4), Greens (#10b981, #059669), Oranges (#f97316, #ea580c)
+  * Automotive: Grays (#374151, #4b5563), Blues (#1e40af, #2563eb), Reds (#dc2626, #ef4444)
+  * Real Estate: Blues (#1e40af, #2563eb), Grays (#374151, #4b5563), Greens (#059669, #10b981)
+  * E-commerce: Blues (#2563eb, #1d4ed8), Oranges (#ea580c, #f97316), Greens (#059669, #10b981)
+  * Choose colors that evoke the right emotions for the business and target audience
 
 IMPORTANT: This is a REGENERATION based on the user's ORIGINAL PROMPT. Improve the existing content to better match what the user originally requested. Do not leave any sections with empty arrays or strings. DO NOT generate generic placeholder content - make everything specific and relevant to the user's original prompt.
 

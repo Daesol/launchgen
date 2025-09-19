@@ -14,6 +14,7 @@ interface PreviewHeaderProps {
   previewUrl?: string;
   isPublished?: boolean;
   slug?: string;
+  shouldAutoOpenQR?: boolean;
 }
 
 export default function PreviewHeader({ 
@@ -27,7 +28,8 @@ export default function PreviewHeader({
   pageId,
   previewUrl,
   isPublished = false,
-  slug
+  slug,
+  shouldAutoOpenQR = false
 }: PreviewHeaderProps) {
   return (
     <div className="border-b border-[#2D2D2D] px-2 py-1.5 flex items-center justify-between" style={{ backgroundColor: '#0A0A0A' }}>
@@ -102,6 +104,7 @@ export default function PreviewHeader({
               previewUrl={previewUrl}
               isPublished={isPublished}
               slug={slug}
+              autoOpen={shouldAutoOpenQR}
             />
           </div>
           
@@ -142,6 +145,7 @@ export default function PreviewHeader({
               previewUrl={previewUrl}
               isPublished={isPublished}
               slug={slug}
+              autoOpen={shouldAutoOpenQR}
             />
           </div>
           

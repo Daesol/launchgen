@@ -8,7 +8,11 @@ import {
   SectionSelectHandler 
 } from '../types/editor.types';
 
-export function useSectionManagement(): UseSectionManagementReturn {
+export function useSectionManagement(
+  initialVisibleSections?: Record<string, boolean>, 
+  initialSectionOrder?: string[],
+  onSectionChange?: (visibleSections: Record<string, boolean>, sectionOrder: string[]) => void
+): UseSectionManagementReturn {
   // Section expansion state - default: all sections expanded for better visibility
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     business: true,
@@ -24,27 +28,31 @@ export function useSectionManagement(): UseSectionManagementReturn {
     theme: true,
   });
 
-  // Section visibility state - default: all sections visible
-  const [visibleSections, setVisibleSections] = useState<Record<string, boolean>>({
-    features: true,
-    cta: true,
-    problemSection: true,
-    socialProof: true,
-    pricing: true,
-    guarantees: true,
-    faq: true,
-  });
+  // Section visibility state - use initial values if provided, otherwise default to all visible
+  const [visibleSections, setVisibleSections] = useState<Record<string, boolean>>(
+    initialVisibleSections || {
+      features: true,
+      cta: true,
+      problemSection: true,
+      socialProof: true,
+      pricing: true,
+      guarantees: true,
+      faq: true,
+    }
+  );
 
-  // Section order state for drag-and-drop
-  const [sectionOrder, setSectionOrder] = useState<string[]>([
-    'problemSection',
-    'features',
-    'socialProof',
-    'pricing',
-    'guarantees',
-    'faq',
-    'cta'
-  ]);
+  // Section order state for drag-and-drop - use initial values if provided
+  const [sectionOrder, setSectionOrder] = useState<string[]>(
+    initialSectionOrder || [
+      'problemSection',
+      'features',
+      'socialProof',
+      'pricing',
+      'guarantees',
+      'faq',
+      'cta'
+    ]
+  );
 
   // Edit panel view state
   const [editPanelView, setEditPanelView] = useState<EditPanelState['editPanelView']>('main');
@@ -60,11 +68,22 @@ export function useSectionManagement(): UseSectionManagementReturn {
 
   // Toggle section visibility
   const toggleSectionVisibility = useCallback<SectionVisibilityHandler>((sectionName: string) => {
-    setVisibleSections(prev => ({
-      ...prev,
-      [sectionName]: !prev[sectionName]
-    }));
-  }, []);
+    console.log('toggleSectionVisibility called for:', sectionName);
+    setVisibleSections(prev => {
+      const newState = {
+        ...prev,
+        [sectionName]: !prev[sectionName]
+      };
+      console.log('Section visibility state updated:', { sectionName, newState });
+      
+      // Notify parent component about the change
+      if (onSectionChange) {
+        onSectionChange(newState, sectionOrder);
+      }
+      
+      return newState;
+    });
+  }, [onSectionChange, sectionOrder]);
 
   // Handle section selection from preview
   const handleSectionSelect = useCallback<SectionSelectHandler>((sectionId: string) => {
@@ -89,7 +108,12 @@ export function useSectionManagement(): UseSectionManagementReturn {
     // Filter out 'hero' from the new order since it's always fixed at the top
     const filteredOrder = newOrder.filter(section => section !== 'hero');
     setSectionOrder(filteredOrder);
-  }, []);
+    
+    // Notify parent component about the change
+    if (onSectionChange) {
+      onSectionChange(visibleSections, filteredOrder);
+    }
+  }, [onSectionChange, visibleSections]);
 
   // Get section state
   const getSectionState = useCallback((): SectionState => ({

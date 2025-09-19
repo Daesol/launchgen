@@ -1,5 +1,45 @@
 # Road Map Log
 
+## 2025-01-20 - AI Theme Selection Enhancement
+
+### What was done:
+- **Enhanced AI theme selection based on business analysis** - AI now analyzes business type, industry, and target audience to choose the most appropriate theme and accent colors
+- **Added comprehensive business type color guidelines** - Created detailed color recommendations for 15+ business categories including professional, tech, creative, health, finance, luxury, gaming, food, fashion, education, travel, automotive, real estate, and e-commerce
+- **Improved theme mode selection logic** - AI now intelligently chooses between light and dark themes based on business type and target audience
+- **Enhanced emotional response design** - Color selections now consider the emotional impact and professional appearance appropriate for each business type
+- **Verified regeneration functionality** - Confirmed that regeneration properly uses the enhanced theme selection prompts
+
+### Technical details:
+- **Business analysis instruction**: Added critical instruction at the beginning of both prompts to analyze business type before generating content
+- **Comprehensive color guidelines**: Added specific color recommendations for each business category with hex codes and emotional context
+- **Theme mode logic**: Clear guidelines for when to use light vs dark themes based on business type and target audience
+- **Regeneration enhancement**: Updated regeneration prompt to consider if current theme is appropriate for the business type described in original prompt
+- **Color psychology integration**: Colors are selected based on industry standards and emotional responses appropriate for each business type
+
+### Files affected:
+- `lib/openai/promptTemplates.ts` - Enhanced both `createNewGenerationPrompt` and `createRegenerationPrompt` with business analysis and comprehensive theme selection guidelines
+
+---
+
+## 2025-01-20 - AI Prompt Icon Names Update
+
+### What was done:
+- **Updated AI prompt templates to use comprehensive icon names** - Enhanced both new generation and regeneration prompts to include all available icons from iconUtils.ts
+- **Expanded icon selection for AI generation** - AI can now choose from 50+ icons instead of the previous limited set of 8 icons
+- **Improved icon variety in generated pages** - Generated landing pages now have access to the full range of icons including problem, features, guarantees, and additional icons
+- **Enhanced user experience** - AI-generated pages will have more appropriate and varied icon selections that better match the content
+
+### Technical details:
+- **Prompt template updates**: Updated both `createNewGenerationPrompt` and `createRegenerationPrompt` functions in `lib/openai/promptTemplates.ts`
+- **Comprehensive icon list**: Added all 50+ icons from iconUtils.ts including core icons, problem section icons, features section icons, guarantees section icons, and additional icons
+- **Icon categories included**: Core (zap, star, shield, rocket, etc.), Problem (clock, book, wallet, users, etc.), Features (brain, cart, etc.), Guarantees (lock, key, safety, etc.), and Additional (lightbulb, wrench, smartphone, etc.)
+- **Backward compatibility**: All existing icon names remain valid, ensuring no breaking changes to existing functionality
+
+### Files affected:
+- `lib/openai/promptTemplates.ts` - Updated both prompt functions to include comprehensive icon list from iconUtils.ts
+
+---
+
 ## 2025-01-20 - Edit Page Publish Loading State and Success Message
 
 ### What was done:

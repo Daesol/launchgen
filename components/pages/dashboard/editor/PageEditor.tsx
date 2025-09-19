@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import MobilePreviewQR from "../../../widgets/MobilePreviewQR";
 import LandingPageTemplate from "../../landing/LandingPageTemplate";
 import EditPanel from "../../../features/editor/panels/EditPanel";
@@ -17,6 +17,8 @@ import { usePreviewMode } from "../hooks/usePreviewMode";
 import { useEditorLayout } from "../hooks/useEditorLayout";
 import EditorLayout from "./EditorLayout";
 
+// SIMPLIFIED: Removed complex refactor hooks
+
 interface PageEditorProps {
   initialConfig: any; // Should contain page_content, page_style, template_id, id (if editing)
   onSave?: (config: any) => void;
@@ -33,9 +35,12 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   // Mobile editor states
   const [showMobileEditor, setShowMobileEditor] = React.useState(false);
   const [showMobileSectionEditor, setShowMobileSectionEditor] = React.useState(false);
-  
+
   // Success message state
   const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
+  
+  // QR code auto-open state
+  const [shouldAutoOpenQR, setShouldAutoOpenQR] = React.useState(false);
 
   // Notify parent components about publishing state changes
   React.useEffect(() => {
@@ -44,7 +49,9 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     }
   }, [isPublishing, onPublishingChange]);
 
-  // Use our custom hooks for all the logic
+  // SIMPLIFIED: Remove complex refactor, use existing system
+
+  // Legacy: Keep existing usePageEditor for backward compatibility
   const {
     state: {
       pageContent,
@@ -61,28 +68,91 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       hasUnsavedChanges,
       publishedUrl,
     },
-    setPageContent,
-    setPageStyle,
-    handleSave,
+    setPageContent: legacySetPageContent,
+    setPageStyle: legacySetPageStyle,
+    handleSave: legacyHandleSave,
     handlePublish: originalHandlePublish,
     handleRegenerate,
     setError,
     clearError,
   } = usePageEditor(initialConfig, onSave);
 
-  // Create a wrapper for handlePublish that manages external publishing state
+  // Section management - pass initial values from saved data
+  const initialVisibleSections = pageContent?.visibleSections;
+  const initialSectionOrder = pageContent?.sectionOrder;
+  
+  // Debug logging
+  console.log('PageEditor - initialVisibleSections:', initialVisibleSections);
+  console.log('PageEditor - initialSectionOrder:', initialSectionOrder);
+  console.log('PageEditor - pageContent:', pageContent);
+  console.log('PageEditor - pageContent keys:', pageContent ? Object.keys(pageContent) : 'no pageContent');
+  
+  // Handle section changes by updating pageContent directly
+  const handleSectionChange = useCallback((visibleSections: Record<string, boolean>, sectionOrder: string[]) => {
+    console.log('PageEditor - Section change detected, updating pageContent:', {
+      visibleSections,
+      sectionOrder
+    });
+    
+    // Update pageContent directly with section visibility - this will trigger auto-save
+    legacySetPageContent((prevContent: any) => ({
+      ...prevContent,
+      visibleSections,
+      sectionOrder,
+    }));
+  }, [legacySetPageContent]);
+
+  const sectionManagement = useSectionManagement(initialVisibleSections, initialSectionOrder, handleSectionChange);
+  const sectionState = sectionManagement.sectionState;
+
+  // Create a wrapper for handlePublish that manages external publishing state and includes section state
   const handlePublish = React.useCallback(async () => {
     if (onPublishingChange) {
       onPublishingChange(true);
     }
     try {
-      await originalHandlePublish();
+      // Create config with section state for publishing
+      const config = {
+        page_content: pageContent,
+        page_style: pageStyle,
+        template_id: templateId,
+        id: id,
+        original_prompt: originalPrompt,
+        published: true,
+        visibleSections: sectionState.visibleSections,
+        sectionOrder: sectionState.sectionOrder,
+      };
+      
+      if (onSave) {
+        await onSave(config);
+        // Trigger QR code auto-open after successful publish
+        setShouldAutoOpenQR(true);
+        // Reset after a short delay to allow the QR component to process it
+        setTimeout(() => setShouldAutoOpenQR(false), 100);
+      }
     } finally {
       if (onPublishingChange) {
         onPublishingChange(false);
       }
     }
-  }, [originalHandlePublish, onPublishingChange]);
+  }, [pageContent, pageStyle, templateId, id, originalPrompt, sectionState, onSave, onPublishingChange]);
+
+  // Create a wrapper for handleSave that includes section state
+  const handleSaveWithSectionState = React.useCallback(async () => {
+    const config = {
+      page_content: pageContent,
+      page_style: pageStyle,
+      template_id: templateId,
+      id: id,
+      original_prompt: originalPrompt,
+      visibleSections: sectionState.visibleSections,
+      sectionOrder: sectionState.sectionOrder,
+    };
+    
+    if (onSave) {
+      await onSave(config);
+    }
+  }, [pageContent, pageStyle, templateId, id, originalPrompt, sectionState, onSave]);
 
   // Preview mode management - Force mobile view on mobile devices
   const [isMobile, setIsMobile] = React.useState(false);
@@ -119,9 +189,97 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     closeSidePanel
   } = useEditorLayout();
 
-  // Section management
-  const sectionManagement = useSectionManagement();
-  const sectionState = sectionManagement.sectionState;
+         // Track previous values to detect actual changes
+         const prevVisibleSectionsRef = React.useRef<Record<string, boolean> | null>(null);
+         const prevSectionOrderRef = React.useRef<string[] | null>(null);
+         const isSavingSectionsRef = React.useRef(false);
+         const isInitializedRef = React.useRef(false);
+         const saveErrorCountRef = React.useRef(0);
+         const maxRetries = 3;
+  
+  // Only auto-save when there's an actual user-initiated change
+  React.useEffect(() => {
+    const currentVisibleSections = sectionState.visibleSections;
+    const currentSectionOrder = sectionState.sectionOrder;
+    
+    const autoSaveSectionChanges = async () => {
+      if (!id || !onSave || isSavingSectionsRef.current) return;
+    
+         // Skip auto-save on initial load
+         if (!isInitializedRef.current) {
+           isInitializedRef.current = true;
+           // Set initial values to the loaded data from database, not current state
+           prevVisibleSectionsRef.current = initialVisibleSections || null;
+           prevSectionOrderRef.current = initialSectionOrder || null;
+           return;
+         }
+    
+      // Check if there are actual changes from the previous state
+      const hasVisibilityChanges = prevVisibleSectionsRef.current !== null ? 
+        JSON.stringify(currentVisibleSections) !== JSON.stringify(prevVisibleSectionsRef.current) : 
+        false; // If no previous state, don't consider it a change
+      const hasOrderChanges = prevSectionOrderRef.current !== null ? 
+        JSON.stringify(currentSectionOrder) !== JSON.stringify(prevSectionOrderRef.current) : 
+        false; // If no previous state, don't consider it a change
+      
+      console.log('Auto-save check:', {
+        hasVisibilityChanges,
+        hasOrderChanges,
+        currentVisibleSections,
+        prevVisibleSections: prevVisibleSectionsRef.current,
+        currentSectionOrder,
+        prevSectionOrder: prevSectionOrderRef.current,
+        errorCount: saveErrorCountRef.current,
+        initialVisibleSections,
+        initialSectionOrder
+      });
+      
+      if (hasVisibilityChanges || hasOrderChanges) {
+        // Circuit breaker: stop trying after max retries
+        if (saveErrorCountRef.current >= maxRetries) {
+          console.warn('Auto-save disabled due to repeated errors. Please refresh the page.');
+          return;
+        }
+        
+        isSavingSectionsRef.current = true;
+        
+             // For section visibility updates, don't pass page_content to avoid conflicts
+             // This ensures the API uses the dedicated section visibility update path
+             const config = {
+               id: id,
+               visibleSections: currentVisibleSections,
+               sectionOrder: currentSectionOrder,
+             };
+
+             console.log('Auto-save config:', config);
+
+             // Skip if both visibleSections and sectionOrder are undefined
+             if (currentVisibleSections === undefined && currentSectionOrder === undefined) {
+               console.log('Skipping auto-save: both visibleSections and sectionOrder are undefined');
+               return;
+             }
+        
+        try {
+          await onSave(config);
+          console.log('Section visibility/order saved:', { currentVisibleSections, currentSectionOrder });
+          
+          // Reset error count on successful save
+          saveErrorCountRef.current = 0;
+          
+          // Update the previous values after successful save
+          prevVisibleSectionsRef.current = currentVisibleSections;
+          prevSectionOrderRef.current = currentSectionOrder;
+        } catch (error) {
+          console.error('Error auto-saving section changes:', error);
+          saveErrorCountRef.current += 1;
+        } finally {
+          isSavingSectionsRef.current = false;
+        }
+      }
+    };
+
+    autoSaveSectionChanges();
+  }, [sectionState.visibleSections, sectionState.sectionOrder, id, onSave]);
 
   // Field auto-save
   useFieldAutoSave(
@@ -133,7 +291,9 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
           page_content: pageContent,
           page_style: pageStyle,
           template_id: templateId,
-          id: id
+          id: id,
+          visibleSections: sectionState.visibleSections,
+          sectionOrder: sectionState.sectionOrder,
         };
 
         // Update the specific field
@@ -169,7 +329,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       setPreviewMode(mode);
     },
     onPreviewPage: async () => {
-      await handleSave();
+      await legacyHandleSave();
       if (id && initialConfig.slug) {
         window.open(`/page/${initialConfig.slug}`, '_blank');
       }
@@ -182,30 +342,37 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     }
   });
 
-  // Handle page content changes
-  const handlePageContentChange = (path: string, value: any) => {
-    setPageContent((prevContent: any) => {
+  // SIMPLIFIED: Handle page content changes - just use the existing system
+  const handlePageContentChange = useCallback((path: string, value: any) => {
+    console.log('PageEditor - Content change:', { path, value });
+    
+    // Use the existing setPageContent which already triggers auto-save
+    legacySetPageContent((prevContent: any) => {
       const newContent = { ...prevContent };
       const pathParts = path.split('.');
-      let current = newContent;
+      let target = newContent;
       
       for (let i = 0; i < pathParts.length - 1; i++) {
-        if (!current[pathParts[i]]) {
-          current[pathParts[i]] = {};
+        if (!target[pathParts[i]]) {
+          target[pathParts[i]] = {};
         }
-        current = current[pathParts[i]];
+        target = target[pathParts[i]];
       }
       
-      current[pathParts[pathParts.length - 1]] = value;
-      
-      console.log('PageEditor - New pageContent after change:', newContent);
+      target[pathParts[pathParts.length - 1]] = value;
       return newContent;
     });
-  };
+  }, [legacySetPageContent]);
 
-  // Handle page style changes
-  const handlePageStyleChange = (path: string, value: any) => {
-    setPageStyle((prevStyle: any) => {
+  // SIMPLIFIED: Handle section visibility changes directly in the section management
+  // We'll modify the section management to update pageContent when changes happen
+
+  // SIMPLIFIED: Handle page style changes - just use the existing system
+  const handlePageStyleChange = useCallback((path: string, value: any) => {
+    console.log('PageEditor - Style change:', { path, value });
+    
+    // Use the existing setPageStyle which already triggers auto-save
+    legacySetPageStyle((prevStyle: any) => {
       const newStyle = { ...prevStyle };
       const pathParts = path.split('.');
       let current = newStyle;
@@ -218,11 +385,9 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       }
       
       current[pathParts[pathParts.length - 1]] = value;
-      
-      console.log('PageEditor - New pageStyle after change:', newStyle);
       return newStyle;
     });
-  };
+  }, [legacySetPageStyle]);
 
   // Handle section selection from preview
   const handleSectionSelectFromPreview = (sectionId: string) => {
@@ -335,6 +500,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
               previewUrl={undefined}
               isPublished={published}
               slug={initialConfig.slug}
+              shouldAutoOpenQR={shouldAutoOpenQR}
             />
           </div>
           

@@ -42,6 +42,7 @@ export default function PageEditorWrapper({ initialConfig }: PageEditorWrapperPr
           page_style: config.page_style,
           original_prompt: config.original_prompt,
           published: config.published,
+          // Section visibility is now included in page_content, no need for separate fields
         }),
       });
 
