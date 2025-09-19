@@ -6,6 +6,7 @@
  */
 
 import { LandingPageConfig } from "../landingPageSchema";
+import { FALLBACK_HERO_IMAGE } from "../constants";
 
 /**
  * Validates the basic structure of a landing page configuration
@@ -154,6 +155,24 @@ export function applyFallbacks(config: any): LandingPageConfig {
   }
   if (!config.hero.cta && config.hero.ctaText) {
     config.hero.cta = config.hero.ctaText;
+  }
+
+  // Hero media fallbacks
+  if (!config.hero.media) {
+    config.hero.media = {
+      enabled: false,
+      type: "image" as const,
+      url: "",
+      file: "",
+      altText: "",
+      thumbnail: ""
+    };
+  }
+  
+  // If hero media is enabled but no URL is provided, use the fallback hero image
+  if (config.hero.media.enabled && (!config.hero.media.url || config.hero.media.url.trim() === "")) {
+    config.hero.media.url = FALLBACK_HERO_IMAGE;
+    config.hero.media.altText = config.hero.media.altText || "Hero background image";
   }
 
   // Problem Section fallbacks
