@@ -32,6 +32,19 @@ export default function MobilePreviewQR({ pageUrl, pageId, previewUrl, isPublish
   const hasPublishedUrl = pageUrl && pageUrl.trim() !== '';
   const hasAnyUrl = hasPreviewUrl || hasPublishedUrl;
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log('MobilePreviewQR Debug:', {
+      pageUrl,
+      clientPreviewUrl,
+      hasPreviewUrl,
+      hasPublishedUrl,
+      hasAnyUrl,
+      isPublished,
+      autoOpen
+    });
+  }, [pageUrl, clientPreviewUrl, hasPreviewUrl, hasPublishedUrl, hasAnyUrl, isPublished, autoOpen]);
+
   // Handle auto-open functionality
   React.useEffect(() => {
     if (autoOpen && hasAnyUrl) {

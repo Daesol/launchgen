@@ -111,7 +111,10 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       onPublishingChange(true);
     }
     try {
-      // Create config with section state for publishing
+      // First, call the original handlePublish to update publishedUrl and show modal
+      await originalHandlePublish();
+      
+      // Then do our custom save with section state
       const config = {
         page_content: pageContent,
         page_style: pageStyle,
@@ -135,7 +138,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
         onPublishingChange(false);
       }
     }
-  }, [pageContent, pageStyle, templateId, id, originalPrompt, sectionState, onSave, onPublishingChange]);
+  }, [pageContent, pageStyle, templateId, id, originalPrompt, sectionState, onSave, onPublishingChange, originalHandlePublish]);
 
   // Create a wrapper for handleSave that includes section state
   const handleSaveWithSectionState = React.useCallback(async () => {
