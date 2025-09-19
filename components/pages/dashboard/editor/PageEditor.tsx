@@ -38,6 +38,9 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
 
   // Success message state
   const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
+  
+  // QR code auto-open state
+  const [shouldAutoOpenQR, setShouldAutoOpenQR] = React.useState(false);
 
   // Notify parent components about publishing state changes
   React.useEffect(() => {
@@ -122,6 +125,10 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       
       if (onSave) {
         await onSave(config);
+        // Trigger QR code auto-open after successful publish
+        setShouldAutoOpenQR(true);
+        // Reset after a short delay to allow the QR component to process it
+        setTimeout(() => setShouldAutoOpenQR(false), 100);
       }
     } finally {
       if (onPublishingChange) {
@@ -493,6 +500,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
               previewUrl={undefined}
               isPublished={published}
               slug={initialConfig.slug}
+              shouldAutoOpenQR={shouldAutoOpenQR}
             />
           </div>
           
