@@ -1,5 +1,28 @@
 # Road Map Log
 
+## 2025-01-20 - Fallback Hero Image Implementation
+
+### What was done:
+- **Implemented fallback hero image system** - Added centralized fallback hero image using the specified Unsplash image URL
+- **Created constants file** - Added `lib/constants.ts` with `FALLBACK_HERO_IMAGE` constant for consistent image usage
+- **Updated MediaComponent fallback** - Modified image error handling to use the new fallback hero image instead of generic placeholder
+- **Enhanced validationAndFallbacks** - Added logic to automatically use fallback hero image when hero media is enabled but no URL is provided
+- **Improved user experience** - Users now see a consistent, high-quality hero image when AI-generated images fail to load or when no image is provided
+
+### Technical details:
+- **Constants centralization**: Created `lib/constants.ts` with `FALLBACK_HERO_IMAGE` and `FALLBACK_IMAGE_PLACEHOLDER` constants
+- **MediaComponent enhancement**: Updated `onError` handler to use `FALLBACK_HERO_IMAGE` instead of hardcoded placeholder URL
+- **Validation fallback logic**: Added hero media fallback logic in `applyFallbacks` function to set fallback image when media is enabled but URL is empty
+- **Image URL**: Using `https://images.unsplash.com/photo-1686006324574-f7feac9d98a6?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D` as the fallback hero image
+- **Consistent fallback behavior**: Both error handling and validation now use the same fallback image for consistency
+
+### Files affected:
+- `lib/constants.ts` - New constants file with fallback image URLs
+- `components/features/media/MediaComponent.tsx` - Updated to use fallback hero image constant
+- `lib/openai/validationAndFallbacks.ts` - Added hero media fallback logic
+
+---
+
 ## 2025-01-20 - AI Theme Selection Enhancement
 
 ### What was done:

@@ -7,6 +7,7 @@ import { Upload, Image, Video, Youtube, Play, X, Link, FolderOpen, Trash2 } from
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { getAccentColor } from "@/utils/theme";
 import { Theme } from "@/types/landing-page.types";
+import { FALLBACK_HERO_IMAGE, FALLBACK_IMAGE_PLACEHOLDER } from "@/lib/constants";
 
 interface MediaComponentProps {
   media?: {
@@ -320,9 +321,9 @@ export default function MediaComponent({
                 alt={media.altText || "Hero media"}
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  // Fallback to a default placeholder image if the URL is invalid
+                  // Fallback to the hero image if the URL is invalid
                   const target = e.target as HTMLImageElement;
-                  target.src = 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop&auto=format';
+                  target.src = FALLBACK_HERO_IMAGE;
                 }}
               />
               {isEditor && (
