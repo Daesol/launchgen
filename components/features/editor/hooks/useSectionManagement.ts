@@ -8,7 +8,11 @@ import {
   SectionSelectHandler 
 } from '../types/editor.types';
 
-export function useSectionManagement(initialVisibleSections?: Record<string, boolean>, initialSectionOrder?: string[]): UseSectionManagementReturn {
+export function useSectionManagement(
+  initialVisibleSections?: Record<string, boolean>, 
+  initialSectionOrder?: string[],
+  onSectionChange?: (visibleSections: Record<string, boolean>, sectionOrder: string[]) => void
+): UseSectionManagementReturn {
   // Section expansion state - default: all sections expanded for better visibility
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     business: true,
@@ -71,9 +75,15 @@ export function useSectionManagement(initialVisibleSections?: Record<string, boo
         [sectionName]: !prev[sectionName]
       };
       console.log('Section visibility state updated:', { sectionName, newState });
+      
+      // Notify parent component about the change
+      if (onSectionChange) {
+        onSectionChange(newState, sectionOrder);
+      }
+      
       return newState;
     });
-  }, []);
+  }, [onSectionChange, sectionOrder]);
 
   // Handle section selection from preview
   const handleSectionSelect = useCallback<SectionSelectHandler>((sectionId: string) => {
@@ -98,7 +108,12 @@ export function useSectionManagement(initialVisibleSections?: Record<string, boo
     // Filter out 'hero' from the new order since it's always fixed at the top
     const filteredOrder = newOrder.filter(section => section !== 'hero');
     setSectionOrder(filteredOrder);
-  }, []);
+    
+    // Notify parent component about the change
+    if (onSectionChange) {
+      onSectionChange(visibleSections, filteredOrder);
+    }
+  }, [onSectionChange, visibleSections]);
 
   // Get section state
   const getSectionState = useCallback((): SectionState => ({

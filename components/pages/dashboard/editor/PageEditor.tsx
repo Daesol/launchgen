@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import MobilePreviewQR from "../../../widgets/MobilePreviewQR";
 import LandingPageTemplate from "../../landing/LandingPageTemplate";
 import EditPanel from "../../../features/editor/panels/EditPanel";
@@ -17,6 +17,8 @@ import { usePreviewMode } from "../hooks/usePreviewMode";
 import { useEditorLayout } from "../hooks/useEditorLayout";
 import EditorLayout from "./EditorLayout";
 
+// SIMPLIFIED: Removed complex refactor hooks
+
 interface PageEditorProps {
   initialConfig: any; // Should contain page_content, page_style, template_id, id (if editing)
   onSave?: (config: any) => void;
@@ -33,7 +35,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   // Mobile editor states
   const [showMobileEditor, setShowMobileEditor] = React.useState(false);
   const [showMobileSectionEditor, setShowMobileSectionEditor] = React.useState(false);
-  
+
   // Success message state
   const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
 
@@ -44,7 +46,9 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     }
   }, [isPublishing, onPublishingChange]);
 
-  // Use our custom hooks for all the logic
+  // SIMPLIFIED: Remove complex refactor, use existing system
+
+  // Legacy: Keep existing usePageEditor for backward compatibility
   const {
     state: {
       pageContent,
@@ -61,9 +65,9 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       hasUnsavedChanges,
       publishedUrl,
     },
-    setPageContent,
-    setPageStyle,
-    handleSave,
+    setPageContent: legacySetPageContent,
+    setPageStyle: legacySetPageStyle,
+    handleSave: legacyHandleSave,
     handlePublish: originalHandlePublish,
     handleRegenerate,
     setError,
@@ -80,7 +84,22 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
   console.log('PageEditor - pageContent:', pageContent);
   console.log('PageEditor - pageContent keys:', pageContent ? Object.keys(pageContent) : 'no pageContent');
   
-  const sectionManagement = useSectionManagement(initialVisibleSections, initialSectionOrder);
+  // Handle section changes by updating pageContent directly
+  const handleSectionChange = useCallback((visibleSections: Record<string, boolean>, sectionOrder: string[]) => {
+    console.log('PageEditor - Section change detected, updating pageContent:', {
+      visibleSections,
+      sectionOrder
+    });
+    
+    // Update pageContent directly with section visibility - this will trigger auto-save
+    legacySetPageContent((prevContent: any) => ({
+      ...prevContent,
+      visibleSections,
+      sectionOrder,
+    }));
+  }, [legacySetPageContent]);
+
+  const sectionManagement = useSectionManagement(initialVisibleSections, initialSectionOrder, handleSectionChange);
   const sectionState = sectionManagement.sectionState;
 
   // Create a wrapper for handlePublish that manages external publishing state and includes section state
@@ -303,7 +322,7 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       setPreviewMode(mode);
     },
     onPreviewPage: async () => {
-      await handleSave();
+      await legacyHandleSave();
       if (id && initialConfig.slug) {
         window.open(`/page/${initialConfig.slug}`, '_blank');
       }
@@ -316,23 +335,14 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
     }
   });
 
-  // Handle page content changes
-  const handlePageContentChange = (path: string, value: any) => {
-    // Build the new content object
-    const pathParts = path.split('.');
-    const updateObject: any = {};
-    let current = updateObject;
+  // SIMPLIFIED: Handle page content changes - just use the existing system
+  const handlePageContentChange = useCallback((path: string, value: any) => {
+    console.log('PageEditor - Content change:', { path, value });
     
-    for (let i = 0; i < pathParts.length - 1; i++) {
-      current[pathParts[i]] = {};
-      current = current[pathParts[i]];
-    }
-    
-    current[pathParts[pathParts.length - 1]] = value;
-    
-    // Use setPageContent from usePageEditor hook which triggers auto-save
-    setPageContent((prevContent: any) => {
+    // Use the existing setPageContent which already triggers auto-save
+    legacySetPageContent((prevContent: any) => {
       const newContent = { ...prevContent };
+      const pathParts = path.split('.');
       let target = newContent;
       
       for (let i = 0; i < pathParts.length - 1; i++) {
@@ -343,17 +353,19 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       }
       
       target[pathParts[pathParts.length - 1]] = value;
-      
-      console.log('PageEditor - New pageContent after change:', newContent);
-      console.log('PageEditor - This will trigger auto-save via usePageEditor hook');
       return newContent;
     });
-  };
+  }, [legacySetPageContent]);
 
-  // Handle page style changes
-  const handlePageStyleChange = (path: string, value: any) => {
-    // Use setPageStyle from usePageEditor hook which triggers auto-save
-    setPageStyle((prevStyle: any) => {
+  // SIMPLIFIED: Handle section visibility changes directly in the section management
+  // We'll modify the section management to update pageContent when changes happen
+
+  // SIMPLIFIED: Handle page style changes - just use the existing system
+  const handlePageStyleChange = useCallback((path: string, value: any) => {
+    console.log('PageEditor - Style change:', { path, value });
+    
+    // Use the existing setPageStyle which already triggers auto-save
+    legacySetPageStyle((prevStyle: any) => {
       const newStyle = { ...prevStyle };
       const pathParts = path.split('.');
       let current = newStyle;
@@ -366,12 +378,9 @@ export default function PageEditor({ initialConfig, onSave, saveStatus = 'saved'
       }
       
       current[pathParts[pathParts.length - 1]] = value;
-      
-      console.log('PageEditor - New pageStyle after change:', newStyle);
-      console.log('PageEditor - This will trigger auto-save via usePageEditor hook');
       return newStyle;
     });
-  };
+  }, [legacySetPageStyle]);
 
   // Handle section selection from preview
   const handleSectionSelectFromPreview = (sectionId: string) => {
