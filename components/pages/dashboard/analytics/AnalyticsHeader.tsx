@@ -22,8 +22,36 @@ export default function AnalyticsHeader({ page, onDelete, onUrlUpdate }: Analyti
   const [isUpdatingUrl, setIsUpdatingUrl] = useState(false);
   const [urlError, setUrlError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [urlValidationWarning, setUrlValidationWarning] = useState("");
 
   const fullUrl = `${window.location.origin}/page/${page.slug}`;
+
+  // URL validation function
+  const validateUrlSlug = (slug: string) => {
+    // Check for invalid characters in URL slug
+    const invalidChars = /[^a-zA-Z0-9\-_]/g;
+    const matches = slug.match(invalidChars);
+    
+    if (matches) {
+      const uniqueChars = Array.from(new Set(matches));
+      return `Invalid characters: ${uniqueChars.join(', ')}. Only letters, numbers, hyphens, and underscores are allowed.`;
+    }
+    
+    return "";
+  };
+
+  // Handle URL input changes with space-to-dash conversion and validation
+  const handleSlugChange = (value: string) => {
+    // Convert spaces to dashes
+    const convertedValue = value.replace(/\s+/g, '-');
+    
+    // Update the slug
+    setEditedSlug(convertedValue);
+    
+    // Validate and show warning
+    const warning = validateUrlSlug(convertedValue);
+    setUrlValidationWarning(warning);
+  };
 
   const handleCopyUrl = async () => {
     try {
@@ -41,8 +69,15 @@ export default function AnalyticsHeader({ page, onDelete, onUrlUpdate }: Analyti
       return;
     }
 
+    // Check for validation warnings before saving
+    if (urlValidationWarning) {
+      setUrlError("Please fix invalid characters before saving.");
+      return;
+    }
+
     setIsUpdatingUrl(true);
     setUrlError("");
+    setUrlValidationWarning("");
 
     try {
       const response = await fetch('/api/landing-pages/update-url', {
@@ -74,6 +109,7 @@ export default function AnalyticsHeader({ page, onDelete, onUrlUpdate }: Analyti
     setEditedSlug(page.slug);
     setIsEditingUrl(false);
     setUrlError("");
+    setUrlValidationWarning("");
   };
   return (
     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -113,7 +149,7 @@ export default function AnalyticsHeader({ page, onDelete, onUrlUpdate }: Analyti
                   onClick={() => setIsEditingUrl(true)}
                   variant="ghost"
                   size="sm"
-                  className="h-6 px-2 text-xs text-neutral-400 hover:text-white"
+                  className="h-6 px-2 text-xs text-neutral-400 hover:text-white hover:bg-neutral-800"
                 >
                   <Edit2 className="w-3 h-3 mr-1" />
                   Edit
@@ -123,27 +159,32 @@ export default function AnalyticsHeader({ page, onDelete, onUrlUpdate }: Analyti
             
             {isEditingUrl ? (
               <div className="space-y-2">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                   <span className="text-sm text-neutral-400 flex-shrink-0">
                     {window.location.origin}/page/
                   </span>
                   <Input
                     value={editedSlug}
-                    onChange={(e) => setEditedSlug(e.target.value)}
+                    onChange={(e) => handleSlugChange(e.target.value)}
                     className="flex-1 h-8 text-sm bg-neutral-800 border-neutral-700 text-white"
                     placeholder="your-page-url"
                     disabled={isUpdatingUrl}
                   />
                 </div>
+                {urlValidationWarning && (
+                  <p className="text-xs text-yellow-400">{urlValidationWarning}</p>
+                )}
                 {urlError && (
                   <p className="text-xs text-red-400">{urlError}</p>
                 )}
                 <div className="flex items-center gap-2">
                   <Button
                     onClick={handleUrlSave}
+                    variant="outline"
                     size="sm"
-                    disabled={isUpdatingUrl || !editedSlug.trim()}
-                    className="h-7 px-3 text-xs bg-green-600 hover:bg-green-700"
+                    disabled={isUpdatingUrl || !editedSlug.trim() || !!urlValidationWarning}
+                    className="h-7 px-3 text-xs border-green-600 text-green-400 hover:text-green-300 hover:bg-green-900 hover:border-green-500"
+                    style={{ backgroundColor: '#0C0C0C', borderColor: '#16a34a' }}
                   >
                     {isUpdatingUrl ? "Saving..." : "Save"}
                   </Button>
@@ -152,22 +193,23 @@ export default function AnalyticsHeader({ page, onDelete, onUrlUpdate }: Analyti
                     variant="outline"
                     size="sm"
                     disabled={isUpdatingUrl}
-                    className="h-7 px-3 text-xs border-neutral-700 text-neutral-400 hover:text-white"
+                    className="h-7 px-3 text-xs border-red-800 text-red-400 hover:text-red-300 hover:bg-red-900 hover:border-red-700"
+                    style={{ backgroundColor: '#0C0C0C' }}
                   >
                     Cancel
                   </Button>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <code className="flex-1 text-sm text-green-400 bg-neutral-800/50 px-2 py-1 rounded font-mono">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <code className="flex-1 text-sm text-green-400 bg-neutral-800/50 px-2 py-1 rounded font-mono break-all">
                   {fullUrl}
                 </code>
                 <Button
                   onClick={handleCopyUrl}
                   variant="ghost"
                   size="sm"
-                  className="h-7 px-2 text-neutral-400 hover:text-white"
+                  className="h-7 px-2 text-neutral-400 hover:text-white hover:bg-neutral-800 self-start sm:self-center"
                   title="Copy URL"
                 >
                   {copied ? (
